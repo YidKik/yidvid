@@ -11,6 +11,7 @@ import {
   ChevronRight,
   LogOut,
   GitPullRequest,
+  Play,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +28,7 @@ const navSections = [
     label: "Content",
     items: [
       { id: "channels", label: "Channels & Videos", icon: MonitorPlay },
+      { id: "shorts", label: "Shorts", icon: Play },
       { id: "moderation", label: "Moderation", icon: Shield },
       { id: "categories", label: "Categories", icon: Tag },
     ],

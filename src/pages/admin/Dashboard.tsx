@@ -20,6 +20,7 @@ import { CategoriesPageV2 } from "@/components/admin-v2/pages/CategoriesPageV2";
 import { CommentsPageV2 } from "@/components/admin-v2/pages/CommentsPageV2";
 import { ContactRequestsPageV2 } from "@/components/admin-v2/pages/ContactRequestsPageV2";
 import { ChannelRequestsPageV2 } from "@/components/admin-v2/pages/ChannelRequestsPageV2";
+import { ShortsPageV2 } from "@/components/admin-v2/pages/ShortsPageV2";
 
 import { AnalyticsPageV2 } from "@/components/admin-v2/pages/AnalyticsPageV2";
 
@@ -28,6 +29,7 @@ const PAGE_META: Record<string, { title: string; description: string }> = {
   analytics: { title: "Analytics", description: "Site traffic & user analytics" },
   channels: { title: "Channels & Videos", description: "Manage YouTube channels & videos" },
   moderation: { title: "Moderation", description: "Review & moderate content" },
+  shorts: { title: "Shorts", description: "Manage YouTube Shorts" },
   categories: { title: "Categories", description: "Manage channel & video categories" },
   
   users: { title: "Users", description: "Manage users & admin roles" },
@@ -93,6 +95,8 @@ const Dashboard = () => {
         return <AnalyticsPageV2 />;
       case "channels":
         return <ChannelsPageV2 />;
+      case "shorts":
+        return <ShortsPageV2 />;
       case "moderation":
         return <ContentModerationPage />;
       case "categories":
