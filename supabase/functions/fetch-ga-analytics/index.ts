@@ -23,7 +23,7 @@ const addDays = (dateString: string, days: number) => {
 
 const resolveAllTimeStartDate = (dateRange: string, fallbackStartDate?: string) => {
   if (dateRange !== 'allTime') return dateRange;
-  return fallbackStartDate || '2015-08-14';
+  return fallbackStartDate || '2015-08-13';
 };
 
 const buildReportRequest = (metricType: string, resolvedStartDate: string) => {
