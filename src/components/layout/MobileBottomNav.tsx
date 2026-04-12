@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, PlayCircle, Search, Library, Menu, X, History, Heart, Clock, ListMusic, Settings, Info, Bell, LogIn } from "lucide-react";
+import { Home, PlayCircle, Search, Library, Menu, History, Heart, Clock, ListMusic, Settings, Info, Bell, LogIn, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSessionManager } from "@/hooks/useSessionManager";
-import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
 
 interface MobileBottomNavProps {
@@ -17,7 +16,6 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
   const { setIsAuthOpen } = useSessionManager();
   const [showLibrary, setShowLibrary] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const { allCategories } = useCategories();
 
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";
@@ -39,6 +37,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
     { icon: Heart, label: "Favorites", path: "/favorites" },
     { icon: Clock, label: "Watch Later", path: "/watch-later" },
     { icon: ListMusic, label: "Playlists", path: "/playlists" },
+    { icon: Users, label: "Subscriptions", path: "/settings" },
   ];
 
   const menuItems = [
@@ -70,7 +69,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
     navigate(path);
   };
 
-  const isLibraryActive = ["/history", "/favorites", "/watch-later", "/playlists"].includes(location.pathname);
+  const isLibraryActive = ["/history", "/favorites", "/watch-later", "/playlists"].includes(location.pathname) || (location.pathname === "/settings" && showLibrary);
   const isMenuActive = ["/settings", "/about"].includes(location.pathname);
 
   return (
@@ -101,7 +100,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
             <div className="w-12 h-1 bg-[#E5E5E5] dark:bg-[#555] rounded-full mx-auto mt-3" />
             <div className="p-4 pb-2">
               <h3 className="text-sm font-bold text-[#1A1A1A] dark:text-[#e8e8e8] mb-3 px-1" style={{ fontFamily: "'Quicksand', sans-serif" }}>Library</h3>
-              <div className="space-y-1">
+              <div className="grid grid-cols-3 gap-2 pb-2">
                 {libraryItems.map((item) => {
                   const Icon = item.icon;
                   const active = location.pathname === item.path;
@@ -110,12 +109,12 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                       key={item.path}
                       onClick={() => handleSheetItemClick(item.path, true)}
                       className={cn(
-                        "flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-medium transition-all",
-                        active ? "bg-[#F5F5F5] dark:bg-[#333] text-[#FF0000]" : "text-[#666666] dark:text-[#aaa] hover:bg-[#F5F5F5] dark:hover:bg-[#333]",
+                        "flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-xs font-medium transition-all",
+                        active ? "bg-[#FFF0F0] dark:bg-[#3a2020] text-[#FF0000]" : "bg-[#F5F5F5] dark:bg-[#2a2a2a] text-[#666666] dark:text-[#aaa] hover:bg-[#EFEFEF] dark:hover:bg-[#333]",
                         !isAuthenticated && "opacity-40"
                       )}
                     >
-                      <Icon className={cn("w-5 h-5", active ? "text-[#FF0000]" : "text-[#666666]")} />
+                      <Icon className={cn("w-5 h-5", active ? "text-[#FF0000]" : "text-[#888] dark:text-[#999]")} />
                       <span>{item.label}</span>
                     </button>
                   );
@@ -134,12 +133,12 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-14 left-0 right-0 z-40 bg-white dark:bg-[#212121] rounded-t-2xl border-t border-[#E5E5E5] dark:border-[#333] shadow-2xl max-h-[60vh] overflow-y-auto"
+            className="fixed bottom-14 left-0 right-0 z-40 bg-white dark:bg-[#212121] rounded-t-2xl border-t border-[#E5E5E5] dark:border-[#333] shadow-2xl"
           >
-            <div className="w-12 h-1 bg-[#E5E5E5] dark:bg-[#555] rounded-full mx-auto mt-3 sticky top-0" />
+            <div className="w-12 h-1 bg-[#E5E5E5] dark:bg-[#555] rounded-full mx-auto mt-3" />
             <div className="p-4 pb-2">
-              {/* Menu items */}
-              <div className="space-y-1 mb-4">
+              <h3 className="text-sm font-bold text-[#1A1A1A] dark:text-[#e8e8e8] mb-3 px-1" style={{ fontFamily: "'Quicksand', sans-serif" }}>Menu</h3>
+              <div className="space-y-1 mb-2">
                 {menuItems.map((item) => {
                   const Icon = item.icon;
                   const active = location.pathname === item.path;
@@ -158,30 +157,6 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                   );
                 })}
               </div>
-
-              {/* Categories */}
-              {allCategories.length > 0 && (
-                <div className="border-t border-[#E5E5E5] dark:border-[#333] pt-3">
-                  <h3 className="text-xs font-bold text-[#999999] dark:text-[#717171] uppercase tracking-wider mb-2 px-1">Categories</h3>
-                  <div className="space-y-1">
-                    {allCategories
-                      .filter((c) => {
-                        const isUrl = c.icon?.startsWith('http') || c.icon?.startsWith('/');
-                        return !isUrl;
-                      })
-                      .map((category) => (
-                        <button
-                          key={category.id}
-                          onClick={() => handleSheetItemClick(`/videos?category=${category.id}`)}
-                          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-[#666666] dark:text-[#aaa] hover:bg-[#F5F5F5] dark:hover:bg-[#333] transition-all"
-                        >
-                          <span>{category.label}</span>
-                        </button>
-                      ))}
-                  </div>
-                </div>
-              )}
-
               {/* Sign In */}
               {!isAuthenticated && (
                 <div className="border-t border-[#E5E5E5] dark:border-[#333] pt-3 mt-3">
