@@ -19,6 +19,10 @@ export interface AnalyticsStats {
   activeUsers: number;
   weeklyUsers: number;
   monthlyUsers: number;
+  avgEngagementTime: number;
+  totalSessions: number;
+  engagementRate: number;
+  totalPageViews: number;
 }
 
 export const useAnalyticsData = (userId: string | undefined) => {
@@ -159,6 +163,19 @@ export const useAnalyticsData = (userId: string | undefined) => {
           ? monthlyUserIds.size
           : Math.round(getMetricValue(monthlyGA, 4));
 
+        const totalSessions = allTimeGAError
+          ? 0
+          : Math.round(getMetricValue(allTimeGA, 1));
+        const engagementRate = allTimeGAError
+          ? 0
+          : Math.round(getMetricValue(allTimeGA, 3) * 1000) / 10;
+        const totalPageViews = allTimeGAError
+          ? 0
+          : Math.round(getMetricValue(allTimeGA, 2));
+        const avgEngagementTime = allTimeGAError || !totalUsers
+          ? 0
+          : Math.round((getMetricValue(allTimeGA, 5) / totalUsers) / 60 * 10) / 10;
+
         return {
           totalChannels: totalChannels || 0,
           totalVideos: totalVideos || 0,
@@ -170,6 +187,10 @@ export const useAnalyticsData = (userId: string | undefined) => {
           activeUsers,
           weeklyUsers,
           monthlyUsers,
+          avgEngagementTime,
+          totalSessions,
+          engagementRate,
+          totalPageViews,
         };
       } catch (error: any) {
         console.error('Error fetching dashboard stats:', error);
