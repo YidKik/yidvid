@@ -81,6 +81,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   
   // Videos per page in expanded view - fewer on mobile
   const videosPerPage = isMobile ? 6 : isTablet ? 9 : 12;
+  const mobileGridRows = 3; // 3 rows × 2 cols = 6 on mobile
   const totalPages = Math.ceil(allNewVideos.length / videosPerPage);
   
   // Current page videos
@@ -158,7 +159,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   return (
     <section 
       ref={sectionRef}
-      className={`mb-8 ${isMobile ? 'py-5 -mx-3 px-3' : 'py-8 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-8 ${isMobile ? 'py-5 -mx-3 px-3' : 'py-8 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllVideos ? (isMobile ? 'pb-6' : 'min-h-screen pb-20') : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="sync">
         {showAllVideos ? (

@@ -110,7 +110,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
           />
 
           <DialogPrimitive.Content
-            className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[90vh]' : 'w-[480px] max-h-[85vh]'} rounded-2xl overflow-hidden shadow-xl p-0`}
+            className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[75vh]' : 'w-[480px] max-h-[85vh]'} rounded-2xl overflow-hidden shadow-xl p-0`}
             style={{
               border: '1px solid #E5E5E5',
               backgroundColor: 'rgba(255,255,255,0.95)',
@@ -127,26 +127,26 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
               <span className="sr-only">Close</span>
             </button>
 
-            <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid #E5E5E5' }}>
+            <div className={`${isMobile ? 'px-4 pt-4 pb-3' : 'px-6 pt-6 pb-4'}`} style={{ borderBottom: '1px solid #E5E5E5' }}>
               <div className="flex items-center gap-3 pr-10">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FFCC00' }}>
-                  <Send className="w-4.5 h-4.5" style={{ color: '#222' }} />
+                <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center`} style={{ backgroundColor: '#FFCC00' }}>
+                  <Send className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'}`} style={{ color: '#222' }} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold tracking-tight" style={{ color: '#222' }}>Contact Us</h2>
-                  <p className="text-xs" style={{ color: '#999' }}>We'd love to hear from you</p>
+                  <h2 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold tracking-tight`} style={{ color: '#222' }}>Contact Us</h2>
+                  <p className={`${isMobile ? 'text-[10px]' : 'text-xs'}`} style={{ color: '#999' }}>We'd love to hear from you</p>
                 </div>
               </div>
             </div>
 
-            <div className="px-6 pt-5 pb-6 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(90vh - 100px)' : 'calc(85vh - 100px)' }}>
+            <div className={`${isMobile ? 'px-4 pt-3 pb-4' : 'px-6 pt-5 pb-6'} overflow-y-auto`} style={{ maxHeight: isMobile ? 'calc(75vh - 80px)' : 'calc(85vh - 100px)' }}>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <form onSubmit={form.handleSubmit(onSubmit)} className={`${isMobile ? 'space-y-3' : 'space-y-5'}`}>
                   <CategorySelect form={form} />
                   <ContactFormFields form={form} />
                   <button
                     type="submit"
-                    className="w-full h-11 text-sm font-bold rounded-full flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+                    className={`w-full ${isMobile ? 'h-9 text-xs' : 'h-11 text-sm'} font-bold rounded-full flex items-center justify-center gap-2 transition-opacity hover:opacity-90`}
                     style={{ backgroundColor: '#FF0000', color: 'white' }}
                   >
                     <Send className="w-4 h-4" />

@@ -37,7 +37,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-card text-card-foreground shadow-md rounded px-8 pt-6 pb-8 mb-4 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] auth-dialog-desktop border-2 border-border",
+        "fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 bg-card text-card-foreground shadow-md rounded duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] auth-dialog-desktop border-2 border-border max-w-lg px-8 pt-6 pb-8 mb-4 max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:px-4 max-[768px]:pt-4 max-[768px]:pb-5 max-[768px]:gap-3 max-[768px]:max-h-[80vh] max-[768px]:overflow-y-auto max-[768px]:rounded-2xl",
         className
       )}
       {...props}
@@ -45,9 +45,9 @@ const DialogContent = React.forwardRef<
       {children}
       {!hideCloseButton && (
         <DialogPrimitive.Close 
-          className="absolute right-5 top-5 z-10 bg-primary hover:bg-primary-hover text-white font-bold py-2 px-4 rounded transition-colors duration-300"
+          className="absolute right-3 top-3 z-10 bg-primary hover:bg-primary-hover text-white font-bold p-2 max-[768px]:p-1.5 rounded-full transition-colors duration-300"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4 max-[768px]:h-3.5 max-[768px]:w-3.5" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
       )}
