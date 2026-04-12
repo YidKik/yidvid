@@ -37,7 +37,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
     { icon: Heart, label: "Favorites", path: "/favorites" },
     { icon: Clock, label: "Watch Later", path: "/watch-later" },
     { icon: ListMusic, label: "Playlists", path: "/playlists" },
-    { icon: Users, label: "Subscriptions", path: "/settings" },
+    { icon: Users, label: "Subscriptions", path: "/subscriptions" },
   ];
 
   const menuItems = [
