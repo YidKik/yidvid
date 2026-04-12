@@ -5,9 +5,11 @@ import { ChannelLoading } from "@/components/channel/ChannelLoading";
 import { ChannelHeader } from "@/components/channel/ChannelHeader";
 import { ChannelErrorState } from "@/components/channel/ChannelErrorState";
 import { ChannelVideoSection } from "@/components/channel/ChannelVideoSection";
+import { ChannelShortsSection } from "@/components/channel/ChannelShortsSection";
 import { useChannelData } from "@/hooks/channel/useChannelData";
 import { useChannelSubscription } from "@/hooks/channel/useChannelSubscription";
 import { useChannelVideos } from "@/hooks/channel/useChannelVideos";
+import { useChannelShorts } from "@/hooks/channel/useChannelShorts";
 import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 import { toast } from "sonner";
 import { useSessionManager } from "@/hooks/useSessionManager";
@@ -21,6 +23,7 @@ const ChannelDetails = () => {
   const navigate = useNavigate();
   const [loadAttempts, setLoadAttempts] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [activeTab, setActiveTab] = useState<'videos' | 'shorts'>('videos');
   const { isAuthenticated, session, refreshSession } = useSessionManager();
   const { isChannelHidden, unhideChannel } = useHiddenChannels();
   
@@ -74,6 +77,7 @@ const ChannelDetails = () => {
     error: videosError
   } = useChannelVideos(cleanChannelId);
 
+  const { shorts, isLoading: isLoadingShorts } = useChannelShorts(cleanChannelId);
   // Register loading state with the global loading bar
   const isLoading = isLoadingChannel || isLoadingInitialVideos;
   usePageLoader('channel', isLoading);
@@ -217,16 +221,53 @@ const ChannelDetails = () => {
           videoCount={displayedVideos?.length}
         />
         
-        <ChannelVideoSection
-          isLoadingVideos={isLoadingVideos}
-          hasVideosError={hasVideosError}
-          videosError={videosError}
-          displayedVideos={displayedVideos || []}
-          channelThumbnail={channel.thumbnail_url}
-          INITIAL_VIDEOS_COUNT={INITIAL_VIDEOS_COUNT}
-          isLoadingMore={isLoadingMore}
-          refetchVideos={refetchVideos}
-        />
+        {/* Tabs for Videos / Shorts */}
+        {shorts.length > 0 && (
+          <div className="flex gap-1 mb-6 border-b border-gray-200 dark:border-gray-700">
+            <button
+              onClick={() => setActiveTab('videos')}
+              className={`px-5 py-2.5 text-sm font-medium transition-all relative ${
+                activeTab === 'videos'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Videos
+              {activeTab === 'videos' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500" />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('shorts')}
+              className={`px-5 py-2.5 text-sm font-medium transition-all relative flex items-center gap-1.5 ${
+                activeTab === 'shorts'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Shorts
+              <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-medium">{shorts.length}</span>
+              {activeTab === 'shorts' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500" />
+              )}
+            </button>
+          </div>
+        )}
+
+        {activeTab === 'videos' ? (
+          <ChannelVideoSection
+            isLoadingVideos={isLoadingVideos}
+            hasVideosError={hasVideosError}
+            videosError={videosError}
+            displayedVideos={displayedVideos || []}
+            channelThumbnail={channel.thumbnail_url}
+            INITIAL_VIDEOS_COUNT={INITIAL_VIDEOS_COUNT}
+            isLoadingMore={isLoadingMore}
+            refetchVideos={refetchVideos}
+          />
+        ) : (
+          <ChannelShortsSection shorts={shorts} isLoading={isLoadingShorts} />
+        )}
       </div>
     </div>
   );
