@@ -90,7 +90,7 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
   };
   
   const handleAdminDashboard = () => {
-    navigate("/dashboard");
+    navigate("/admin");
   };
 
   // Display user email immediately from props, with fallback to first part of email

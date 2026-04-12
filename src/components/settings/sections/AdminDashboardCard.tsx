@@ -8,7 +8,7 @@ export const AdminDashboardCard = () => {
   const navigate = useNavigate();
 
   const handleDashboardClick = () => {
-    navigate("/dashboard");
+    navigate("/admin");
   };
 
   return (

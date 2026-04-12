@@ -82,7 +82,7 @@ export default function UsersPage() {
 
   // Return to dashboard button for faster navigation
   const handleBackToDashboard = () => {
-    navigate("/dashboard");
+    navigate("/admin");
   };
 
   return (

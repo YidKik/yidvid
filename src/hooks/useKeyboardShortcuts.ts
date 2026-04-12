@@ -26,8 +26,8 @@ export const useKeyboardShortcuts = () => {
               break;
             case 'd':
               // Ctrl+Shift+D => Admin Dashboard
-              navigate('/dashboard');
-              toast.success('Navigated to Dashboard');
+              navigate('/admin');
+              toast.success('Navigated to Admin Dashboard');
               break;
             case 'h':
               // Ctrl+Shift+H => Home
