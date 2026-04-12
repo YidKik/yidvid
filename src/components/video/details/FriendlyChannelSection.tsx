@@ -27,6 +27,7 @@ interface FriendlyChannelSectionProps {
   channelVideos?: Video[];
   isLoadingVideos?: boolean;
   compact?: boolean;
+  hideChannelInfo?: boolean;
 }
 
 const formatViewCount = (count: number): string => {
@@ -42,7 +43,8 @@ export const FriendlyChannelSection = ({
   description,
   channelVideos = [],
   isLoadingVideos = false,
-  compact = false
+  compact = false,
+  hideChannelInfo = false
 }: FriendlyChannelSectionProps) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [needsExpand, setNeedsExpand] = useState(false);
