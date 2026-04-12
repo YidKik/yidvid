@@ -150,7 +150,7 @@ const VideoDetails = () => {
                 </div>
                 
                 {/* Thin divider */}
-                <div className="h-px bg-[#E5E5E5] my-4" />
+                <div className="h-px bg-[#E5E5E5] dark:bg-[#333] my-4" />
                 
                 {/* Description + More Videos (no channel header - it's in action bar now) */}
                 <FriendlyChannelSection
@@ -215,7 +215,7 @@ const VideoDetails = () => {
               </div>
               
               {/* Title */}
-              <h1 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-[#1A1A1A] leading-tight`}>
+              <h1 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-[#1A1A1A] dark:text-[#e8e8e8] leading-tight`}>
                 {video?.title}
               </h1>
               
