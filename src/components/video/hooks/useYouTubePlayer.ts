@@ -58,7 +58,7 @@ export const useYouTubePlayer = (
     isReady: false,
     buffered: 0,
     hasEnded: false,
-    isBuffering: true,
+    isBuffering: false,
   });
 
   const playerRef = useRef<any>(null);
@@ -164,7 +164,7 @@ export const useYouTubePlayer = (
               ...s,
               isPlaying: ps === 1 || ps === 3,
               hasEnded: ps === 0,
-              isBuffering: ps === 3 || ps === -1,
+              isBuffering: ps === 3,
             }));
             if (ps === 0 && onVideoEndRef.current) {
               onVideoEndRef.current();
@@ -185,7 +185,7 @@ export const useYouTubePlayer = (
       isReady: false,
       buffered: 0,
       hasEnded: false,
-      isBuffering: true,
+      isBuffering: false,
     });
 
     init();

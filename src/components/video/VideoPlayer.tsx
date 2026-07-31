@@ -18,6 +18,16 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
 
   const player = useYouTubePlayer(playerContainerRef, videoId, onVideoEnd);
 
+  // Keep an opaque cover over the iframe until playback actually starts so the
+  // native YouTube poster / play button / info chip never flashes through.
+  const [hasStarted, setHasStarted] = useState(false);
+  useEffect(() => {
+    setHasStarted(false);
+  }, [videoId]);
+  useEffect(() => {
+    if (player.isPlaying) setHasStarted(true);
+  }, [player.isPlaying]);
+
   useEffect(() => {
     const onChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onChange);
@@ -66,6 +76,10 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
           }}
         />
       </div>
+      {/* Pre-roll cover — hides YouTube's own poster UI before playback starts */}
+      {!hasStarted && (
+        <div className="absolute inset-0 z-[6] bg-black pointer-events-none" />
+      )}
       {/* Opaque masks to guarantee YT overlays are hidden even during buffering flashes */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-black z-[5]" />
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-black z-[5]" />
@@ -76,7 +90,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
         volume={player.volume}
         isMuted={player.isMuted}
         buffered={player.buffered}
-        isBuffering={!player.isReady || player.isBuffering}
+        isBuffering={player.isBuffering || (!hasStarted && !player.isReady)}
         isFullscreen={isFullscreen}
         onTogglePlay={player.togglePlay}
         onSeek={player.seek}
