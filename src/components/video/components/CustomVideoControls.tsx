@@ -270,7 +270,7 @@ export const CustomVideoControls = ({
       {/* Single centered play badge — only while paused */}
       <div
         className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-200 ${
-          !isPlaying && !isBuffering
+          showPlayBadge && !isPlaying && !isBuffering
             ? "opacity-100 scale-100"
             : "opacity-0 scale-90"
         }`}
