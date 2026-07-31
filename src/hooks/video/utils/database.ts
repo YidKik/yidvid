@@ -14,7 +14,7 @@ export const formatVideoData = (data: any[]): VideoData[] => {
   return data.map(video => ({
     id: video.id,
     video_id: video.video_id || "",
-    title: video.title || "Untitled Video",
+    title: cleanVideoTitle(video.title) || "Untitled Video",
     description: video.description || "",
     thumbnail: video.thumbnail || "/placeholder.svg",
     channel_name: video.channel_name || "Unknown Channel",
