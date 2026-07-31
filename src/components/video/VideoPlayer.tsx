@@ -3,6 +3,7 @@ import { usePlayback } from "@/contexts/PlaybackContext";
 import { VideoPlayerError } from "./components/VideoPlayerError";
 import { CustomVideoControls } from "./components/CustomVideoControls";
 import { useYouTubePlayer } from "./hooks/useYouTubePlayer";
+import yvPlayerLogo from "@/assets/yv-player-logo.png";
 
 interface VideoPlayerProps {
   videoId: string;
@@ -80,6 +81,22 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
       {!hasStarted && (
         <div className="absolute inset-0 z-[6] bg-black pointer-events-none" />
       )}
+      {/* Top scrim + YidVid mark — masks YouTube's info chip and brands the frame */}
+      <div
+        className="absolute top-0 left-0 right-0 z-[7] pointer-events-none"
+        style={{
+          height: 64,
+          background:
+            'linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.65) 45%, transparent 100%)',
+        }}
+      />
+      <img
+        src={yvPlayerLogo}
+        alt=""
+        aria-hidden
+        className="absolute top-2.5 left-3 z-[8] pointer-events-none w-8 md:w-10 h-auto opacity-90"
+        style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.6))' }}
+      />
       {/* Opaque masks to guarantee YT overlays are hidden even during buffering flashes */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-black z-[5]" />
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-black z-[5]" />
