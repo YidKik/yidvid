@@ -130,7 +130,7 @@ const VideoDetails = () => {
           
         {/* Desktop Layout - two column */}
           {!isMobile && !isTablet && (
-            <div className="mt-4 flex gap-6">
+            <div className="mx-auto w-full max-w-[1600px] mt-4 flex gap-6">
               {/* Left Column - Video, Title, Actions, Channel, More Videos */}
               <div className="flex-1 min-w-0">
                 {/* Video Player - clean, no card wrapper */}
@@ -215,7 +215,7 @@ const VideoDetails = () => {
           
           {/* Mobile + Tablet Layout - stacked */}
           {(isMobile || isTablet) && (
-            <div className={`mt-2 space-y-${isMobile ? '3' : '4'}`}>
+            <div className={`mx-auto w-full max-w-[1100px] mt-2 ${isMobile ? 'space-y-3' : 'space-y-4'}`}>
               {/* Video Player */}
               <div className={`rounded-xl overflow-hidden bg-black ${isMobile ? '-mx-3' : ''} relative`}>
                 <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={handleVideoEnd} />
