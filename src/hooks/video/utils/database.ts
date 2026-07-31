@@ -1,5 +1,6 @@
 
 import { VideoData } from "../types/video-fetcher";
+import { cleanVideoTitle } from "@/lib/utils";
 
 /**
  * Formats raw database video data into the VideoData format

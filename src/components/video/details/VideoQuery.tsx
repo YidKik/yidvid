@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { cleanVideoTitle } from "@/lib/utils";
 
 // Extended interface that matches the actual structure from the database
 interface ExtendedYoutubeVideo {

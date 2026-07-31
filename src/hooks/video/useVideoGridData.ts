@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export interface VideoGridItem {
   id: string;

@@ -1,6 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export const useWelcomeData = (session: any) => {
   const { data: profile, isLoading: isLoadingProfile, error: profileError } = useQuery({

@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export const useRelatedVideosQuery = (channelId: string, currentVideoId: string) => {
   const { isAuthenticated } = useAuth();
