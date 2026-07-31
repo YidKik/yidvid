@@ -224,14 +224,6 @@ const ShortsViewer = () => {
 
   const handleShare = async () => {
     const url = `${window.location.origin}/shorts/${currentShort.video_id}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: currentShort.title, url });
-        return;
-      } catch {
-        /* user cancelled — fall through to copy */
-      }
-    }
     try {
       await navigator.clipboard.writeText(url);
       toast("Link copied");
@@ -239,6 +231,7 @@ const ShortsViewer = () => {
       toast("Could not copy link");
     }
   };
+
 
   return (
     <>
