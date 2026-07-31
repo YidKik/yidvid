@@ -492,3 +492,22 @@ body.home-page {
   height: 100% !important;
   pointer-events: none;
 }
+
+/* ===== Shorts viewer transitions ===== */
+@keyframes short-slide-up {
+  0% { transform: translateY(6%) scale(0.97); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes short-slide-down {
+  0% { transform: translateY(-6%) scale(0.97); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.short-enter-up { animation: short-slide-up 0.38s cubic-bezier(0.22, 1, 0.36, 1); }
+.short-enter-down { animation: short-slide-down 0.38s cubic-bezier(0.22, 1, 0.36, 1); }
+
+@keyframes short-like-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.short-like-pop { animation: short-like-pop 0.4s ease-out; }
