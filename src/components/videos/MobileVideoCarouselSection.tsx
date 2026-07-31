@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { ChevronRight } from "lucide-react";
 import { useVideoDate } from "@/components/video/useVideoDate";
+import { cleanVideoTitle } from "@/lib/utils";
 
 interface MobileVideoCarouselSectionProps {
   title: string;

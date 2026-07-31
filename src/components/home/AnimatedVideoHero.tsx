@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { Circle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, cleanVideoTitle } from "@/lib/utils";
 import { VideoGridItem } from "@/hooks/video/useVideoGridData";
 
 interface AnimatedVideoProps {

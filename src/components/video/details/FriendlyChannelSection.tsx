@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useEnhancedChannelSubscription } from "@/hooks/channel/useEnhancedChannelSubscription";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { toast } from "sonner";
+import { cleanVideoTitle } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { useVideoDate } from "@/components/video/useVideoDate";
 

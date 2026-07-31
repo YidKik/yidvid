@@ -6,6 +6,7 @@ import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { useVideoDate } from "@/components/video/useVideoDate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
+import { cleanVideoTitle } from "@/lib/utils";
 
 interface FeaturedVideoSectionProps {
   videos: VideoData[];

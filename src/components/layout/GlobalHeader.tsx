@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import Auth from "@/pages/Auth";
 import { useVideoSearch } from "@/hooks/useVideoSearch";
 import { NotificationsMenu } from "@/components/header/NotificationsMenu";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export const GlobalHeader = () => {
   const location = useLocation();
