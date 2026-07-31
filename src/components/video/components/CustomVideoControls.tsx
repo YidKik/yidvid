@@ -20,6 +20,7 @@ interface CustomVideoControlsProps {
   isMuted: boolean;
   buffered: number;
   isBuffering?: boolean;
+  showPlayBadge?: boolean;
   isFullscreen?: boolean;
   onTogglePlay: () => void;
   onSeek: (time: number) => void;
