@@ -376,7 +376,7 @@ const ShortsViewer = () => {
                 active={isLiked}
                 onClick={handleLike}
               />
-              <SideButton icon={<Share2 className="w-5 h-5" />} label="Share" onClick={handleShare} />
+              <SideButton icon={<Copy className="w-5 h-5" />} label="Copy" onClick={handleShare} />
             </div>
 
             {/* Progress rail */}
