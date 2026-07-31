@@ -6,14 +6,20 @@ import { ChevronUp, ChevronDown, X, ThumbsUp, Share2, Play, Loader2 } from "luci
 import { Helmet } from "react-helmet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 const ShortsViewer = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const navigate = useNavigate();
   const { shorts, isLoading, currentIndex: initialIndex } = useShortsNavigation(videoId);
   const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [direction, setDirection] = useState<"up" | "down">("up");
   const [isPaused, setIsPaused] = useState(false);
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const [likePop, setLikePop] = useState(false);
   const { isMobile } = useIsMobile();
+  const { isAuthenticated, user } = useUnifiedAuth();
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const isTransitioning = useRef(false);
@@ -39,11 +45,12 @@ const ShortsViewer = () => {
       const next = activeIndex + delta;
       if (next < 0 || next > shorts.length - 1) return;
       isTransitioning.current = true;
+      setDirection(delta > 0 ? "up" : "down");
       setIsPaused(false);
       setActiveIndex(next);
       setTimeout(() => {
         isTransitioning.current = false;
-      }, 350);
+      }, 320);
     },
     [activeIndex, shorts.length]
   );
@@ -119,6 +126,26 @@ const ShortsViewer = () => {
     return () => el.removeEventListener("wheel", handleWheel);
   }, [goNext, goPrev]);
 
+  const currentShort = shorts[activeIndex];
+
+  // Load existing like state for the current short
+  useEffect(() => {
+    const load = async () => {
+      if (!isAuthenticated || !user?.id || !currentShort?.video_id) return;
+      const { data } = await supabase
+        .from("user_video_interactions")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("video_id", currentShort.video_id)
+        .eq("interaction_type", "like")
+        .maybeSingle();
+      if (data) {
+        setLikedIds((prev) => new Set(prev).add(currentShort.video_id));
+      }
+    };
+    load();
+  }, [currentShort?.video_id, isAuthenticated, user?.id]);
+
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-[#0b0b0b] flex items-center justify-center z-[60]">
@@ -127,7 +154,7 @@ const ShortsViewer = () => {
     );
   }
 
-  if (shorts.length === 0) {
+  if (shorts.length === 0 || !currentShort) {
     return (
       <div className="fixed inset-0 bg-[#0b0b0b] flex items-center justify-center z-[60]">
         <div className="text-white text-center px-6">
@@ -143,20 +170,73 @@ const ShortsViewer = () => {
     );
   }
 
-  const currentShort = shorts[activeIndex];
+  const isLiked = likedIds.has(currentShort.video_id);
+
   const formatViews = (views: number) => {
     if (views >= 1_000_000) return `${(views / 1_000_000).toFixed(1)}M`;
     if (views >= 1_000) return `${(views / 1_000).toFixed(0)}K`;
     return views.toString();
   };
 
-  const handleShare = () => {
+  const handleLike = async () => {
+    if (!isAuthenticated || !user?.id) {
+      toast("Sign in to like shorts");
+      return;
+    }
+    const id = currentShort.video_id;
+    const nextLiked = !isLiked;
+
+    setLikedIds((prev) => {
+      const s = new Set(prev);
+      nextLiked ? s.add(id) : s.delete(id);
+      return s;
+    });
+    if (nextLiked) {
+      setLikePop(true);
+      setTimeout(() => setLikePop(false), 400);
+    }
+
+    try {
+      if (nextLiked) {
+        await supabase.from("user_video_interactions").insert({
+          user_id: user.id,
+          video_id: id,
+          interaction_type: "like",
+        });
+      } else {
+        await supabase
+          .from("user_video_interactions")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("video_id", id)
+          .eq("interaction_type", "like");
+      }
+    } catch (e) {
+      console.error("Error toggling short like:", e);
+      setLikedIds((prev) => {
+        const s = new Set(prev);
+        nextLiked ? s.delete(id) : s.add(id);
+        return s;
+      });
+      toast("Could not save your like");
+    }
+  };
+
+  const handleShare = async () => {
     const url = `${window.location.origin}/shorts/${currentShort.video_id}`;
     if (navigator.share) {
-      navigator.share({ title: currentShort.title, url }).catch(() => {});
-    } else {
-      navigator.clipboard?.writeText(url);
+      try {
+        await navigator.share({ title: currentShort.title, url });
+        return;
+      } catch {
+        /* user cancelled — fall through to copy */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
       toast("Link copied");
+    } catch {
+      toast("Could not copy link");
     }
   };
 
@@ -173,7 +253,8 @@ const ShortsViewer = () => {
       >
         {/* Ambient backdrop from the current thumbnail */}
         <div
-          className="absolute inset-0 opacity-30 blur-3xl scale-110 pointer-events-none"
+          key={`bg-${currentShort.video_id}`}
+          className="absolute inset-0 opacity-30 blur-3xl scale-110 pointer-events-none animate-fade-in"
           style={{
             backgroundImage: `url(${currentShort.thumbnail})`,
             backgroundSize: "cover",
@@ -200,13 +281,15 @@ const ShortsViewer = () => {
         </div>
 
         {/* Stage */}
-        <div
-          className="relative flex items-center justify-center w-full"
-          style={{ height: "100dvh" }}
-        >
+        <div className="relative flex items-center justify-center w-full" style={{ height: "100dvh" }}>
           <div
+            key={currentShort.video_id}
             className={`relative bg-black overflow-hidden ${
-              isMobile ? "w-full h-full" : "rounded-[28px] ring-1 ring-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]"
+              direction === "up" ? "short-enter-up" : "short-enter-down"
+            } ${
+              isMobile
+                ? "w-full h-full"
+                : "rounded-[28px] ring-1 ring-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]"
             }`}
             style={
               isMobile
@@ -218,17 +301,23 @@ const ShortsViewer = () => {
                   }
             }
           >
-            {/* Player */}
-            <iframe
-              ref={iframeRef}
-              key={currentShort.video_id}
-              src={`https://www.youtube.com/embed/${currentShort.video_id}?autoplay=1&mute=0&loop=1&playlist=${currentShort.video_id}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&enablejsapi=1`}
-              className="absolute inset-0 w-full h-full pointer-events-none"
-              allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-              title={currentShort.title}
-            />
+            {/* Player — oversized and cropped so YouTube's header/footer UI sits outside the frame */}
+            <div className="absolute inset-0 overflow-hidden">
+              <iframe
+                ref={iframeRef}
+                src={`https://www.youtube.com/embed/${currentShort.video_id}?autoplay=1&loop=1&playlist=${currentShort.video_id}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&color=white&enablejsapi=1`}
+                className="absolute left-0 w-full pointer-events-none"
+                style={{ top: "-70px", height: "calc(100% + 140px)" }}
+                allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
+                title={currentShort.title}
+              />
+            </div>
 
-            {/* Tap layer: swallows YouTube branding/clicks, toggles play */}
+            {/* Opaque edge masks over any residual YouTube chrome */}
+            <div className="absolute top-0 inset-x-0 h-10 bg-black z-[5] pointer-events-none" />
+            <div className="absolute bottom-0 inset-x-0 h-10 bg-black z-[5] pointer-events-none" />
+
+            {/* Tap layer: swallows YouTube clicks, toggles play */}
             <div className="absolute inset-0 z-10" onClick={togglePlay} />
 
             {/* Pause indicator */}
@@ -241,7 +330,7 @@ const ShortsViewer = () => {
             )}
 
             {/* Bottom info */}
-            <div className="absolute inset-x-0 bottom-0 z-20 pointer-events-none bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pt-20 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+            <div className="absolute inset-x-0 bottom-0 z-20 pointer-events-none bg-gradient-to-t from-black via-black/60 to-transparent px-4 pt-20 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
               <div className="pr-16">
                 <button
                   onClick={() => navigate(`/channel/${currentShort.channel_id}`)}
@@ -277,7 +366,16 @@ const ShortsViewer = () => {
                   </div>
                 )}
               </button>
-              <SideButton icon={<ThumbsUp className="w-5 h-5" />} label="Like" />
+              <SideButton
+                icon={
+                  <ThumbsUp
+                    className={`w-5 h-5 ${isLiked ? "text-[#FFCC00] fill-[#FFCC00]" : ""} ${likePop ? "short-like-pop" : ""}`}
+                  />
+                }
+                label={isLiked ? "Liked" : "Like"}
+                active={isLiked}
+                onClick={handleLike}
+              />
               <SideButton icon={<Share2 className="w-5 h-5" />} label="Share" onClick={handleShare} />
             </div>
 
@@ -321,16 +419,29 @@ const NavArrow = ({
     className={`w-11 h-11 rounded-full flex items-center justify-center transition-all backdrop-blur-md ${
       disabled
         ? "bg-white/5 text-white/20 cursor-not-allowed"
-        : "bg-white/10 text-white hover:bg-[#FFCC00] hover:text-black"
+        : "bg-white/10 text-white hover:bg-[#FFCC00] hover:text-black active:scale-95"
     }`}
   >
     {icon}
   </button>
 );
 
-const SideButton = ({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick?: () => void }) => (
-  <button onClick={onClick} className="flex flex-col items-center gap-1 text-white/85 hover:text-white transition-colors">
-    <div className="w-11 h-11 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+const SideButton = ({
+  icon,
+  label,
+  onClick,
+  active,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+  active?: boolean;
+}) => (
+  <button
+    onClick={onClick}
+    className={`flex flex-col items-center gap-1 transition-colors ${active ? "text-[#FFCC00]" : "text-white/85 hover:text-white"}`}
+  >
+    <div className="w-11 h-11 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/20 transition-colors active:scale-95">
       {icon}
     </div>
     <span className="text-[10px] font-medium">{label}</span>
