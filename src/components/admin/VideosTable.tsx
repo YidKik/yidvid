@@ -1,6 +1,7 @@
 
 import { format } from "date-fns";
 import { Trash2 } from "lucide-react";
+import { cleanVideoTitle } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -46,12 +47,12 @@ export function VideosTable({ videos, isDeleting, onDeleteVideo }: VideoTablePro
               <TableCell>
                 <img
                   src={video.thumbnail}
-                  alt={video.title}
+                  alt={cleanVideoTitle(video.title)}
                   className="w-24 h-16 object-cover rounded"
                 />
               </TableCell>
               <TableCell className="font-medium max-w-[300px] truncate">
-                {video.title}
+                {cleanVideoTitle(video.title)}
               </TableCell>
               <TableCell>{video.channel_name}</TableCell>
               <TableCell>

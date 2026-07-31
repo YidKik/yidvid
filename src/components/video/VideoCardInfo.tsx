@@ -1,6 +1,7 @@
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Clock, Eye } from "lucide-react";
+import { cleanVideoTitle } from "@/lib/utils";
 
 interface VideoCardInfoProps {
   title: string;
@@ -106,7 +107,7 @@ export const VideoCardInfo = ({
     }
   };
 
-  const cleanTitle = removeEmojis(title);
+  const cleanTitle = removeEmojis(cleanVideoTitle(title));
 
   return (
     <div className="mt-2 xl:mt-3 px-1">

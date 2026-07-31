@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Clock } from "lucide-react";
 import { VideoOptionsMenu } from "./VideoOptionsMenu";
-import { cn } from "@/lib/utils";
+import { cn, cleanVideoTitle } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoCardWithOptionsProps {
@@ -81,7 +81,7 @@ export const VideoCardWithOptions = ({
             isMobile ? 'text-[10px] leading-tight min-h-[24px]' 
             : 'text-[10px] md:text-[11px] lg:text-[11px] xl:text-sm min-h-[24px] md:min-h-[28px] xl:min-h-[38px]'
           } font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
-            {title}
+            {cleanVideoTitle(title)}
           </h3>
           {!hideChannelInfo && (
             <div className={`flex items-center gap-1 min-h-[14px] ${isMobile ? 'mt-0.5' : 'mt-0.5 md:mt-1 xl:mt-2'}`}>

@@ -6,6 +6,7 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import { VideoOptionsMenu } from "@/components/video/VideoOptionsMenu";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/layout/Footer";
+import { cleanVideoTitle } from "@/lib/utils";
 
 const Favorites = () => {
   const navigate = useNavigate();
@@ -90,7 +91,7 @@ const Favorites = () => {
                 onClick={() => navigate(`/video/${item.video?.video_id}`)}
               >
                 <div className="relative aspect-video rounded-xl lg:rounded-2xl overflow-hidden bg-[#F5F5F5] mb-2 lg:mb-3 shadow-sm group-hover:shadow-md transition-shadow">
-                  <img src={item.video?.thumbnail} alt={item.video?.title} className="w-full h-full object-cover" />
+                  <img src={item.video?.thumbnail} alt={cleanVideoTitle(item.video?.title)} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <div className="w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-[#FFCC00] flex items-center justify-center shadow-lg">
                       <Play className="w-5 h-5 lg:w-6 lg:h-6 text-[#1A1A1A] fill-[#1A1A1A] ml-0.5" />
@@ -101,7 +102,7 @@ const Favorites = () => {
                   </div>
                 </div>
                 <h3 className="font-semibold text-[#1A1A1A] line-clamp-2 text-xs lg:text-sm mb-1 lg:mb-1.5 group-hover:text-[#FF0000] transition-colors">
-                  {item.video?.title}
+                  {cleanVideoTitle(item.video?.title)}
                 </h3>
                 <p className="text-[10px] lg:text-xs text-[#999999]">{item.video?.channel_name}</p>
               </motion.div>

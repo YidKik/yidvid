@@ -2,6 +2,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { cleanVideoTitle } from "@/lib/utils";
+
+const cleanReturnedVideos = (videos: any[]) =>
+  videos.map(video => ({ ...video, title: cleanVideoTitle(video.title) }));
 
 export const useRelatedVideosQuery = (channelId: string, currentVideoId: string) => {
   const { isAuthenticated } = useAuth();
@@ -31,7 +35,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
         // If we found videos, return them
         if (data && data.length > 0) {
           console.log(`Found ${data.length} related videos using UUID exclusion`);
-          return data;
+          return cleanReturnedVideos(data);
         }
         
         // Try excluding by video_id instead of UUID
@@ -51,7 +55,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
 
         if (videoIdData && videoIdData.length > 0) {
           console.log(`Found ${videoIdData.length} related videos using video_id exclusion`);
-          return videoIdData;
+          return cleanReturnedVideos(videoIdData);
         }
 
         // Try without any exclusion to see if there are ANY videos from this channel
@@ -77,7 +81,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
           
           if (filteredVideos.length > 0) {
             console.log(`Returning ${filteredVideos.length} filtered videos`);
-            return filteredVideos;
+            return cleanReturnedVideos(filteredVideos);
           }
         }
 
@@ -111,7 +115,7 @@ export const useRelatedVideosQuery = (channelId: string, currentVideoId: string)
           
           if (filteredVideos.length > 0) {
             console.log(`Returning ${filteredVideos.length} filtered edge function videos`);
-            return filteredVideos;
+            return cleanReturnedVideos(filteredVideos);
           }
         }
 

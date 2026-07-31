@@ -1,5 +1,6 @@
 
 import { VideoData } from "../../types/video-fetcher";
+import { cleanVideoTitle } from "@/lib/utils";
 
 /**
  * Format raw video data to VideoData interface
@@ -24,7 +25,7 @@ export const formatVideoData = (videosData: any[]): VideoData[] => {
     return {
       id: video.id,
       video_id: video.video_id || "Untitled Video",
-      title: video.title || "Untitled Video",
+      title: cleanVideoTitle(video.title) || "Untitled Video",
       thumbnail: video.thumbnail || '/placeholder.svg',
       channel_name: video.channel_name || "Unknown Channel",
       channel_id: video.channel_id || "unknown-channel",

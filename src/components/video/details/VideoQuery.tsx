@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { cleanVideoTitle } from "@/lib/utils";
 
 // Extended interface that matches the actual structure from the database
 interface ExtendedYoutubeVideo {
@@ -56,7 +57,7 @@ export const useVideoQuery = (id: string) => {
 
         if (!videoError && videoByVideoId) {
           console.log("Found video by video_id:", videoByVideoId);
-          return videoByVideoId as ExtendedYoutubeVideo;
+          return { ...videoByVideoId, title: cleanVideoTitle(videoByVideoId.title) } as ExtendedYoutubeVideo;
         } else {
           console.log("Video not found by video_id, error:", videoError);
         }
@@ -73,7 +74,7 @@ export const useVideoQuery = (id: string) => {
 
           if (!videoByUuidError && videoByUuid) {
             console.log("Found video by UUID:", videoByUuid);
-            return videoByUuid as ExtendedYoutubeVideo;
+            return { ...videoByUuid, title: cleanVideoTitle(videoByUuid.title) } as ExtendedYoutubeVideo;
           } else {
             console.log("Video not found by UUID, error:", videoByUuidError);
           }
@@ -102,7 +103,7 @@ export const useVideoQuery = (id: string) => {
             const data = await response.json();
             if (data.video) {
               console.log("Found video through public edge function:", data.video);
-              return data.video as ExtendedYoutubeVideo;
+              return { ...data.video, title: cleanVideoTitle(data.video.title) } as ExtendedYoutubeVideo;
             } else {
               console.log("Edge function returned no video data");
             }
@@ -125,7 +126,7 @@ export const useVideoQuery = (id: string) => {
           
         if (!partialSearchError && partialSearchResults && partialSearchResults.length > 0) {
           console.log("Found video through partial ID search:", partialSearchResults[0]);
-          return partialSearchResults[0] as ExtendedYoutubeVideo;
+          return { ...partialSearchResults[0], title: cleanVideoTitle(partialSearchResults[0].title) } as ExtendedYoutubeVideo;
         } else {
           console.log("Video not found through partial search, error:", partialSearchError);
         }
@@ -140,7 +141,7 @@ export const useVideoQuery = (id: string) => {
             
           if (!titleSearchError && titleSearchResults && titleSearchResults.length > 0) {
             console.log("Found video through title search:", titleSearchResults[0]);
-            return titleSearchResults[0] as ExtendedYoutubeVideo;
+            return { ...titleSearchResults[0], title: cleanVideoTitle(titleSearchResults[0].title) } as ExtendedYoutubeVideo;
           } else {
             console.log("Video not found through title search, error:", titleSearchError);
           }

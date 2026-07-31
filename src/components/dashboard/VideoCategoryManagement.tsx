@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
 import { useQuery } from "@tanstack/react-query";
+import { cleanVideoTitle } from "@/lib/utils";
 
 interface VideoCategoryManagementProps {
   videos: YoutubeVideosTable['Row'][];
@@ -176,12 +177,12 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
                   <td className="px-6 py-4 whitespace-nowrap">
                     <img
                       src={video.thumbnail}
-                      alt={video.title}
+                      alt={cleanVideoTitle(video.title)}
                       className="h-16 w-24 object-cover rounded"
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{video.title}</div>
+                    <div className="text-sm text-gray-900">{cleanVideoTitle(video.title)}</div>
                     <div className="text-sm text-gray-500">{video.channel_name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Play } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cleanVideoTitle } from "@/lib/utils";
 
 interface ChannelShortsSectionProps {
   shorts: any[];
@@ -33,7 +34,7 @@ export const ChannelShortsSection = ({ shorts, isLoading }: ChannelShortsSection
             <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '9/16' }}>
               <img
                 src={short.thumbnail}
-                alt={short.title}
+                alt={cleanVideoTitle(short.title)}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
               />
@@ -45,7 +46,7 @@ export const ChannelShortsSection = ({ shorts, isLoading }: ChannelShortsSection
               )}
             </div>
             <p className={`mt-2 ${isMobile ? 'text-[11px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-semibold text-foreground line-clamp-2`}>
-              {short.title}
+              {cleanVideoTitle(short.title)}
             </p>
           </div>
         ))}

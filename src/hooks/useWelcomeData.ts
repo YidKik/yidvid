@@ -1,6 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export const useWelcomeData = (session: any) => {
   const { data: profile, isLoading: isLoadingProfile, error: profileError } = useQuery({
@@ -64,7 +65,7 @@ export const useWelcomeData = (session: any) => {
               return basicQuery.data.map(video => ({
                 id: video.id,
                 video_id: video.video_id,
-                title: video.title,
+                title: cleanVideoTitle(video.title),
                 thumbnail: video.thumbnail,
                 channelName: video.channel_name,
                 channelId: video.channel_id,
@@ -80,7 +81,7 @@ export const useWelcomeData = (session: any) => {
         return (data || []).map(video => ({
           id: video.id,
           video_id: video.video_id,
-          title: video.title,
+          title: cleanVideoTitle(video.title),
           thumbnail: video.thumbnail,
           channelName: video.channel_name,
           channelId: video.channel_id,

@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export interface VideoGridItem {
   id: string;
@@ -64,7 +65,7 @@ export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = 
             const mappedVideos = simpleData.map(video => ({
               id: video.id,
               video_id: video.video_id,
-              title: video.title || "Untitled Video",
+              title: cleanVideoTitle(video.title) || "Untitled Video",
               thumbnail: video.thumbnail || '/placeholder.svg',
               channel_name: video.channel_name || "Unknown Channel",
               channel_id: video.channel_id || "unknown-channel",
@@ -86,7 +87,7 @@ export const useVideoGridData = (maxVideos: number = 12, shouldFetch: boolean = 
         const mappedVideos = data.map(video => ({
           id: video.id,
           video_id: video.video_id,
-          title: video.title || "Untitled Video",
+          title: cleanVideoTitle(video.title) || "Untitled Video",
           thumbnail: video.thumbnail || '/placeholder.svg',
           channel_name: video.channel_name || "Unknown Channel",
           channel_id: video.channel_id || "unknown-channel",

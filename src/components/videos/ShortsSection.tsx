@@ -6,6 +6,7 @@ import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useShorts } from "@/hooks/video/useShorts";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export const ShortsSection = () => {
   const { shorts, isLoading } = useShorts();
@@ -124,7 +125,7 @@ const ShortCard = ({
       <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '9/16' }}>
         <img
           src={short.thumbnail}
-          alt={short.title}
+          alt={cleanVideoTitle(short.title)}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
@@ -133,7 +134,7 @@ const ShortCard = ({
       </div>
       {/* Title */}
       <p className={`mt-2 ${isMobile ? 'text-[11px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-semibold text-foreground line-clamp-2`}>
-        {short.title}
+        {cleanVideoTitle(short.title)}
       </p>
       {/* Views below title */}
       {short.views != null && short.views > 0 && (
