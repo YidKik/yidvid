@@ -148,7 +148,7 @@ const VideoDetails = () => {
                 
                 {/* Title */}
                 <h1 className="text-xl font-bold text-[#1A1A1A] dark:text-[#e8e8e8] leading-tight mt-4">
-                  {video?.title}
+                  {cleanVideoTitle(video?.title)}
                 </h1>
                 
                 {/* Channel + Actions combined row */}
@@ -231,7 +231,7 @@ const VideoDetails = () => {
               
               {/* Title */}
               <h1 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-[#1A1A1A] dark:text-[#e8e8e8] leading-tight`}>
-                {video?.title}
+                {cleanVideoTitle(video?.title)}
               </h1>
               
               {/* Channel + Actions combined */}

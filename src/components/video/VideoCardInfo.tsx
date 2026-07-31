@@ -107,7 +107,7 @@ export const VideoCardInfo = ({
     }
   };
 
-  const cleanTitle = removeEmojis(title);
+  const cleanTitle = removeEmojis(cleanVideoTitle(title));
 
   return (
     <div className="mt-2 xl:mt-3 px-1">

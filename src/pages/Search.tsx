@@ -234,7 +234,7 @@ const Search = () => {
                     </div>
                   </div>
                   <p className={`mt-1.5 ${isMobile ? 'text-[10px]' : 'text-[11px]'} font-medium text-[#1A1A1A] dark:text-[#e8e8e8] line-clamp-2 leading-tight`}>
-                    {short.title}
+                    {cleanVideoTitle(short.title)}
                   </p>
                 </div>
               ))}
@@ -261,7 +261,7 @@ const Search = () => {
                   <div className={`${isMobile ? 'w-[140px]' : 'w-[280px]'} flex-shrink-0 aspect-video rounded-xl overflow-hidden bg-[#F0F0F0] dark:bg-[#222] relative`}>
                     <img
                       src={video.thumbnail || "/placeholder.svg"}
-                      alt={video.title}
+                      alt={cleanVideoTitle(video.title)}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     />
@@ -270,7 +270,7 @@ const Search = () => {
                   {/* Info */}
                   <div className="flex-1 min-w-0 py-0.5">
                     <h3 className={`${isMobile ? 'text-xs' : 'text-base'} font-semibold text-[#1A1A1A] dark:text-[#e8e8e8] line-clamp-2 leading-snug`}>
-                      {video.title}
+                      {cleanVideoTitle(video.title)}
                     </h3>
 
                     {/* Views & date */}
