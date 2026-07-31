@@ -65,35 +65,49 @@ const VideoDetails = () => {
     return <div className="p-4">Video ID not provided</div>;
   }
 
-  if (!video || error) {
-    if (!isLoadingVideo) {
-      console.error("Video not found or error:", error, "for videoId:", videoId);
-    }
+  // Loading skeleton mirrors the final layout exactly so the player frame
+  // never changes size between load and playback.
+  if (isLoadingVideo) {
     return (
-      <div className="min-h-screen bg-white pt-14 pl-0 lg:pl-[200px] transition-all duration-300">
-        <div className="p-4">
-          <div className="p-8 text-center bg-[#F5F5F5] rounded-2xl mt-6">
-            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-white rounded-xl">
-              <VideoPlaceholder size="large" />
+      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0">
+        <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
+          <div className="mx-auto w-full max-w-[1600px] mt-4 flex gap-6">
+            <div className="flex-1 min-w-0">
+              <div className={`aspect-video w-full bg-black rounded-xl ${isMobile ? '-mx-3 w-[calc(100%+1.5rem)] rounded-none' : ''}`} />
+              <div className="h-6 w-3/4 mt-4 rounded bg-[#EEE] dark:bg-[#1f1f1f] animate-pulse" />
+              <div className="h-4 w-1/3 mt-3 rounded bg-[#EEE] dark:bg-[#1f1f1f] animate-pulse" />
             </div>
-            <h2 className="text-xl font-semibold text-destructive">
-              {isLoadingVideo ? "Loading..." : "Video not found"}
-            </h2>
-            {!isLoadingVideo && (
-              <>
-                <p className="mt-2 text-[#666666]">
-                  {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
-                </p>
-                <Link to="/videos" className="mt-4 inline-block px-6 py-3 bg-[#FF0000] text-white rounded-full font-medium hover:brightness-90 transition-all">
-                  Return to videos
-                </Link>
-              </>
-            )}
+            {!isMobile && !isTablet && <div className="w-[380px] flex-shrink-0" />}
           </div>
         </div>
       </div>
     );
   }
+
+  if (!video || error) {
+    console.error("Video not found or error:", error, "for videoId:", videoId);
+    return (
+      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] transition-all duration-300">
+        <div className="p-4">
+          <div className="p-8 text-center bg-[#F5F5F5] dark:bg-[#1a1a1a] rounded-2xl mt-6">
+            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-white dark:bg-[#0f0f0f] rounded-xl">
+              <VideoPlaceholder size="large" />
+            </div>
+            <h2 className="text-xl font-semibold text-destructive">
+              Video not found
+            </h2>
+            <p className="mt-2 text-[#666666]">
+              {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
+            </p>
+            <Link to="/videos" className="mt-4 inline-block px-6 py-3 bg-[#FF0000] text-white rounded-full font-medium hover:brightness-90 transition-all">
+              Return to videos
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   const videoForSEO = {
     ...video,
@@ -116,7 +130,7 @@ const VideoDetails = () => {
           
         {/* Desktop Layout - two column */}
           {!isMobile && !isTablet && (
-            <div className="mt-4 flex gap-6">
+            <div className="mx-auto w-full max-w-[1600px] mt-4 flex gap-6">
               {/* Left Column - Video, Title, Actions, Channel, More Videos */}
               <div className="flex-1 min-w-0">
                 {/* Video Player - clean, no card wrapper */}
@@ -201,7 +215,7 @@ const VideoDetails = () => {
           
           {/* Mobile + Tablet Layout - stacked */}
           {(isMobile || isTablet) && (
-            <div className={`mt-2 space-y-${isMobile ? '3' : '4'}`}>
+            <div className={`mx-auto w-full max-w-[1100px] mt-2 ${isMobile ? 'space-y-3' : 'space-y-4'}`}>
               {/* Video Player */}
               <div className={`rounded-xl overflow-hidden bg-black ${isMobile ? '-mx-3' : ''} relative`}>
                 <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={handleVideoEnd} />
