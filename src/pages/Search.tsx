@@ -213,7 +213,7 @@ const Search = () => {
                   <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '9/16' }}>
                     <img
                       src={short.thumbnail}
-                      alt={short.title}
+                      alt={cleanVideoTitle(short.title)}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
