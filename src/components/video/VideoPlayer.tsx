@@ -3,7 +3,7 @@ import { usePlayback } from "@/contexts/PlaybackContext";
 import { VideoPlayerError } from "./components/VideoPlayerError";
 import { CustomVideoControls } from "./components/CustomVideoControls";
 import { useYouTubePlayer } from "./hooks/useYouTubePlayer";
-import yvPlayerLogo from "@/assets/yv-player-logo.png";
+
 
 interface VideoPlayerProps {
   videoId: string;
@@ -81,31 +81,15 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
       {!hasStarted && (
         <div className="absolute inset-0 z-[6] bg-black pointer-events-none" />
       )}
-      {/* Top scrim + YidVid mark — masks YouTube's info chip and brands the frame */}
+      {/* Top scrim — even fade that masks YouTube's info chip, lighter when idle */}
       <div
-        className="absolute top-0 left-0 right-0 z-[7] pointer-events-none"
+        className="absolute top-0 left-0 right-0 z-[7] pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity duration-300"
         style={{
           height: 64,
           background:
-            'linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.65) 45%, transparent 100%)',
+            'linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.55) 50%, transparent 100%)',
         }}
       />
-      <div
-        className="absolute top-0 left-0 z-[8] pointer-events-none flex items-center pl-3"
-        style={{
-          height: 52,
-          width: 150,
-          background:
-            'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 55%, transparent 100%)',
-        }}
-      >
-        <img
-          src={yvPlayerLogo}
-          alt=""
-          aria-hidden
-          className="w-8 md:w-10 h-auto opacity-90"
-        />
-      </div>
       {/* Opaque masks to guarantee YT overlays are hidden even during buffering flashes */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-black z-[5]" />
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-black z-[5]" />
