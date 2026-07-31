@@ -405,9 +405,16 @@ const NavArrow = ({
   label: string;
 }) => (
   <button
-    onClick={onClick}
+    type="button"
+    onPointerDown={(e) => e.stopPropagation()}
+    onClick={(e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      onClick();
+    }}
     disabled={disabled}
     aria-label={label}
+
     className={`w-11 h-11 rounded-full flex items-center justify-center transition-all backdrop-blur-md ${
       disabled
         ? "bg-white/5 text-white/20 cursor-not-allowed"
