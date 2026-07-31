@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Clock } from "lucide-react";
 import { VideoOptionsMenu } from "./VideoOptionsMenu";
-import { cn } from "@/lib/utils";
+import { cn, cleanVideoTitle } from "@/libutils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface VideoCardWithOptionsProps {

@@ -6,6 +6,7 @@ import { VideoData } from "@/hooks/video/types/video-fetcher";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useShorts } from "@/hooks/video/useShorts";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export const ShortsSection = () => {
   const { shorts, isLoading } = useShorts();

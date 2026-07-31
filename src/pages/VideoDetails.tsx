@@ -16,6 +16,7 @@ import { FriendlyChannelSection } from "@/components/video/details/FriendlyChann
 import { MessageCircle, ListMusic, Shuffle } from "lucide-react";
 import { usePageLoader } from "@/contexts/LoadingContext";
 import { usePlaylistAutoplay } from "@/hooks/video/usePlaylistAutoplay";
+import { cleanVideoTitle } from "@/lib/utils";
 
 const VideoDetails = () => {
   const { videoId } = useParams<{ videoId: string }>();

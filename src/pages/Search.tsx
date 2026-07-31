@@ -9,6 +9,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useHiddenChannels } from "@/hooks/channel/useHiddenChannels";
 import { formatDistanceToNow, parseISO } from "date-fns";
+import { cleanVideoTitle } from "@/lib/utils";
 
 const TypingSearchLoader = ({ query }: { query: string }) => {
   const prefix = 'Searching results for ';

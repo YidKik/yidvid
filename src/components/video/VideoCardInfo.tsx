@@ -1,6 +1,7 @@
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Clock, Eye } from "lucide-react";
+import { cleanVideoTitle } from "@/lib/utils";
 
 interface VideoCardInfoProps {
   title: string;
