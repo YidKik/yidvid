@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ListMusic, Plus, Play, Pencil, Trash2, LogIn, ArrowLeft, MoreVertical } from "lucide-react";
+import { cleanVideoTitle } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useVideoLibrary, usePlaylistItems } from "@/hooks/useVideoLibrary";
 import { useSessionManager } from "@/hooks/useSessionManager";
@@ -211,7 +212,7 @@ const Playlists = () => {
                   <div className={`relative ${isMobile ? 'w-full' : 'w-44'} aspect-video rounded-xl overflow-hidden bg-gray-100 shrink-0 shadow-sm`}>
                     <img
                       src={item.video?.thumbnail}
-                      alt={item.video?.title}
+                      alt={cleanVideoTitle(item.video?.title)}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -222,7 +223,7 @@ const Playlists = () => {
                   </div>
                   <div className="flex-1 min-w-0 py-1">
                     <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-red-500 transition-colors">
-                      {item.video?.title}
+                      {cleanVideoTitle(item.video?.title)}
                     </h3>
                     <p className="text-sm text-gray-500 mt-1.5">{item.video?.channel_name}</p>
                   </div>

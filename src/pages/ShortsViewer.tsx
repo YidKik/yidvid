@@ -8,6 +8,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
+import { cleanVideoTitle } from "@/lib/utils";
 
 const ShortsViewer = () => {
   const { videoId } = useParams<{ videoId: string }>();
@@ -236,7 +237,7 @@ const ShortsViewer = () => {
   return (
     <>
       <Helmet>
-        <title>{currentShort?.title || "Shorts"} | YidVid</title>
+        <title>{cleanVideoTitle(currentShort?.title) || "Shorts"} | YidVid</title>
       </Helmet>
 
       <div
@@ -302,7 +303,7 @@ const ShortsViewer = () => {
                 className="absolute left-0 w-full pointer-events-none"
                 style={{ top: "-70px", height: "calc(100% + 140px)" }}
                 allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-                title={currentShort.title}
+                title={cleanVideoTitle(currentShort.title)}
               />
             </div>
 
@@ -334,7 +335,7 @@ const ShortsViewer = () => {
                   </span>
                 </button>
                 <h1 className="text-white font-semibold text-sm sm:text-[15px] leading-snug line-clamp-2">
-                  {currentShort.title}
+                  {cleanVideoTitle(currentShort.title)}
                 </h1>
                 {currentShort.views != null && currentShort.views > 0 && (
                   <p className="mt-1.5 text-[11px] sm:text-xs text-white/60">
