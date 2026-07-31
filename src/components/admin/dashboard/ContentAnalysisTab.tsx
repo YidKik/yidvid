@@ -193,7 +193,7 @@ export const ContentAnalysisTab: React.FC = () => {
             <div className="relative w-48 h-28 flex-shrink-0">
               <img 
                 src={video.thumbnail} 
-                alt={video.title}
+                alt={cleanVideoTitle(video.title)}
                 className="w-full h-full object-cover rounded-lg"
               />
               {video.manual_review_required && (
@@ -205,7 +205,7 @@ export const ContentAnalysisTab: React.FC = () => {
             </div>
             
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-base line-clamp-2 mb-1">{video.title}</h4>
+              <h4 className="font-semibold text-base line-clamp-2 mb-1">{cleanVideoTitle(video.title)}</h4>
               <p className="text-sm text-muted-foreground truncate mb-3">{video.channel_name}</p>
               
               <div className="flex items-center gap-2 mb-3">
@@ -291,11 +291,11 @@ export const ContentAnalysisTab: React.FC = () => {
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-6">
-            {/* Video Info */}
-            <div>
-              <img src={video.thumbnail} alt={video.title} className="w-full rounded-lg shadow-md" />
-              <h3 className="font-bold text-lg mt-4">{video.title}</h3>
+            <div className="space-y-6">
+              {/* Video Info */}
+              <div>
+                <img src={video.thumbnail} alt={cleanVideoTitle(video.title)} className="w-full rounded-lg shadow-md" />
+                <h3 className="font-bold text-lg mt-4">{cleanVideoTitle(video.title)}</h3>
               <p className="text-muted-foreground">{video.channel_name}</p>
             </div>
 

@@ -2,6 +2,7 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { VideoDeleteDialog } from "./VideoDeleteDialog";
 import { Video, VideoTableRowProps } from "@/types/channel-videos";
+import { cleanVideoTitle } from "@/lib/utils";
 
 export const VideoTableRow = ({ 
   video, 
@@ -14,11 +15,11 @@ export const VideoTableRow = ({
       <TableCell>
         <img
           src={video.thumbnail}
-          alt={video.title}
+          alt={cleanVideoTitle(video.title)}
           className="w-24 h-16 object-cover rounded"
         />
       </TableCell>
-      <TableCell>{video.title}</TableCell>
+      <TableCell>{cleanVideoTitle(video.title)}</TableCell>
       <TableCell>{video.views?.toLocaleString() || 0}</TableCell>
       <TableCell>
         {new Date(video.uploaded_at).toLocaleDateString()}

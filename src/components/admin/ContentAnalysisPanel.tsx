@@ -245,11 +245,11 @@ export const ContentAnalysisPanel = () => {
         <div className="flex gap-3">
           <img 
             src={video.thumbnail || '/placeholder.svg'} 
-            alt={video.title}
+            alt={cleanVideoTitle(video.title)}
             className="w-24 h-16 object-cover rounded"
           />
           <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-sm line-clamp-2 mb-1">{video.title}</h4>
+            <h4 className="font-medium text-sm line-clamp-2 mb-1">{cleanVideoTitle(video.title)}</h4>
             <p className="text-xs text-muted-foreground mb-2">{video.channel_name}</p>
             
             <div className="flex items-center justify-between">

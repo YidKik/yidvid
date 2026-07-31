@@ -184,7 +184,7 @@ export const ShortsPageV2 = () => {
                         <img src={short.thumbnail} alt="" className="w-full h-full object-cover" />
                       </div>
                     </TableCell>
-                    <TableCell className="text-white text-xs max-w-[200px] truncate">{short.title}</TableCell>
+                    <TableCell className="text-white text-xs max-w-[200px] truncate">{cleanVideoTitle(short.title)}</TableCell>
                     <TableCell className="text-[#8b8fa3] text-xs">{short.channel_name}</TableCell>
                     <TableCell className="text-[#8b8fa3] text-xs">{(short.views || 0).toLocaleString()}</TableCell>
                     <TableCell>
