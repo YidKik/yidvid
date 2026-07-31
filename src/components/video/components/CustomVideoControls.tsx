@@ -57,6 +57,7 @@ export const CustomVideoControls = ({
   isMuted,
   buffered,
   isBuffering = false,
+  showPlayBadge = true,
   isFullscreen = false,
   onTogglePlay,
   onSeek,
