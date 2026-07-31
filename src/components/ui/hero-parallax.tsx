@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import { Link } from "react-router-dom";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { cleanVideoTitle } from "@/lib/utils";
 import { VideoGridItem as VideoItemType } from "@/hooks/video/useVideoGridData";
 
 // 4 videos per row, 3 rows = 12 videos
