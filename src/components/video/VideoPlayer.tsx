@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { usePlayback } from "@/contexts/PlaybackContext";
 import { VideoPlayerError } from "./components/VideoPlayerError";
 import { CustomVideoControls } from "./components/CustomVideoControls";
@@ -10,12 +10,19 @@ interface VideoPlayerProps {
 }
 
 export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
-  const [hasError, setHasError] = useState(false);
+  const [hasError] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { playbackSpeed, setPlaybackSpeed } = usePlayback();
   const containerRef = useRef<HTMLDivElement>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
 
   const player = useYouTubePlayer(playerContainerRef, videoId, onVideoEnd);
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
 
   const handleFullscreen = useCallback(() => {
     const el = containerRef.current;
@@ -42,7 +49,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
   return (
     <div
       ref={containerRef}
-      className="aspect-video w-full mb-4 relative rounded-lg overflow-hidden bg-black group"
+      className="aspect-video w-full relative overflow-hidden bg-black group"
     >
       {/* YouTube player — oversized to crop native YT overlays that flash during state changes */}
       <div className="absolute inset-0 overflow-hidden">
@@ -69,6 +76,8 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
         volume={player.volume}
         isMuted={player.isMuted}
         buffered={player.buffered}
+        isBuffering={!player.isReady || player.isBuffering}
+        isFullscreen={isFullscreen}
         onTogglePlay={player.togglePlay}
         onSeek={player.seek}
         onVolumeChange={player.setVolume}
