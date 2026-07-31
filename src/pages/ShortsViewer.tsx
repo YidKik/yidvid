@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useShortsNavigation } from "@/hooks/video/useShortsNavigation";
-import { ChevronUp, ChevronDown, X, ThumbsUp, Share2, Play, Loader2 } from "lucide-react";
+import { ChevronUp, ChevronDown, X, ThumbsUp, Copy, Play, Loader2 } from "lucide-react";
 import { Helmet } from "react-helmet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -224,14 +224,6 @@ const ShortsViewer = () => {
 
   const handleShare = async () => {
     const url = `${window.location.origin}/shorts/${currentShort.video_id}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: currentShort.title, url });
-        return;
-      } catch {
-        /* user cancelled — fall through to copy */
-      }
-    }
     try {
       await navigator.clipboard.writeText(url);
       toast("Link copied");
@@ -239,6 +231,7 @@ const ShortsViewer = () => {
       toast("Could not copy link");
     }
   };
+
 
   return (
     <>
@@ -376,7 +369,7 @@ const ShortsViewer = () => {
                 active={isLiked}
                 onClick={handleLike}
               />
-              <SideButton icon={<Share2 className="w-5 h-5" />} label="Share" onClick={handleShare} />
+              <SideButton icon={<Copy className="w-5 h-5" />} label="Copy" onClick={handleShare} />
             </div>
 
             {/* Progress rail */}
@@ -389,13 +382,12 @@ const ShortsViewer = () => {
           </div>
         </div>
 
-        {/* Desktop navigation arrows */}
-        {!isMobile && (
-          <div className="absolute right-4 lg:right-10 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
-            <NavArrow onClick={goPrev} disabled={activeIndex === 0} icon={<ChevronUp className="w-6 h-6" />} label="Previous short" />
-            <NavArrow onClick={goNext} disabled={activeIndex >= shorts.length - 1} icon={<ChevronDown className="w-6 h-6" />} label="Next short" />
-          </div>
-        )}
+        {/* Navigation arrows */}
+        <div className="absolute right-3 sm:right-4 lg:right-10 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3">
+          <NavArrow onClick={goPrev} disabled={activeIndex === 0} icon={<ChevronUp className="w-6 h-6" />} label="Previous short" />
+          <NavArrow onClick={goNext} disabled={activeIndex >= shorts.length - 1} icon={<ChevronDown className="w-6 h-6" />} label="Next short" />
+        </div>
+
       </div>
     </>
   );
@@ -413,9 +405,16 @@ const NavArrow = ({
   label: string;
 }) => (
   <button
-    onClick={onClick}
+    type="button"
+    onPointerDown={(e) => e.stopPropagation()}
+    onClick={(e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      onClick();
+    }}
     disabled={disabled}
     aria-label={label}
+
     className={`w-11 h-11 rounded-full flex items-center justify-center transition-all backdrop-blur-md ${
       disabled
         ? "bg-white/5 text-white/20 cursor-not-allowed"
