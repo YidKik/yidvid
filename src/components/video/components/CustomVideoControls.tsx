@@ -6,9 +6,11 @@ import {
   VolumeX,
   Volume1,
   Maximize,
+  Minimize,
+  RotateCcw,
+  RotateCw,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import yvPlayerLogo from "@/assets/yv-player-logo.png";
 
 interface CustomVideoControlsProps {
   isPlaying: boolean;
@@ -17,6 +19,8 @@ interface CustomVideoControlsProps {
   volume: number;
   isMuted: boolean;
   buffered: number;
+  isBuffering?: boolean;
+  isFullscreen?: boolean;
   onTogglePlay: () => void;
   onSeek: (time: number) => void;
   onVolumeChange: (vol: number) => void;
@@ -27,14 +31,21 @@ interface CustomVideoControlsProps {
 }
 
 const formatTime = (seconds: number) => {
-  if (!seconds || isNaN(seconds)) return "0:00";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
+  if (!seconds || isNaN(seconds) || seconds < 0) return "0:00";
+  const total = Math.floor(seconds);
+  const hrs = Math.floor(total / 3600);
+  const mins = Math.floor((total % 3600) / 60);
+  const secs = total % 60;
+  if (hrs > 0) {
+    return `${hrs}:${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  }
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
 const SPEEDS = ["0.5", "0.75", "1", "1.25", "1.5", "2"];
-const CONTROLS_HIDE_DELAY = 2500;
+const CONTROLS_HIDE_DELAY = 2600;
 const ACCENT = "#FFCC00";
 
 export const CustomVideoControls = ({
@@ -44,6 +55,8 @@ export const CustomVideoControls = ({
   volume,
   isMuted,
   buffered,
+  isBuffering = false,
+  isFullscreen = false,
   onTogglePlay,
   onSeek,
   onVolumeChange,
@@ -52,33 +65,79 @@ export const CustomVideoControls = ({
   playbackSpeed,
   onPlaybackSpeedChange,
 }: CustomVideoControlsProps) => {
-  const [isDragging, setIsDragging] = useState(false);
+  const [scrubTime, setScrubTime] = useState<number | null>(null);
   const [showVolume, setShowVolume] = useState(false);
   const [speedOpen, setSpeedOpen] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [centerFeedback, setCenterFeedback] = useState<"play" | "pause" | null>(null);
-  const [hoverProgress, setHoverProgress] = useState<number | null>(null);
+  const [hoverX, setHoverX] = useState<number | null>(null);
+  const [hoverTime, setHoverTime] = useState(0);
+
   const progressRef = useRef<HTMLDivElement>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const centerFeedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const speedRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
   const { isMobile } = useIsMobile();
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
-  const bufferedPercent = buffered * 100;
+  const isDragging = scrubTime !== null;
+  const displayTime = scrubTime ?? currentTime;
+  const progress = duration > 0 ? (displayTime / duration) * 100 : 0;
+  const bufferedPercent = Math.min(100, buffered * 100);
 
-  // Spacebar play/pause
+  const resetHideTimer = useCallback(() => {
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    setControlsVisible(true);
+    hideTimerRef.current = setTimeout(() => {
+      setControlsVisible(false);
+    }, CONTROLS_HIDE_DELAY);
+  }, []);
+
+  // Keyboard shortcuts: space / k play-pause, arrows seek, m mute, f fullscreen
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space" && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
-        e.preventDefault();
-        onTogglePlay();
-        resetHideTimer();
+      const target = e.target as HTMLElement | null;
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target?.isContentEditable
+      ) {
+        return;
       }
+      switch (e.code) {
+        case "Space":
+        case "KeyK":
+          e.preventDefault();
+          onTogglePlay();
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          onSeek(Math.min(duration, currentTime + 10));
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          onSeek(Math.max(0, currentTime - 10));
+          break;
+        case "KeyM":
+          onToggleMute();
+          break;
+        case "KeyF":
+          onFullscreen();
+          break;
+        default:
+          return;
+      }
+      resetHideTimer();
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onTogglePlay]);
+  }, [
+    onTogglePlay,
+    onSeek,
+    onToggleMute,
+    onFullscreen,
+    currentTime,
+    duration,
+    resetHideTimer,
+  ]);
 
   // Close speed popup on outside click
   useEffect(() => {
@@ -92,271 +151,282 @@ export const CustomVideoControls = ({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [speedOpen]);
 
-  const resetHideTimer = useCallback(() => {
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    setControlsVisible(true);
-    hideTimerRef.current = setTimeout(() => {
-      if (!speedOpen && !isDragging) {
-        setControlsVisible(false);
-      }
-    }, CONTROLS_HIDE_DELAY);
-  }, [speedOpen, isDragging]);
-
   useEffect(() => {
-    if (!isPlaying) {
-      setControlsVisible(true);
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    } else {
-      resetHideTimer();
-    }
+    if (isPlaying) resetHideTimer();
+    else if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
   }, [isPlaying, resetHideTimer]);
 
   useEffect(() => {
-    if (speedOpen) {
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-      setControlsVisible(true);
-    } else if (isPlaying) {
-      resetHideTimer();
-    }
-  }, [speedOpen, isPlaying, resetHideTimer]);
-
-  useEffect(() => {
     return () => {
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-      if (centerFeedbackTimerRef.current) clearTimeout(centerFeedbackTimerRef.current);
     };
   }, []);
 
-  const triggerCenterFeedback = useCallback((type: "play" | "pause") => {
-    if (centerFeedbackTimerRef.current) clearTimeout(centerFeedbackTimerRef.current);
-    setCenterFeedback(type);
-    centerFeedbackTimerRef.current = setTimeout(() => {
-      setCenterFeedback(null);
-    }, 700);
-  }, []);
+  const timeFromClientX = useCallback(
+    (clientX: number) => {
+      const rect = progressRef.current?.getBoundingClientRect();
+      if (!rect || rect.width === 0 || duration === 0) return 0;
+      const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+      return (x / rect.width) * duration;
+    },
+    [duration]
+  );
 
-  const handleVideoAreaClick = useCallback(() => {
-    triggerCenterFeedback(isPlaying ? "pause" : "play");
+  // Pointer-based scrubbing (works for mouse, touch and pen)
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (duration === 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      draggingRef.current = true;
+      progressRef.current?.setPointerCapture(e.pointerId);
+      setScrubTime(timeFromClientX(e.clientX));
+      setControlsVisible(true);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    },
+    [duration, timeFromClientX]
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const rect = progressRef.current?.getBoundingClientRect();
+      if (rect) {
+        const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+        setHoverX(x);
+        setHoverTime(timeFromClientX(e.clientX));
+      }
+      if (!draggingRef.current) return;
+      setScrubTime(timeFromClientX(e.clientX));
+    },
+    [timeFromClientX]
+  );
+
+  const endScrub = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!draggingRef.current) return;
+      draggingRef.current = false;
+      try {
+        progressRef.current?.releasePointerCapture(e.pointerId);
+      } catch {}
+      const target = timeFromClientX(e.clientX);
+      setScrubTime(null);
+      onSeek(target);
+      if (isPlaying) resetHideTimer();
+    },
+    [timeFromClientX, onSeek, isPlaying, resetHideTimer]
+  );
+
+  const handleSurfaceClick = useCallback(() => {
     onTogglePlay();
     resetHideTimer();
-  }, [isPlaying, onTogglePlay, triggerCenterFeedback, resetHideTimer]);
+  }, [onTogglePlay, resetHideTimer]);
 
-  const handleMouseMove = useCallback(() => {
-    resetHideTimer();
-  }, [resetHideTimer]);
-
-  const handleProgressClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = progressRef.current?.getBoundingClientRect();
-      if (!rect || duration === 0) return;
-      const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      onSeek((x / rect.width) * duration);
+  const skip = useCallback(
+    (delta: number) => {
+      onSeek(Math.max(0, Math.min(duration || 0, currentTime + delta)));
+      resetHideTimer();
     },
-    [duration, onSeek]
+    [onSeek, currentTime, duration, resetHideTimer]
   );
-
-  const handleProgressDrag = useCallback(
-    (e: MouseEvent) => {
-      const rect = progressRef.current?.getBoundingClientRect();
-      if (!rect || duration === 0) return;
-      const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      onSeek((x / rect.width) * duration);
-    },
-    [duration, onSeek]
-  );
-
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      setIsDragging(true);
-      handleProgressClick(e);
-    },
-    [handleProgressClick]
-  );
-
-  const handleProgressHover = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = progressRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      setHoverProgress((x / rect.width) * 100);
-    },
-    []
-  );
-
-  useEffect(() => {
-    if (!isDragging) return;
-    const handleUp = () => setIsDragging(false);
-    window.addEventListener("mousemove", handleProgressDrag);
-    window.addEventListener("mouseup", handleUp);
-    return () => {
-      window.removeEventListener("mousemove", handleProgressDrag);
-      window.removeEventListener("mouseup", handleUp);
-    };
-  }, [isDragging, handleProgressDrag]);
 
   const VolumeIcon =
-    isMuted || volume === 0
-      ? VolumeX
-      : volume < 50
-      ? Volume1
-      : Volume2;
+    isMuted || volume === 0 ? VolumeX : volume < 50 ? Volume1 : Volume2;
 
   const showControls = controlsVisible || !isPlaying || isDragging || speedOpen;
+  const iconBtn =
+    "flex items-center justify-center rounded-full text-white/90 hover:text-[#FFCC00] hover:bg-white/10 transition-colors";
+  const btnSize = isMobile ? "w-8 h-8" : "w-9 h-9";
+  const iconSize = isMobile ? "w-4 h-4" : "w-[18px] h-[18px]";
 
   return (
     <div
       className="absolute inset-0 z-10"
-      onMouseMove={handleMouseMove}
+      onMouseMove={resetHideTimer}
       onMouseLeave={() => {
-        if (isPlaying && !speedOpen) setControlsVisible(false);
-        setHoverProgress(null);
+        if (isPlaying && !speedOpen && !isDragging) setControlsVisible(false);
+        setHoverX(null);
       }}
     >
-      {/* Persistent YV logo watermark — top-left, always visible */}
+      {/* Tap / click surface — single source of play-pause on the video itself */}
+      <button
+        aria-label={isPlaying ? "Pause" : "Play"}
+        className="absolute inset-0 cursor-default"
+        style={{ zIndex: 15 }}
+        onClick={handleSurfaceClick}
+      />
 
-      {/* Center feedback icon — yellow, instant */}
-      <div
-        className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-none ${
-          centerFeedback ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ transition: 'opacity 150ms ease-in-out' }}
-      >
-        <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-full flex items-center justify-center`}
-          style={{ backgroundColor: ACCENT }}>
-          {centerFeedback === "pause" ? (
-            <Pause className={`${isMobile ? 'w-5 h-5' : 'w-7 h-7'} text-[#1A1A1A]`} fill="#1A1A1A" />
-          ) : (
-            <Play className={`${isMobile ? 'w-5 h-5' : 'w-7 h-7'} text-[#1A1A1A] ml-0.5`} fill="#1A1A1A" />
-          )}
-        </div>
-      </div>
-
-      {/* Logo in top-left when paused */}
-      {!isPlaying && showControls && !centerFeedback && (
-        <div
-          className="absolute top-4 left-4 transition-all duration-300"
-          style={{ zIndex: 21 }}
-        >
-          <img
-            src={yvPlayerLogo}
-            alt="YV"
-            className="rounded-lg shadow-lg opacity-80"
-            style={{
-              width: isMobile ? '32px' : '44px',
-              height: 'auto',
-              filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))',
-            }}
+      {/* Buffering spinner */}
+      {isBuffering && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+          <div
+            className={`${isMobile ? "w-9 h-9" : "w-12 h-12"} rounded-full border-2 border-white/20 animate-spin`}
+            style={{ borderTopColor: ACCENT }}
           />
         </div>
       )}
 
-      {/* Big center play button when paused */}
-      <button
-        className={`absolute inset-0 flex items-center justify-center ${
-          !isPlaying && showControls && !centerFeedback
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+      {/* Single centered play badge — only while paused */}
+      <div
+        className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-200 ${
+          !isPlaying && !isBuffering
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-90"
         }`}
-        style={{ zIndex: 20, transition: 'opacity 150ms ease-in-out' }}
-        onClick={handleVideoAreaClick}
       >
         <div
-          className={`${isMobile ? 'w-10 h-10' : 'w-14 h-14'} rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-200`}
-          style={{ backgroundColor: ACCENT }}
+          className={`${isMobile ? "w-14 h-14" : "w-[72px] h-[72px]"} rounded-full flex items-center justify-center`}
+          style={{
+            backgroundColor: ACCENT,
+            boxShadow: "0 8px 28px rgba(0,0,0,0.45)",
+          }}
         >
-          <Play className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'} text-[#1A1A1A] ml-0.5`} fill="#1A1A1A" />
+          <Play
+            className={`${isMobile ? "w-6 h-6" : "w-8 h-8"} text-[#1A1A1A] ml-1`}
+            fill="#1A1A1A"
+          />
         </div>
-      </button>
+      </div>
 
-      {/* Click-to-toggle play */}
-      <button
-        className="absolute inset-0 cursor-default"
-        style={{ zIndex: 15 }}
-        onClick={handleVideoAreaClick}
-      />
-
-      {/* Bottom controls bar */}
+      {/* Bottom control bar */}
       <div
-        className={`absolute bottom-0 left-0 right-0 z-30 transition-opacity duration-300 ${
-          showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`absolute bottom-0 left-0 right-0 z-30 transition-all duration-200 ${
+          showControls
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-2 pointer-events-none"
         }`}
         style={{
-          background: "linear-gradient(transparent, rgba(0,0,0,0.75))",
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 55%, transparent 100%)",
+          paddingTop: isMobile ? 24 : 36,
         }}
       >
-        {/* Progress bar */}
-        <div
-          ref={progressRef}
-          className={`relative w-full cursor-pointer group transition-all ${isMobile ? 'h-[5px] hover:h-[7px]' : 'h-[5px] hover:h-[8px]'}`}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleProgressHover}
-          onMouseLeave={() => setHoverProgress(null)}
-        >
-          <div className="absolute inset-0 bg-white/20 rounded-full" />
+        {/* Scrubber */}
+        <div className={`${isMobile ? "px-2.5" : "px-4"} pb-0.5`}>
           <div
-            className="absolute inset-y-0 left-0 bg-white/25 rounded-full"
-            style={{ width: `${bufferedPercent}%` }}
-          />
-          {hoverProgress !== null && (
+            ref={progressRef}
+            className="relative w-full cursor-pointer group py-2 touch-none select-none"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={endScrub}
+            onPointerCancel={endScrub}
+            onMouseLeave={() => setHoverX(null)}
+          >
+            {/* Track */}
             <div
-              className="absolute inset-y-0 left-0 bg-white/10 rounded-full"
-              style={{ width: `${hoverProgress}%` }}
-            />
-          )}
-          <div
-            className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-100"
-            style={{ width: `${progress}%`, backgroundColor: ACCENT }}
-          />
-          <div
-            className={`absolute top-1/2 rounded-full shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${
-              isDragging ? "scale-125" : "scale-0 group-hover:scale-100"
-            }`}
-            style={{
-              left: `${progress}%`,
-              transform: "translate(-50%, -50%)",
-              width: isMobile ? '12px' : '14px',
-              height: isMobile ? '12px' : '14px',
-              backgroundColor: ACCENT,
-            }}
-          />
+              className={`relative w-full rounded-full bg-white/25 transition-all duration-150 ${
+                isDragging ? "h-[6px]" : "h-[4px] group-hover:h-[6px]"
+              }`}
+            >
+              <div
+                className="absolute inset-y-0 left-0 bg-white/30 rounded-full"
+                style={{ width: `${bufferedPercent}%` }}
+              />
+              <div
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{
+                  width: `${progress}%`,
+                  backgroundColor: ACCENT,
+                  transition: isDragging ? "none" : "width 200ms linear",
+                }}
+              />
+              {/* Handle */}
+              <div
+                className={`absolute top-1/2 rounded-full transition-transform duration-150 ${
+                  isDragging ? "scale-110" : "scale-0 group-hover:scale-100"
+                }`}
+                style={{
+                  left: `${progress}%`,
+                  transform: "translate(-50%, -50%)",
+                  width: isMobile ? 14 : 15,
+                  height: isMobile ? 14 : 15,
+                  backgroundColor: ACCENT,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+                }}
+              />
+            </div>
+
+            {/* Hover / drag timestamp bubble */}
+            {!isMobile && (hoverX !== null || isDragging) && duration > 0 && (
+              <div
+                className="absolute -top-6 px-2 py-0.5 rounded-md bg-[#1A1A1A]/95 text-white text-[11px] font-semibold tabular-nums pointer-events-none border border-white/10"
+                style={{
+                  left: isDragging
+                    ? `${progress}%`
+                    : `${hoverX}px`,
+                  transform: "translateX(-50%)",
+                }}
+              >
+                {formatTime(isDragging ? displayTime : hoverTime)}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Controls row */}
-        <div className={`flex items-center justify-between ${isMobile ? 'px-2 py-1.5' : 'px-4 py-2'}`}>
-          <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-3'}`}>
+        {/* Buttons row */}
+        <div
+          className={`flex items-center justify-between ${
+            isMobile ? "px-1.5 pb-1.5" : "px-3 pb-2.5"
+          }`}
+        >
+          <div className={`flex items-center ${isMobile ? "gap-0.5" : "gap-1"}`}>
             <button
+              aria-label={isPlaying ? "Pause" : "Play"}
               onClick={(e) => {
                 e.stopPropagation();
                 onTogglePlay();
                 resetHideTimer();
               }}
-              className="text-white transition-colors"
-              onMouseEnter={(e) => e.currentTarget.style.color = ACCENT}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+              className={`${iconBtn} ${btnSize}`}
             >
               {isPlaying ? (
-                <Pause className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} fill-current`} />
+                <Pause className={`${iconSize} fill-current`} />
               ) : (
-                <Play className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} ml-0.5 fill-current`} />
+                <Play className={`${iconSize} ml-0.5 fill-current`} />
               )}
             </button>
 
+            <button
+              aria-label="Back 10 seconds"
+              onClick={(e) => {
+                e.stopPropagation();
+                skip(-10);
+              }}
+              className={`${iconBtn} ${btnSize}`}
+            >
+              <RotateCcw className={iconSize} />
+            </button>
+
+            <button
+              aria-label="Forward 10 seconds"
+              onClick={(e) => {
+                e.stopPropagation();
+                skip(10);
+              }}
+              className={`${iconBtn} ${btnSize}`}
+            >
+              <RotateCw className={iconSize} />
+            </button>
+
             <div
-              className="flex items-center gap-1"
+              className="flex items-center"
               onMouseEnter={() => setShowVolume(true)}
               onMouseLeave={() => setShowVolume(false)}
             >
               <button
-                onClick={(e) => { e.stopPropagation(); onToggleMute(); }}
-                className="text-white transition-colors"
-                onMouseEnter={(e) => e.currentTarget.style.color = ACCENT}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+                aria-label={isMuted ? "Unmute" : "Mute"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleMute();
+                }}
+                className={`${iconBtn} ${btnSize}`}
               >
-                <VolumeIcon className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                <VolumeIcon className={iconSize} />
               </button>
               <div
                 className={`overflow-hidden transition-all duration-200 ${
-                  showVolume ? `${isMobile ? 'w-14' : 'w-20'} opacity-100` : "w-0 opacity-0"
+                  showVolume && !isMobile
+                    ? "w-20 opacity-100 mr-1"
+                    : "w-0 opacity-0"
                 }`}
               >
                 <input
@@ -366,34 +436,42 @@ export const CustomVideoControls = ({
                   value={isMuted ? 0 : volume}
                   onChange={(e) => onVolumeChange(Number(e.target.value))}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full h-1 cursor-pointer"
+                  className="w-full h-1 cursor-pointer align-middle"
                   style={{ accentColor: ACCENT }}
                 />
               </div>
             </div>
 
-            <span className={`text-white/90 ${isMobile ? 'text-[10px]' : 'text-xs'} font-medium tabular-nums select-none`}>
-              {formatTime(currentTime)}
-              <span className="text-white/40 mx-0.5">/</span>
-              {formatTime(duration)}
+            <span
+              className={`text-white/90 ${
+                isMobile ? "text-[10px] ml-1" : "text-xs ml-1.5"
+              } font-medium tabular-nums select-none`}
+            >
+              {formatTime(displayTime)}
+              <span className="text-white/40 mx-1">/</span>
+              <span className="text-white/60">{formatTime(duration)}</span>
             </span>
           </div>
 
-          <div className={`flex items-center ${isMobile ? 'gap-1.5' : 'gap-2.5'}`}>
-            {/* Speed selector pill */}
+          <div className={`flex items-center ${isMobile ? "gap-1" : "gap-1.5"}`}>
+            {/* Speed */}
             <div ref={speedRef} className="relative">
               <button
-                onClick={(e) => { e.stopPropagation(); setSpeedOpen(!speedOpen); }}
-                className="text-white transition-all text-[11px] font-bold px-2.5 py-0.5 rounded-full border"
-                style={{
-                  borderColor: speedOpen ? ACCENT : 'rgba(255,255,255,0.3)',
-                  color: speedOpen ? ACCENT : 'white',
-                  backgroundColor: speedOpen ? `${ACCENT}15` : 'transparent',
+                aria-label="Playback speed"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSpeedOpen(!speedOpen);
                 }}
-                onMouseEnter={(e) => { if (!speedOpen) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
-                onMouseLeave={(e) => { if (!speedOpen) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; }}
+                className="transition-all text-[11px] font-bold px-2.5 py-1 rounded-full border"
+                style={{
+                  borderColor: speedOpen ? ACCENT : "rgba(255,255,255,0.28)",
+                  color: speedOpen ? ACCENT : "rgba(255,255,255,0.9)",
+                  backgroundColor: speedOpen
+                    ? "rgba(255,204,0,0.12)"
+                    : "transparent",
+                }}
               >
-                {playbackSpeed === "1" ? "1x" : `${playbackSpeed}x`}
+                {playbackSpeed}x
               </button>
 
               {speedOpen && (
@@ -406,18 +484,24 @@ export const CustomVideoControls = ({
                     return (
                       <button
                         key={s}
-                        onClick={() => { onPlaybackSpeedChange(s); setSpeedOpen(false); }}
-                        className={`relative flex items-center justify-center rounded-full transition-all duration-200 font-bold ${
-                          isMobile ? 'w-8 h-8 text-[10px]' : 'w-9 h-9 text-[11px]'
-                        }`}
-                        style={{
-                          backgroundColor: isActive ? ACCENT : 'transparent',
-                          color: isActive ? '#1A1A1A' : 'rgba(255,255,255,0.7)',
+                        onClick={() => {
+                          onPlaybackSpeedChange(s);
+                          setSpeedOpen(false);
                         }}
-                        onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; } }}
-                        onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; } }}
+                        className={`flex items-center justify-center rounded-full transition-all duration-200 font-bold ${
+                          isMobile ? "w-8 h-8 text-[10px]" : "w-9 h-9 text-[11px]"
+                        } ${
+                          isActive
+                            ? ""
+                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                        }`}
+                        style={
+                          isActive
+                            ? { backgroundColor: ACCENT, color: "#1A1A1A" }
+                            : undefined
+                        }
                       >
-                        {s === "1" ? "1x" : `${s}x`}
+                        {s}x
                       </button>
                     );
                   })}
@@ -426,12 +510,18 @@ export const CustomVideoControls = ({
             </div>
 
             <button
-              onClick={(e) => { e.stopPropagation(); onFullscreen(); }}
-              className="text-white transition-colors"
-              onMouseEnter={(e) => e.currentTarget.style.color = ACCENT}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+              aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+              onClick={(e) => {
+                e.stopPropagation();
+                onFullscreen();
+              }}
+              className={`${iconBtn} ${btnSize}`}
             >
-              <Maximize className={`${isMobile ? 'w-4 h-4' : 'w-4.5 h-4.5'}`} />
+              {isFullscreen ? (
+                <Minimize className={iconSize} />
+              ) : (
+                <Maximize className={iconSize} />
+              )}
             </button>
           </div>
         </div>
