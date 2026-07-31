@@ -16,6 +16,7 @@ interface YouTubePlayerState {
   isReady: boolean;
   buffered: number;
   hasEnded: boolean;
+  isBuffering: boolean;
 }
 
 const loadYouTubeAPI = (): Promise<void> => {
@@ -57,6 +58,7 @@ export const useYouTubePlayer = (
     isReady: false,
     buffered: 0,
     hasEnded: false,
+    isBuffering: true,
   });
 
   const playerRef = useRef<any>(null);
@@ -152,6 +154,7 @@ export const useYouTubePlayer = (
               isReady: true,
               volume: vol,
               duration: dur,
+              isBuffering: false,
             }));
           },
           onStateChange: (event: any) => {
@@ -161,6 +164,7 @@ export const useYouTubePlayer = (
               ...s,
               isPlaying: ps === 1 || ps === 3,
               hasEnded: ps === 0,
+              isBuffering: ps === 3 || ps === -1,
             }));
             if (ps === 0 && onVideoEndRef.current) {
               onVideoEndRef.current();
@@ -181,6 +185,7 @@ export const useYouTubePlayer = (
       isReady: false,
       buffered: 0,
       hasEnded: false,
+      isBuffering: true,
     });
 
     init();

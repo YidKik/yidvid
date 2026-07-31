@@ -11,9 +11,24 @@ const TABLET_BREAKPOINT = 1024; // Between mobile and this is tablet, above is d
  * IMPROVED tablet detection logic
  */
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(true);
+  // Lazily initialise from the real viewport so the first paint already matches
+  // the device. Defaulting to desktop caused a visible layout jump on mobile.
+  const getSizes = () => {
+    if (typeof window === 'undefined') {
+      return { isMobile: false, isTablet: false, isDesktop: true };
+    }
+    const width = window.innerWidth;
+    return {
+      isMobile: width < MOBILE_BREAKPOINT,
+      isTablet: width >= MOBILE_BREAKPOINT && width < TABLET_BREAKPOINT,
+      isDesktop: width >= TABLET_BREAKPOINT,
+    };
+  };
+
+  const initial = getSizes();
+  const [isMobile, setIsMobile] = useState(initial.isMobile);
+  const [isTablet, setIsTablet] = useState(initial.isTablet);
+  const [isDesktop, setIsDesktop] = useState(initial.isDesktop);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -23,9 +38,6 @@ export function useIsMobile() {
       const newIsMobile = width < MOBILE_BREAKPOINT;
       const newIsTablet = width >= MOBILE_BREAKPOINT && width < TABLET_BREAKPOINT;
       const newIsDesktop = width >= TABLET_BREAKPOINT;
-      
-      // Enhanced logging for debugging tablet detection
-      console.log(`Screen width: ${width}px, isMobile: ${newIsMobile}, isTablet: ${newIsTablet}, isDesktop: ${newIsDesktop}`);
       
       setIsMobile(newIsMobile);
       setIsTablet(newIsTablet);
