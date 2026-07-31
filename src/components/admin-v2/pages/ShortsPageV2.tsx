@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { cleanVideoTitle } from "@/lib/utils";
 import {
   Search, Trash2, RotateCcw, Loader2, Play, Eye, Calendar, ExternalLink, Hash
 } from "lucide-react";

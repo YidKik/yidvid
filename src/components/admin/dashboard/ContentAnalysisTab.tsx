@@ -12,6 +12,7 @@ import {
   FileVideo, Zap
 } from "lucide-react";
 import { toast } from "sonner";
+import { cleanVideoTitle } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,

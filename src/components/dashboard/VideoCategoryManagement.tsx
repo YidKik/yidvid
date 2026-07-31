@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { YoutubeVideosTable } from "@/integrations/supabase/types/youtube-videos";
 import { useQuery } from "@tanstack/react-query";
+import { cleanVideoTitle } from "@/lib/utils";
 
 interface VideoCategoryManagementProps {
   videos: YoutubeVideosTable['Row'][];

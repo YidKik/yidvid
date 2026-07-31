@@ -1,6 +1,7 @@
 
 import { format } from "date-fns";
 import { Trash2 } from "lucide-react";
+import { cleanVideoTitle } from "@/lib/utils";
 import {
   Table,
   TableBody,

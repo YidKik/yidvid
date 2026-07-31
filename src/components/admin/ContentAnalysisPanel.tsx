@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { VideoFetchButton } from '@/components/admin/VideoFetchButton';
 import { Progress } from '@/components/ui/progress';
+import { cleanVideoTitle } from '@/lib/utils';
 
 export const ContentAnalysisPanel = () => {
   const { approved, rejected, reviewQueue, stats, isLoading, approve, reject } = useVideoModeration();
