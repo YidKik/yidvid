@@ -164,13 +164,13 @@ export const VideoCard = ({
           <img
             src={video.thumbnail}
             className="object-cover object-center absolute h-full w-full inset-0 rounded-lg border-4 border-white/10"
-            alt={video.title}
+            alt={cleanVideoTitle(video.title)}
           />
         </AspectRatio>
       </Link>
       <div className="absolute inset-0 h-full w-full opacity-0 group-hover/video:opacity-80 bg-black pointer-events-none rounded-lg transition-opacity duration-300"></div>
       <h2 className="absolute bottom-3 left-4 opacity-0 group-hover/video:opacity-100 text-white transition-opacity duration-300 text-lg font-medium line-clamp-2 max-w-[90%] drop-shadow-lg">
-        {video.title}
+        {cleanVideoTitle(video.title)}
       </h2>
     </motion.div>
   );

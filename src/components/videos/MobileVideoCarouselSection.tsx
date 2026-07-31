@@ -52,7 +52,7 @@ export const MobileVideoCarouselSection = ({
               <div className="relative aspect-video rounded-lg overflow-hidden shadow-sm">
                 <img
                   src={video.thumbnail}
-                  alt={video.title}
+                  alt={cleanVideoTitle(video.title)}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
@@ -68,7 +68,7 @@ export const MobileVideoCarouselSection = ({
                 <div className="min-w-0 flex-1">
                   {/* Title */}
                   <h3 className="text-xs font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                    {video.title}
+                    {cleanVideoTitle(video.title)}
                   </h3>
                   {/* Channel Name */}
                   <p className="text-[10px] text-muted-foreground mt-0.5 truncate">

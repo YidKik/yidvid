@@ -209,11 +209,11 @@ export const GlobalHeader = () => {
                               >
                                 <img
                                   src={video.thumbnail}
-                                  alt={video.title}
+                                  alt={cleanVideoTitle(video.title)}
                                   className="w-16 h-10 object-cover rounded-lg"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-[#1A1A1A] dark:text-[#e8e8e8] truncate">{video.title}</p>
+                                  <p className="text-sm font-medium text-[#1A1A1A] dark:text-[#e8e8e8] truncate">{cleanVideoTitle(video.title)}</p>
                                   <p className="text-xs text-[#999999] dark:text-[#717171] truncate">{video.channel_name}</p>
                                 </div>
                               </button>

@@ -102,7 +102,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
               <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-yellow-400">
                 <img
                   src={video.thumbnail}
-                  alt={video.title}
+                  alt={cleanVideoTitle(video.title)}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
@@ -127,7 +127,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 {/* Content at Bottom */}
                 <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-2' : 'p-2 md:p-2.5 xl:p-4'}`}>
                   <h3 className={`text-white font-semibold line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md ${isMobile ? 'text-[11px]' : 'text-[10px] md:text-[11px] lg:text-xs xl:text-base'}`}>
-                    {video.title}
+                    {cleanVideoTitle(video.title)}
                   </h3>
                   <p className={`text-white/80 mt-0.5 truncate ${isMobile ? 'text-[9px]' : 'text-[8px] md:text-[9px] lg:text-[10px] xl:text-sm'}`}>
                     {video.channel_name}

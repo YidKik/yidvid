@@ -51,7 +51,7 @@ function AnimatedVideo({ video, className, delay = 0, width = 400, height = 100,
       >
         <img
           src={video.thumbnail}
-          alt={video.title}
+          alt={cleanVideoTitle(video.title)}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent backdrop-blur-[2px] border-2 border-white/[0.15] rounded-2xl" />

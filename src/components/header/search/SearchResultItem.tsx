@@ -1,5 +1,6 @@
 
 import { Play, Users } from 'lucide-react';
+import { cleanVideoTitle } from "@/lib/utils";
 
 interface VideoResult {
   id: string;
@@ -47,7 +48,7 @@ export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResult
       >
         <img
           src={video.thumbnail}
-          alt={video.title}
+          alt={cleanVideoTitle(video.title)}
           className={`
             object-cover rounded-lg flex-shrink-0
             ${isMobile ? 'w-16 h-12' : 'w-20 h-14'}
@@ -62,7 +63,7 @@ export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResult
             font-medium text-gray-800 line-clamp-2
             ${isMobile ? 'text-sm' : 'text-base'}
           `}>
-            {video.title}
+            {cleanVideoTitle(video.title)}
           </h4>
           <p className={`
             text-gray-500 truncate

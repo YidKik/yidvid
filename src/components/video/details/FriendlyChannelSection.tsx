@@ -203,7 +203,7 @@ export const FriendlyChannelSection = ({
                 <div className={`${compact ? 'w-[110px]' : 'w-[168px]'} flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-[#F0F0F0]`}>
                   <img
                     src={video.thumbnail || "/placeholder.svg"}
-                    alt={video.title}
+                    alt={cleanVideoTitle(video.title)}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
@@ -212,7 +212,7 @@ export const FriendlyChannelSection = ({
                 {/* Info */}
                 <div className="flex-1 min-w-0 py-0.5">
                   <h4 className={`${compact ? 'text-[11px]' : 'text-[13px]'} font-medium text-[#1A1A1A] line-clamp-2 leading-snug group-hover:text-[#1A1A1A]`}>
-                    {video.title}
+                    {cleanVideoTitle(video.title)}
                   </h4>
                   <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-[#606060] ${compact ? 'mt-0.5' : 'mt-1'} truncate`}>
                     {video.channel_name}
