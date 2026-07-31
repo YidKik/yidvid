@@ -94,6 +94,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-black z-[5]" />
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-black z-[5]" />
       <CustomVideoControls
+        showPlayBadge={hasStarted}
         isPlaying={player.isPlaying}
         currentTime={player.currentTime}
         duration={player.duration}
