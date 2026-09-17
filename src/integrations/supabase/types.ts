@@ -474,6 +474,66 @@ export type Database = {
           },
         ]
       }
+      content_scan_jobs: {
+        Row: {
+          approved_count: number
+          blocked_count: number
+          created_at: string
+          cursor_created_at: string | null
+          cursor_id: string | null
+          error_count: number
+          id: string
+          last_error: string | null
+          last_run_at: string | null
+          lease_until: string | null
+          pause_reason: string | null
+          processed_count: number
+          review_count: number
+          singleton: boolean
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_count?: number
+          blocked_count?: number
+          created_at?: string
+          cursor_created_at?: string | null
+          cursor_id?: string | null
+          error_count?: number
+          id?: string
+          last_error?: string | null
+          last_run_at?: string | null
+          lease_until?: string | null
+          pause_reason?: string | null
+          processed_count?: number
+          review_count?: number
+          singleton?: boolean
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_count?: number
+          blocked_count?: number
+          created_at?: string
+          cursor_created_at?: string | null
+          cursor_id?: string | null
+          error_count?: number
+          id?: string
+          last_error?: string | null
+          last_run_at?: string | null
+          lease_until?: string | null
+          pause_reason?: string | null
+          processed_count?: number
+          review_count?: number
+          singleton?: boolean
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cron_job_logs: {
         Row: {
           created_at: string
