@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cleanVideoTitle } from "@/lib/utils";
+import { ContentScanPanel } from "./ContentScanPanel";
 import {
   Dialog,
   DialogContent,
@@ -533,6 +534,8 @@ export const ContentAnalysisTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <ContentScanPanel />
+
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard

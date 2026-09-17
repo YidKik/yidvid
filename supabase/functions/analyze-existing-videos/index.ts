@@ -1,282 +1,208 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+// Resumable batch re-scan of the existing library using Lovable AI vision.
+// Each invocation processes one bounded batch and updates the job row.
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { analyzeThumbnail, verdictToRow, GatewayError } from "../_shared/modesty-vision.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-interface BatchAnalysisRequest {
-  batchSize?: number;
-  maxVideos?: number;
-  skipAnalyzed?: boolean;
-  onlyPending?: boolean;
-}
-
-const createSupabaseClient = () => {
-  const supabaseUrl = Deno.env.get('SUPABASE_URL');
-  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-  
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error('Missing Supabase configuration');
-  }
-  
-  return createClient(supabaseUrl, supabaseServiceKey);
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const getVideosToAnalyze = async (
-  supabase: any, 
-  batchSize: number, 
-  skipAnalyzed: boolean,
-  onlyPending: boolean
-) => {
-  let query = supabase
-    .from('youtube_videos')
-    .select('id, video_id, title, description, thumbnail, channel_name, content_analysis_status')
-    .is('deleted_at', null)
-    .limit(batchSize);
-
-  if (skipAnalyzed) {
-    query = query.in('content_analysis_status', ['pending', 'manual_review']);
-  }
-
-  if (onlyPending) {
-    query = query.eq('content_analysis_status', 'pending');
-  }
-
-  query = query.order('created_at', { ascending: false });
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error('Error fetching videos to analyze:', error);
-    throw new Error('Failed to fetch videos');
-  }
-
-  return data || [];
-};
-
-const analyzeVideosBatch = async (supabase: any, videos: any[]) => {
-  const results = {
-    total: videos.length,
-    approved: 0,
-    rejected: 0,
-    manualReview: 0,
-    errors: 0,
-    processed: []
-  };
-
-  console.log(`Starting batch analysis of ${videos.length} videos`);
-
-  for (const video of videos) {
-    try {
-      console.log(`Analyzing video: ${video.title} (${video.video_id})`);
-
-      // Call the video content analyzer
-      const analysisResponse = await supabase.functions.invoke('video-content-analyzer', {
-        body: {
-          videoId: video.id,
-          title: video.title,
-          description: video.description,
-          thumbnailUrl: video.thumbnail,
-          channelName: video.channel_name,
-          storeResults: true
-        }
-      });
-
-      if (analysisResponse.error) {
-        console.error(`Error analyzing video ${video.id}:`, analysisResponse.error);
-        results.errors++;
-        continue;
-      }
-
-      const analysisResult = analysisResponse.data;
-
-      // Count results
-      if (analysisResult.approved && analysisResult.status === 'approved') {
-        results.approved++;
-      } else if (analysisResult.status === 'rejected') {
-        results.rejected++;
-      } else if (analysisResult.status === 'manual_review') {
-        results.manualReview++;
-      }
-
-      results.processed.push({
-        videoId: video.id,
-        title: video.title,
-        status: analysisResult.status,
-        score: analysisResult.finalScore,
-        reasoning: analysisResult.reasoning
-      });
-
-      console.log(`Video ${video.id} analyzed: ${analysisResult.status} (score: ${analysisResult.finalScore})`);
-
-      // Small delay to avoid overwhelming the AI services
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-    } catch (error) {
-      console.error(`Error processing video ${video.id}:`, error);
-      results.errors++;
-    }
-  }
-
-  return results;
-};
-
-const getAnalysisStats = async (supabase: any) => {
-  const { data, error } = await supabase
-    .from('youtube_videos')
-    .select('content_analysis_status')
-    .is('deleted_at', null);
-
-  if (error) {
-    console.error('Error getting analysis stats:', error);
-    return null;
-  }
-
-  const stats = {
-    total: data.length,
-    pending: 0,
-    approved: 0,
-    rejected: 0,
-    manualReview: 0
-  };
-
-  data.forEach(video => {
-    const status = video.content_analysis_status || 'pending';
-    if (status in stats) {
-      stats[status as keyof typeof stats]++;
-    }
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
-  return stats;
-};
+const MAX_BATCH = 25;
+const LEASE_MS = 5 * 60 * 1000;
+
+const client = () =>
+  createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+
+async function getJob(supabase: any) {
+  const { data } = await supabase
+    .from("content_scan_jobs")
+    .select("*")
+    .eq("singleton", true)
+    .maybeSingle();
+  return data;
+}
+
+async function updateJob(supabase: any, patch: Record<string, unknown>) {
+  const { data } = await supabase
+    .from("content_scan_jobs")
+    .update(patch)
+    .eq("singleton", true)
+    .select("*")
+    .maybeSingle();
+  return data;
+}
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const supabase = client();
 
   try {
-    const requestBody: BatchAnalysisRequest = await req.json().catch(() => ({}));
-    
-    const {
-      batchSize = 10,
-      maxVideos = 100,
-      skipAnalyzed = true,
-      onlyPending = false
-    } = requestBody;
+    const body = await req.json().catch(() => ({}));
+    const action: string = body.action || "run";
+    const batchSize = Math.min(Number(body.batchSize) || 10, MAX_BATCH);
 
-    console.log('Starting batch analysis with options:', {
-      batchSize,
-      maxVideos,
-      skipAnalyzed,
-      onlyPending
-    });
+    let job = await getJob(supabase);
+    if (!job) return json({ error: "Scan job row missing" }, 500);
 
-    const supabase = createSupabaseClient();
-    
-    // Get current analysis statistics
-    const initialStats = await getAnalysisStats(supabase);
-    console.log('Initial analysis stats:', initialStats);
+    if (action === "status") return json({ success: true, job });
 
-    // Get videos to analyze
-    const videos = await getVideosToAnalyze(supabase, Math.min(batchSize, maxVideos), skipAnalyzed, onlyPending);
-    
-    if (videos.length === 0) {
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'No videos found to analyze',
-        stats: initialStats,
-        processed: 0
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    if (action === "start") {
+      job = await updateJob(supabase, {
+        status: "running",
+        pause_reason: null,
+        last_error: null,
+        started_at: job.started_at ?? new Date().toISOString(),
+        lease_until: null,
       });
+      return json({ success: true, job });
     }
 
-    console.log(`Found ${videos.length} videos to analyze`);
-
-    // Process videos in batches
-    let totalProcessed = 0;
-    let totalResults = {
-      total: 0,
-      approved: 0,
-      rejected: 0,
-      manualReview: 0,
-      errors: 0,
-      processed: []
-    };
-
-    const batchCount = Math.ceil(Math.min(videos.length, maxVideos) / batchSize);
-    
-    for (let i = 0; i < batchCount; i++) {
-      const start = i * batchSize;
-      const end = Math.min(start + batchSize, videos.length, maxVideos);
-      const batch = videos.slice(start, end);
-
-      console.log(`Processing batch ${i + 1}/${batchCount} (${batch.length} videos)`);
-      
-      const batchResults = await analyzeVideosBatch(supabase, batch);
-      
-      // Aggregate results
-      totalResults.total += batchResults.total;
-      totalResults.approved += batchResults.approved;
-      totalResults.rejected += batchResults.rejected;
-      totalResults.manualReview += batchResults.manualReview;
-      totalResults.errors += batchResults.errors;
-      totalResults.processed.push(...batchResults.processed);
-      
-      totalProcessed += batch.length;
-
-      console.log(`Batch ${i + 1} completed. Processed: ${totalProcessed}, Errors: ${totalResults.errors}`);
-
-      // Break if we've reached maxVideos
-      if (totalProcessed >= maxVideos) {
-        break;
-      }
-
-      // Delay between batches to be respectful to API limits
-      if (i < batchCount - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
+    if (action === "pause") {
+      job = await updateJob(supabase, { status: "paused", pause_reason: "Paused by admin" });
+      return json({ success: true, job });
     }
 
-    // Get final statistics
-    const finalStats = await getAnalysisStats(supabase);
+    if (action === "reset") {
+      job = await updateJob(supabase, {
+        status: "idle",
+        pause_reason: null,
+        last_error: null,
+        cursor_created_at: null,
+        cursor_id: null,
+        processed_count: 0,
+        approved_count: 0,
+        blocked_count: 0,
+        review_count: 0,
+        error_count: 0,
+        started_at: null,
+        lease_until: null,
+      });
+      return json({ success: true, job });
+    }
 
-    const response = {
+    // ---- action === "run": process one bounded batch ----
+    if (job.status !== "running") {
+      return json({ success: true, skipped: true, reason: `Job is ${job.status}`, job });
+    }
+
+    // Single-flight lease
+    const now = Date.now();
+    if (job.lease_until && new Date(job.lease_until).getTime() > now) {
+      return json({ success: true, skipped: true, reason: "Another batch is running", job });
+    }
+    job = await updateJob(supabase, {
+      lease_until: new Date(now + LEASE_MS).toISOString(),
+      last_run_at: new Date().toISOString(),
+    });
+
+    // Fetch the next page, ordered by created_at then id (stable cursor).
+    let query = supabase
+      .from("youtube_videos")
+      .select("id, video_id, title, description, thumbnail, channel_name, created_at")
+      .is("deleted_at", null)
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true })
+      .limit(batchSize);
+
+    if (job.cursor_created_at) {
+      query = query.or(
+        `created_at.gt.${job.cursor_created_at},and(created_at.eq.${job.cursor_created_at},id.gt.${job.cursor_id})`,
+      );
+    }
+
+    const { data: videos, error: fetchError } = await query;
+    if (fetchError) throw new Error(fetchError.message);
+
+    if (!videos || videos.length === 0) {
+      job = await updateJob(supabase, { status: "completed", lease_until: null });
+      return json({ success: true, done: true, job });
+    }
+
+    let approved = 0;
+    let blocked = 0;
+    let review = 0;
+    let errors = 0;
+    let cursorCreatedAt = job.cursor_created_at;
+    let cursorId = job.cursor_id;
+    let paused: string | null = null;
+
+    for (const video of videos) {
+      try {
+        const verdict = await analyzeThumbnail({
+          title: video.title,
+          description: video.description,
+          channelName: video.channel_name,
+          thumbnailUrl: video.thumbnail,
+        });
+        const row = verdictToRow(verdict);
+
+        await supabase.from("youtube_videos").update(row).eq("id", video.id);
+
+        if (row.content_analysis_status === "approved") approved++;
+        else if (row.content_analysis_status === "rejected") blocked++;
+        else review++;
+      } catch (error) {
+        if (error instanceof GatewayError && (error.status === 402 || error.status === 403)) {
+          paused =
+            error.status === 402
+              ? "AI credits are used up. Add credits to continue the scan."
+              : "AI access is blocked for this workspace. Check the AI settings.";
+          break;
+        }
+        if (error instanceof GatewayError && error.status === 429) {
+          paused = "AI rate limit reached. The scan will continue when you resume it.";
+          break;
+        }
+        console.error("Scan item failed", video.id, error);
+        errors++;
+      }
+
+      cursorCreatedAt = video.created_at;
+      cursorId = video.id;
+    }
+
+    const processedNow = approved + blocked + review + errors;
+
+    job = await updateJob(supabase, {
+      cursor_created_at: cursorCreatedAt,
+      cursor_id: cursorId,
+      processed_count: (job.processed_count || 0) + processedNow,
+      approved_count: (job.approved_count || 0) + approved,
+      blocked_count: (job.blocked_count || 0) + blocked,
+      review_count: (job.review_count || 0) + review,
+      error_count: (job.error_count || 0) + errors,
+      status: paused ? "paused" : "running",
+      pause_reason: paused,
+      lease_until: null,
+    });
+
+    return json({
       success: true,
-      message: `Successfully analyzed ${totalProcessed} videos`,
-      batchResults: totalResults,
-      initialStats,
-      finalStats,
-      processed: totalProcessed,
-      timestamp: new Date().toISOString()
-    };
-
-    console.log('Batch analysis completed:', {
-      processed: totalProcessed,
-      approved: totalResults.approved,
-      rejected: totalResults.rejected,
-      manualReview: totalResults.manualReview,
-      errors: totalResults.errors
+      processed: processedNow,
+      approved,
+      blocked,
+      review,
+      errors,
+      paused,
+      job,
     });
-
-    return new Response(JSON.stringify(response), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-
   } catch (error) {
-    console.error('Error in analyze-existing-videos:', error);
-    
-    return new Response(JSON.stringify({
-      success: false,
-      error: error.message,
-      processed: 0,
-      timestamp: new Date().toISOString()
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error("analyze-existing-videos error:", error);
+    await updateJob(supabase, {
+      lease_until: null,
+      last_error: (error as Error).message,
+    }).catch(() => {});
+    return json({ success: false, error: (error as Error).message }, 500);
   }
 });
