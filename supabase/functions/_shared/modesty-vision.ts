@@ -144,6 +144,14 @@ export async function analyzeThumbnail(input: {
 
   if (!res.ok || !res.body) {
     const body = await res.text().catch(() => "");
+    // An unreachable / unreadable thumbnail is not a gateway failure — send it to review.
+    if (res.status === 400 && /downloading file|invalid_value|unsupported/i.test(body)) {
+      return {
+        verdict: "review",
+        reasons: ["The thumbnail image could not be opened for checking."],
+        confidence: 0,
+      };
+    }
     throw new GatewayError(res.status, `AI gateway error ${res.status}: ${body.slice(0, 300)}`);
   }
 
