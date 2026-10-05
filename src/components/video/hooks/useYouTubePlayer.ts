@@ -216,7 +216,7 @@ export const useYouTubePlayer = (
         playerRef.current = null;
       }
     };
-  }, [videoId, containerRef]);
+  }, [videoId, containerRef, retryKey]);
 
   const play = useCallback(() => {
     try {
