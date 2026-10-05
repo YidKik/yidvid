@@ -29,6 +29,36 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
     if (player.isPlaying) setHasStarted(true);
   }, [player.isPlaying]);
 
+  // Stall detection: if playback hasn't started within 15s, offer play/retry instead of an endless spinner
+  const [isStalled, setIsStalled] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    setIsStalled(false);
+    if (hasStarted || player.errorCode !== null) return;
+    const t = setTimeout(() => setIsStalled(true), 15000);
+    return () => clearTimeout(t);
+  }, [videoId, hasStarted, player.errorCode, attempt]);
+
+  const handleRetry = useCallback(() => {
+    setHasStarted(false);
+    setIsStalled(false);
+    setAttempt((a) => a + 1);
+    player.retry();
+  }, [player]);
+
+  const errorMessage =
+    player.errorCode === 101 || player.errorCode === 150
+      ? "The video owner doesn't allow this video to play outside YouTube."
+      : player.errorCode === 100
+      ? "This video is unavailable or has been removed."
+      : player.errorCode === 2
+      ? "This video link looks invalid."
+      : player.errorCode !== null
+      ? "The video couldn't be loaded. Check your connection and try again."
+      : isStalled
+      ? "The video is taking longer than usual to load."
+      : null;
+
   useEffect(() => {
     const onChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onChange);
@@ -93,6 +123,42 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
       {/* Opaque masks to guarantee YT overlays are hidden even during buffering flashes */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-black z-[5]" />
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-black z-[5]" />
+      {errorMessage && (
+        <div
+          role="alert"
+          className="absolute inset-0 z-[40] flex flex-col items-center justify-center gap-3 bg-black px-6 text-center"
+        >
+          <p className="text-sm sm:text-base font-semibold text-white max-w-md">{errorMessage}</p>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {isStalled && player.errorCode === null && player.isReady && (
+              <button
+                type="button"
+                onClick={() => { setIsStalled(false); player.play(); }}
+                className="rounded-full bg-[#FFCC00] px-4 py-2 text-sm font-semibold text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                Play
+              </button>
+            )}
+            {player.errorCode !== 101 && player.errorCode !== 150 && player.errorCode !== 100 && (
+              <button
+                type="button"
+                onClick={handleRetry}
+                className="rounded-full bg-[#FF0000] px-4 py-2 text-sm font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                Retry
+              </button>
+            )}
+            <a
+              href={`https://www.youtube.com/watch?v=${videoId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFCC00]"
+            >
+              Open on YouTube
+            </a>
+          </div>
+        </div>
+      )}
       <CustomVideoControls
         showPlayBadge={hasStarted}
         isPlaying={player.isPlaying}
@@ -101,7 +167,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
         volume={player.volume}
         isMuted={player.isMuted}
         buffered={player.buffered}
-        isBuffering={player.isBuffering || (!hasStarted && !player.isReady)}
+        isBuffering={!errorMessage && (player.isBuffering || (!hasStarted && !player.isReady))}
         isFullscreen={isFullscreen}
         onTogglePlay={player.togglePlay}
         onSeek={player.seek}

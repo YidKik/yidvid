@@ -306,7 +306,30 @@ export const CustomVideoControls = ({
         <div className={`${isMobile ? "px-2.5" : "px-4"} pb-0.5`}>
           <div
             ref={progressRef}
-            className="relative w-full cursor-pointer group py-2 touch-none select-none"
+            role="slider"
+            tabIndex={0}
+            aria-label="Seek"
+            aria-valuemin={0}
+            aria-valuemax={Math.max(0, Math.floor(duration || 0))}
+            aria-valuenow={Math.floor(displayTime || 0)}
+            aria-valuetext={`${formatSeekTime(displayTime || 0)} of ${formatSeekTime(duration || 0)}`}
+            onKeyDown={(e) => {
+              const max = duration || 0;
+              let next: number | null = null;
+              if (e.key === "ArrowRight" || e.key === "ArrowUp") next = currentTime + 5;
+              else if (e.key === "ArrowLeft" || e.key === "ArrowDown") next = currentTime - 5;
+              else if (e.key === "PageUp") next = currentTime + 30;
+              else if (e.key === "PageDown") next = currentTime - 30;
+              else if (e.key === "Home") next = 0;
+              else if (e.key === "End") next = max;
+              if (next === null) return;
+              e.preventDefault();
+              e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
+              onSeek(Math.max(0, Math.min(max, next)));
+              resetHideTimer();
+            }}
+            className="relative w-full cursor-pointer group py-2 touch-none select-none rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFCC00]"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={endScrub}
@@ -531,3 +554,11 @@ export const CustomVideoControls = ({
     </div>
   );
 };
+
+function formatSeekTime(t: number) {
+  const s = Math.max(0, Math.floor(t));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}` : `${m}:${String(sec).padStart(2, "0")}`;
+}
