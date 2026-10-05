@@ -31,3 +31,12 @@ export const cleanVideoTitle = (title: string | null | undefined): string => {
   cleaned = cleaned.replace(/[-–—:|]\s*$/g, "").trim();
   return cleaned || title;
 };
+
+/**
+ * Build a PostgREST `ilike` contains-pattern that is safe inside `.or(...)`.
+ * Double-quoting lets commas, parentheses, apostrophes and Hebrew/Yiddish text pass through.
+ */
+export function ilikeContains(term: string): string {
+  const escaped = term.trim().replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  return `"%${escaped}%"`;
+}

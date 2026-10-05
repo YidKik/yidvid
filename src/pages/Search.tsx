@@ -1,3 +1,4 @@
+import { ilikeContains } from "@/lib/utils";
 
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -99,7 +100,7 @@ const Search = () => {
         .from("youtube_videos")
         .select("*")
         .filter('deleted_at', 'is', null)
-        .or(`title.ilike.%${query}%,channel_name.ilike.%${query}%`)
+        .or(`title.ilike.${ilikeContains(query)},channel_name.ilike.${ilikeContains(query)}`)
         .order('created_at', { ascending: false });
       if (error) return [];
       return data || [];
@@ -116,7 +117,7 @@ const Search = () => {
         .from("youtube_channels")
         .select("*")
         .filter('deleted_at', 'is', null)
-        .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+        .or(`title.ilike.${ilikeContains(query)},description.ilike.${ilikeContains(query)}`)
         .order('created_at', { ascending: false });
       if (error) return [];
       return data || [];
