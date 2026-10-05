@@ -45,7 +45,7 @@ export const useVideoSearch = () => {
         const { data: channels, error: channelsError } = await supabase
           .from('youtube_channels')
           .select('id, title, thumbnail_url, channel_id')
-          .ilike('title', `${ilikeContains(debouncedQuery)}`)
+          .ilike('title', `%${debouncedQuery}%`)
           .is('deleted_at', null)
           .order('created_at', { ascending: false })
           .limit(10); // Fetch more to account for filtering
