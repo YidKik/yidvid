@@ -8,12 +8,14 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useSessionManager } from "@/hooks/useSessionManager";
 
 const Subscriptions = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, isLoading: authLoading } = useUnifiedAuth();
   const { isMobile } = useIsMobile();
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const { setIsAuthOpen } = useSessionManager();
 
   const { data: subscriptions = [], isLoading, refetch } = useQuery({
     queryKey: ["channel-subscriptions-page", user?.id],
@@ -67,6 +69,9 @@ const Subscriptions = () => {
       <div className="min-h-screen bg-[#F9F9F9] dark:bg-[#0f0f0f] pt-16 pl-0 lg:pl-[200px] pb-24 lg:pb-8 flex flex-col items-center justify-center gap-4 px-4">
         <Users className="w-12 h-12 text-[#ccc]" />
         <p className="text-[#666] dark:text-[#aaa] text-center">Please sign in to view your subscriptions.</p>
+        <Button onClick={() => setIsAuthOpen(true)} className="bg-[#FF0000] hover:bg-[#FF0000] text-white rounded-full px-6">
+          Sign In
+        </Button>
       </div>
     );
   }
