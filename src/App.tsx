@@ -40,6 +40,10 @@ import { Sidebar } from './components/layout/Sidebar';
 import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { useSessionManager } from './hooks/useSessionManager';
 import { useIsMobile } from './hooks/use-mobile';
+import { AuthDialogProvider } from './contexts/AuthDialogContext';
+import { installThumbnailFallback } from './utils/thumbnailFallback';
+
+installThumbnailFallback();
 
 function AppContent() {
   const location = useLocation();
@@ -124,7 +128,9 @@ function App() {
         <PlaybackProvider>
           <ColorProvider>
             <SidebarProvider>
-              <AppContent />
+              <AuthDialogProvider>
+                <AppContent />
+              </AuthDialogProvider>
             </SidebarProvider>
           </ColorProvider>
         </PlaybackProvider>

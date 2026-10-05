@@ -73,12 +73,19 @@ const ShortsViewer = () => {
     setIsPaused((p) => !p);
   }, [isPaused]);
 
+  // Close: go back only when there is an in-site history entry, otherwise land on /videos
+  const handleClose = useCallback(() => {
+    const idx = (window.history.state as { idx?: number } | null)?.idx;
+    if (typeof idx === "number" && idx > 0) navigate(-1);
+    else navigate("/videos", { replace: true });
+  }, [navigate]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown" || e.key === "j") goNext();
       else if (e.key === "ArrowUp" || e.key === "k") goPrev();
-      else if (e.key === "Escape") navigate(-1);
+      else if (e.key === "Escape") handleClose();
       else if (e.key === " ") {
         e.preventDefault();
         togglePlay();
@@ -86,7 +93,7 @@ const ShortsViewer = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goNext, goPrev, navigate, togglePlay]);
+  }, [goNext, goPrev, handleClose, togglePlay]);
 
   // Touch/swipe navigation
   useEffect(() => {
@@ -260,7 +267,7 @@ const ShortsViewer = () => {
         {/* Top bar */}
         <div className="absolute top-0 inset-x-0 z-40 flex items-center justify-between px-3 sm:px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-3">
           <button
-            onClick={() => navigate(-1)}
+            onClick={handleClose}
             aria-label="Close shorts"
             className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition"
           >
