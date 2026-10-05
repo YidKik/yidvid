@@ -5,6 +5,7 @@ import { useSignIn } from "@/hooks/useSignIn";
 import { SignInFormContent } from "./SignInFormContent";
 import { SocialLoginButtons } from "./SocialLoginButtons";
 import { toast } from "sonner";
+import { ForgotPasswordForm } from "./ForgotPasswordForm";
 
 interface SignInFormProps {
   onOpenChange: (open: boolean) => void;
@@ -24,6 +25,7 @@ export const SignInForm = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginAttempted, setLoginAttempted] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
   const isMobile = useIsMobile();
   
   const { 
@@ -79,6 +81,20 @@ export const SignInForm = ({
     }
   };
 
+  if (showForgot) {
+    return (
+      <ForgotPasswordForm
+        email={email}
+        setEmail={setEmail}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        loginError={loginError}
+        setLoginError={setLoginError}
+        onBackToSignIn={() => { setLoginError(""); setShowForgot(false); }}
+      />
+    );
+  }
+
   // Render the sign in form
   return (
     <>
@@ -90,7 +106,7 @@ export const SignInForm = ({
         isLoading={isLoading}
         loginError={loginError}
         handleSignIn={handleSignIn}
-        onForgotPassword={() => {}} // Keeping the prop but using empty function
+        onForgotPassword={() => { setLoginError(""); setShowForgot(true); }}
         hideRememberMe={hideRememberMe}
       />
 

@@ -14,6 +14,11 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [currentSession, setCurrentSession] = useState<any>(null);
+  const [linkInvalid, setLinkInvalid] = useState(false);
+  const [recoveryEmail, setRecoveryEmail] = useState("");
+  const [recoverySent, setRecoverySent] = useState(false);
+  const [recoveryError, setRecoveryError] = useState("");
+  const [recoveryLoading, setRecoveryLoading] = useState(false);
   
   const { 
     updatePassword, 
@@ -37,13 +42,23 @@ const ResetPassword = () => {
           return;
         }
         
-        console.log("No session found, redirecting to home");
-        toast.error("Invalid or expired reset link. Please request a new password reset.");
-        navigate("/");
+        // Give the auth client a moment to process a recovery token in the URL
+        const hasToken = /access_token|type=recovery|code=/.test(window.location.hash + window.location.search);
+        if (hasToken) {
+          await new Promise((r) => setTimeout(r, 1500));
+          const retry = await supabase.auth.getSession();
+          if (retry.data.session) {
+            setCurrentSession(retry.data.session);
+            setSessionChecked(true);
+            return;
+          }
+        }
+        setLinkInvalid(true);
+        setSessionChecked(true);
       } catch (err) {
         console.error("Error in session check:", err);
-        toast.error("An error occurred. Please try again.");
-        navigate("/");
+        setLinkInvalid(true);
+        setSessionChecked(true);
       }
     };
 
@@ -76,6 +91,64 @@ const ResetPassword = () => {
       setError(authError?.message || "Failed to reset password");
     }
   };
+
+  const handleRequestNewLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRecoveryError("");
+    const email = recoveryEmail.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setRecoveryError("Please enter a valid email address.");
+      return;
+    }
+    setRecoveryLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setRecoveryLoading(false);
+    if (error) setRecoveryError(error.message || "Could not send a new link. Please try again.");
+    else setRecoverySent(true);
+  };
+
+  if (sessionChecked && linkInvalid) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+          <div className="mb-6 text-center">
+            <img src="/yidvid-logo-full.png" alt="YidVid Logo" className="h-20 w-auto mx-auto mb-4" />
+            <h1 className="text-2xl font-semibold text-gray-800">This reset link has expired</h1>
+            <p className="text-sm text-gray-600 mt-2">
+              Reset links can only be used once and expire after a while. Enter your email to get a new one.
+            </p>
+          </div>
+          {recoverySent ? (
+            <div role="status" className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+              If an account exists for that email, a new reset link is on its way. Check your inbox.
+            </div>
+          ) : (
+            <form onSubmit={handleRequestNewLink} className="space-y-4" noValidate>
+              <label htmlFor="recovery-email" className="block text-sm font-medium text-gray-700">Email</label>
+              <Input
+                id="recovery-email"
+                type="email"
+                autoComplete="email"
+                value={recoveryEmail}
+                onChange={(e) => setRecoveryEmail(e.target.value)}
+                className="h-12 text-base px-4 text-gray-800"
+                disabled={recoveryLoading}
+              />
+              {recoveryError && <p role="alert" className="text-sm text-red-600">{recoveryError}</p>}
+              <Button type="submit" disabled={recoveryLoading} className="w-full h-12 bg-[#FF0000] hover:bg-[#FF0000] text-white">
+                {recoveryLoading ? "Sending..." : "Send new reset link"}
+              </Button>
+            </form>
+          )}
+          <button type="button" onClick={() => navigate("/videos")} className="mt-4 w-full text-sm font-semibold text-[#FF0000] hover:underline">
+            Back to YidVid
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!sessionChecked) {
     return (

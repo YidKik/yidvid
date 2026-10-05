@@ -1,17 +1,14 @@
 
 import { useState } from "react";
 import { useUnifiedAuth } from "./useUnifiedAuth";
+import { useAuthDialog } from "@/contexts/AuthDialogContext";
 
 export const useSessionManager = () => {
   const auth = useUnifiedAuth();
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  
-  console.log("useSessionManager - auth state:", {
-    isAuthenticated: auth.isAuthenticated,
-    hasProfile: !!auth.profile,
-    isLoading: auth.isLoading,
-    isProfileLoading: auth.isProfileLoading
-  });
+  const sharedDialog = useAuthDialog();
+  const [localAuthOpen, setLocalAuthOpen] = useState(false);
+  const isAuthOpen = sharedDialog ? sharedDialog.isAuthOpen : localAuthOpen;
+  const setIsAuthOpen = sharedDialog ? sharedDialog.setIsAuthOpen : setLocalAuthOpen;
 
   const handleSignInClick = () => {
     setIsAuthOpen(true);

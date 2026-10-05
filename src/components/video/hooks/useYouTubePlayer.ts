@@ -17,6 +17,7 @@ interface YouTubePlayerState {
   buffered: number;
   hasEnded: boolean;
   isBuffering: boolean;
+  errorCode: number | null;
 }
 
 const loadYouTubeAPI = (): Promise<void> => {
@@ -59,7 +60,9 @@ export const useYouTubePlayer = (
     buffered: 0,
     hasEnded: false,
     isBuffering: false,
+    errorCode: null,
   });
+  const [retryKey, setRetryKey] = useState(0);
 
   const playerRef = useRef<any>(null);
   const previousVolumeRef = useRef(80);
@@ -109,8 +112,17 @@ export const useYouTubePlayer = (
     let destroyed = false;
 
     const init = async () => {
-      await loadYouTubeAPI();
+      try {
+        await loadYouTubeAPI();
+      } catch {
+        if (!destroyed) setState((s) => ({ ...s, errorCode: -1 }));
+        return;
+      }
       if (destroyed) return;
+      if (!window.YT?.Player) {
+        setState((s) => ({ ...s, errorCode: -1 }));
+        return;
+      }
 
       if (playerRef.current) {
         try {
@@ -157,6 +169,10 @@ export const useYouTubePlayer = (
               isBuffering: false,
             }));
           },
+          onError: (event: any) => {
+            if (destroyed) return;
+            setState((s) => ({ ...s, errorCode: Number(event?.data) || -1, isBuffering: false, isPlaying: false }));
+          },
           onStateChange: (event: any) => {
             if (destroyed) return;
             const ps = event.data;
@@ -186,6 +202,7 @@ export const useYouTubePlayer = (
       buffered: 0,
       hasEnded: false,
       isBuffering: false,
+      errorCode: null,
     });
 
     init();
@@ -199,7 +216,7 @@ export const useYouTubePlayer = (
         playerRef.current = null;
       }
     };
-  }, [videoId, containerRef]);
+  }, [videoId, containerRef, retryKey]);
 
   const play = useCallback(() => {
     try {
@@ -271,8 +288,11 @@ export const useYouTubePlayer = (
     } catch {}
   }, []);
 
+  const retry = useCallback(() => setRetryKey((k) => k + 1), []);
+
   return {
     ...state,
+    retry,
     play,
     pause,
     togglePlay,

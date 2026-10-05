@@ -511,3 +511,8 @@ body.home-page {
   100% { transform: scale(1); }
 }
 .short-like-pop { animation: short-like-pop 0.4s ease-out; }
+
+/* Per-block automatic bidi for mixed Hebrew/Yiddish/English titles (interface stays LTR) */
+h1, h2, h3, h4, .line-clamp-1, .line-clamp-2, .line-clamp-3, [dir="auto"] {
+  unicode-bidi: plaintext;
+}

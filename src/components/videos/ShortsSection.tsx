@@ -133,12 +133,12 @@ const ShortCard = ({
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
       </div>
       {/* Title */}
-      <p className={`mt-2 ${isMobile ? 'text-[11px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-semibold text-foreground line-clamp-2`}>
+      <p className={`mt-2 ${isMobile ? 'text-[12px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-semibold text-foreground line-clamp-2`}>
         {cleanVideoTitle(short.title)}
       </p>
       {/* Views below title */}
       {short.views != null && short.views > 0 && (
-        <p className={`mt-0.5 ${isMobile ? 'text-[10px]' : 'text-[12px]'} text-muted-foreground`}>
+        <p className={`mt-0.5 ${isMobile ? 'text-[11px]' : 'text-[12px]'} text-muted-foreground`}>
           {formatViews(short.views)} views
         </p>
       )}

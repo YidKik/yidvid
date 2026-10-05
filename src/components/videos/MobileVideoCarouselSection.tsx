@@ -72,11 +72,11 @@ export const MobileVideoCarouselSection = ({
                     {cleanVideoTitle(video.title)}
                   </h3>
                   {/* Channel Name */}
-                  <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
                     {video.channel_name}
                   </p>
                   {/* Meta */}
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-[11px] text-muted-foreground">
                     {getFormattedDate(video.uploaded_at)} • {video.views?.toLocaleString() || 0}
                   </p>
                 </div>

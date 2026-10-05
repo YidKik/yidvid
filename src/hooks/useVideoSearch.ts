@@ -1,3 +1,4 @@
+import { ilikeContains } from "@/lib/utils";
 
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -34,7 +35,7 @@ export const useVideoSearch = () => {
         const { data: videos, error: videosError } = await supabase
           .from('youtube_videos')
           .select('id, video_id, title, thumbnail, channel_id, channel_name')
-          .or(`title.ilike.%${debouncedQuery}%,channel_name.ilike.%${debouncedQuery}%`)
+          .or(`title.ilike.${ilikeContains(debouncedQuery)},channel_name.ilike.${ilikeContains(debouncedQuery)}`)
           .is('deleted_at', null)
           .eq('content_analysis_status', 'approved')
           .order('created_at', { ascending: false })
