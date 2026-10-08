@@ -126,7 +126,7 @@ export const FriendlyChannelSection = ({
             <Button
               onClick={handleSubscribeClick}
               disabled={isLoading}
-              className={`${compact ? 'h-9 px-3 text-xs' : 'h-9 px-4 text-sm'} rounded-control font-semibold transition-all ${
+              className={`${compact ? 'h-9 px-3 text-xs' : 'h-9 px-4 text-sm'} touch-target rounded-control font-semibold transition-all ${
                 isSubscribed 
                   ? "bg-muted text-foreground hover:bg-surface-active" 
                   : "bg-primary text-white hover:brightness-90"
@@ -162,7 +162,7 @@ export const FriendlyChannelSection = ({
           {needsExpand && (
             <button
               onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-              className={`mt-1.5 ${compact ? 'text-[11px]' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
+              className={`touch-target inline-flex items-center mt-1.5 ${compact ? 'text-[11px]' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
             >
               {isDescriptionExpanded ? "Show less" : "Show more"}
             </button>
@@ -230,7 +230,7 @@ export const FriendlyChannelSection = ({
           {channelVideos.length > initialCount && (
             <button
               onClick={() => setShowAllVideos(!showAllVideos)}
-              className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-surface-hover rounded-control transition-colors"
+              className="touch-target mt-3 w-full flex items-center justify-center gap-1.5 h-9 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-surface-hover rounded-control transition-colors"
             >
               {showAllVideos ? (
                 <>Show less <ChevronUp className="w-3.5 h-3.5" /></>
