@@ -30,7 +30,7 @@ export default function NotFound() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-[120px] sm:text-[160px] font-black leading-none tracking-tight"
+          className="text-[120px] sm:text-[160px] font-black leading-none"
           style={{
             background: "linear-gradient(135deg, #C9253A, #C9253A)",
             WebkitBackgroundClip: "text",

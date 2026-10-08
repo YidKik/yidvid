@@ -164,11 +164,11 @@ export const ShortsPageV2 = () => {
             <Table>
               <TableHeader>
                 <TableRow className="border-[#1e2028] hover:bg-transparent">
-                  <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider">Thumbnail</TableHead>
-                  <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider">Title</TableHead>
-                  <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider">Channel</TableHead>
-                  <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider">Views</TableHead>
-                  <TableHead className="text-[#565b6e] text-[11px] uppercase tracking-wider">Actions</TableHead>
+                  <TableHead className="text-[#565b6e] text-[11px] uppercase">Thumbnail</TableHead>
+                  <TableHead className="text-[#565b6e] text-[11px] uppercase">Title</TableHead>
+                  <TableHead className="text-[#565b6e] text-[11px] uppercase">Channel</TableHead>
+                  <TableHead className="text-[#565b6e] text-[11px] uppercase">Views</TableHead>
+                  <TableHead className="text-[#565b6e] text-[11px] uppercase">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

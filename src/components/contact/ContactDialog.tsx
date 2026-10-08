@@ -133,7 +133,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
                   <Send className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'}`} style={{ color: 'hsl(var(--foreground))' }} />
                 </div>
                 <div>
-                  <h2 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold tracking-tight`} style={{ color: 'hsl(var(--foreground))' }}>Contact Us</h2>
+                  <h2 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold`} style={{ color: 'hsl(var(--foreground))' }}>Contact Us</h2>
                   <p className={`${isMobile ? 'text-[10px]' : 'text-xs'}`} style={{ color: 'hsl(var(--muted-foreground))' }}>We'd love to hear from you</p>
                 </div>
               </div>

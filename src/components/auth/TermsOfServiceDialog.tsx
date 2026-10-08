@@ -45,7 +45,7 @@ export const TermsOfServiceDialog: React.FC<TermsOfServiceDialogProps> = ({
                 <FileText className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
               </div>
               <div>
-                <h2 className="text-lg font-bold tracking-tight text-foreground dark:!text-foreground">Terms of Service</h2>
+                <h2 className="text-lg font-bold text-foreground dark:!text-foreground">Terms of Service</h2>
                 <p className="text-xs text-muted-foreground dark:!text-muted-foreground">
                   Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>

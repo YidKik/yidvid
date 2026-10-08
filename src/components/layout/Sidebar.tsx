@@ -339,7 +339,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         {/* Library */}
         <div className="mt-3 pt-3 border-t border-border dark:border-border">
           {effectiveIsExpanded && (
-            <div className="px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">
               {librarySection.title}
             </div>
           )}

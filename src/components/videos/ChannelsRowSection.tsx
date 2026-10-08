@@ -127,7 +127,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
     return (
       <section className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 rounded-card shadow-sm border border-gray-100 dark:border-gray-800`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
+          <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase">
             Most Viewed Channels
           </h2>
         </div>
@@ -246,7 +246,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
+              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase">
                 Most Viewed Channels
               </h2>
               

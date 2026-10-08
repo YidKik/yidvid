@@ -231,7 +231,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
+              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase">
                 Trending Videos
               </h2>
               

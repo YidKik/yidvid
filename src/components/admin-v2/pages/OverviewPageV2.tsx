@@ -328,7 +328,7 @@ const MiniStat = ({ label, value, color }: { label: string; value: number; color
   <div className="bg-[#0f1117] rounded-card p-3 border border-[#1e2028]">
     <div className="flex items-center gap-2 mb-1">
       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-      <span className="text-[10px] text-[#565b6e] uppercase tracking-wider">{label}</span>
+      <span className="text-[10px] text-[#565b6e] uppercase">{label}</span>
     </div>
     <p className="text-xl font-bold text-white">{value.toLocaleString()}</p>
   </div>

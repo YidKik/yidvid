@@ -100,7 +100,7 @@ export const AdminSidebarV2 = ({
         {navSections.map((section) => (
           <div key={section.label}>
             {!collapsed && (
-              <p className="text-[10px] uppercase tracking-wider text-[#4a4e5e] font-semibold mb-2 px-3">
+              <p className="text-[10px] uppercase text-[#4a4e5e] font-semibold mb-2 px-3">
                 {section.label}
               </p>
             )}

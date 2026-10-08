@@ -34,7 +34,7 @@ export const AdminPinDialog = ({
             value={pinValue}
             onChange={(e) => setPinValue(e.target.value)}
             maxLength={10}
-            className="text-center text-lg tracking-widest"
+            className="text-center text-lg"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 onUnlock();

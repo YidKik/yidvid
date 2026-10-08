@@ -26,7 +26,7 @@ export const MobileVideoCarouselSection = ({
     <section className={`mb-4 ${hasBackground ? 'py-4 px-2 -mx-2 bg-muted/30 rounded-card' : ''}`}>
       {/* Header - YouTube style, smaller */}
       <div className="flex items-center justify-between mb-3 px-1">
-        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <h2 className="text-xs font-medium text-muted-foreground uppercase">
           {title}
         </h2>
         {seeAllLink && (

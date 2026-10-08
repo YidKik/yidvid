@@ -54,7 +54,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
     <section className="mb-10">
       {/* Header - YouTube style, smaller font */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+        <h2 className="text-sm font-medium text-muted-foreground uppercase">
           Featured
         </h2>
         

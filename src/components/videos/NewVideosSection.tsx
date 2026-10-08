@@ -248,7 +248,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
+              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase">
                 Latest Videos
               </h2>
               

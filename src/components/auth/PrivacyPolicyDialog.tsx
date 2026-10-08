@@ -45,7 +45,7 @@ export const PrivacyPolicyDialog: React.FC<PrivacyPolicyDialogProps> = ({
                 <Shield className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
               </div>
               <div>
-                <h2 className="text-lg font-bold tracking-tight text-foreground dark:!text-foreground">Privacy Policy</h2>
+                <h2 className="text-lg font-bold text-foreground dark:!text-foreground">Privacy Policy</h2>
                 <p className="text-xs text-muted-foreground dark:!text-muted-foreground">
                   Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>

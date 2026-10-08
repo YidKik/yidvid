@@ -155,7 +155,7 @@ export const SettingsContent = () => {
               placeholder="••••••"
               value={unlockPin}
               onChange={(e) => { setUnlockPin(e.target.value.replace(/\D/g, "")); setUnlockError(false); }}
-              className={cn("text-center text-2xl tracking-widest h-12 rounded-card", unlockError && "border-brand")}
+              className={cn("text-center text-2xl h-12 rounded-card", unlockError && "border-brand")}
             />
             {unlockError && <p className="text-xs text-brand text-center mt-2">Incorrect PIN</p>}
           </div>
@@ -189,7 +189,7 @@ export const SettingsContent = () => {
               placeholder="••••••"
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-              className="text-center text-2xl tracking-widest h-12 rounded-card mb-4 bg-muted dark:bg-background border-border dark:border-border"
+              className="text-center text-2xl h-12 rounded-card mb-4 bg-muted dark:bg-background border-border dark:border-border"
             />
             <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white rounded-control h-11 font-semibold">
               Set PIN & Lock

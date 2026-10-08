@@ -171,7 +171,7 @@ const Search = () => {
           <section className="mb-8">
             <div className="flex items-center gap-2 mb-3">
               <Users className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-muted-foreground`} />
-              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase tracking-wide`}>Channels</h2>
+              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase`}>Channels</h2>
             </div>
             <div className="flex flex-wrap gap-2.5">
               {filteredChannels.map((channel: any) => (
@@ -202,7 +202,7 @@ const Search = () => {
               <div className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} bg-primary rounded flex items-center justify-center`}>
                 <Play className="h-2 w-2 text-white fill-white" />
               </div>
-              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase tracking-wide`}>Shorts</h2>
+              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase`}>Shorts</h2>
             </div>
             <div className={`grid ${isMobile ? 'grid-cols-3 gap-2' : 'grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3'}`}>
               {filteredShorts.map((short: any) => (
@@ -248,7 +248,7 @@ const Search = () => {
           <section>
             <div className="flex items-center gap-2 mb-3">
               <Play className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-muted-foreground`} />
-              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase tracking-wide`}>Videos</h2>
+              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase`}>Videos</h2>
             </div>
 
             <div className="space-y-3">

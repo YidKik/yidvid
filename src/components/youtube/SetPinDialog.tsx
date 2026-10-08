@@ -36,7 +36,7 @@ export const SetPinDialog = ({ isOpen, onClose, onSetPin, pin, onPinChange }: Se
               value={pin}
               onChange={(e) => onPinChange(e.target.value)}
               placeholder="••••••"
-              className="text-center text-lg tracking-widest"
+              className="text-center text-lg"
             />
           </div>
           <div className="flex justify-end gap-2">
