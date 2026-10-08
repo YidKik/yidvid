@@ -32,7 +32,7 @@ export const PrivacyPolicyDialog: React.FC<PrivacyPolicyDialogProps> = ({
           {/* Close button */}
           <button
             onClick={() => onOpenChange(false)}
-            className="absolute right-4 top-4 z-10 w-8 h-8 rounded-control flex items-center justify-center transition-colors hover:bg-gray-100 dark:hover:bg-secondary"
+            className="absolute right-2 top-2 z-10 w-11 h-11 rounded-control flex items-center justify-center transition-colors hover:bg-surface-hover "
           >
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>

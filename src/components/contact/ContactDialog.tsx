@@ -120,7 +120,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
           >
             <button
               onClick={() => onOpenChange(false)}
-              className="absolute right-4 top-4 z-10 w-8 h-8 rounded-control flex items-center justify-center transition-colors hover:bg-gray-100"
+              className="absolute right-2 top-2 z-10 w-11 h-11 rounded-control flex items-center justify-center transition-colors hover:bg-surface-hover"
               style={{ color: 'hsl(var(--muted-foreground))' }}
             >
               <X className="h-4 w-4" />
