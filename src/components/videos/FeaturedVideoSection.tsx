@@ -128,7 +128,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 
                 {/* Content at Bottom */}
                 <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-2' : 'p-2 md:p-2.5 xl:p-4'}`}>
-                  <h3 dir="auto" className={`text-white font-semibold line-clamp-2 group-hover:text-brand transition-colors drop-shadow-md ${isMobile ? 'text-[12px]' : 'text-xs md:text-xs lg:text-xs xl:text-base'}`}>
+                  <h3 dir="auto" title={cleanVideoTitle(video.title)} className={`text-white font-semibold line-clamp-2 group-hover:text-brand transition-colors drop-shadow-md type-card-title`}>
                     {cleanVideoTitle(video.title)}
                   </h3>
                   <p className={`text-white/80 mt-0.5 truncate ${isMobile ? 'text-xs' : 'text-xs md:text-xs lg:text-xs xl:text-sm'}`}>
