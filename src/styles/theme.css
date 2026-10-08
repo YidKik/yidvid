@@ -1,144 +1,171 @@
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  /* ===== YidVid color system (authoritative) ===== */
+  --background: 220 23% 97%;
+  --foreground: 215 28% 13%;
+  --brand: 352 69% 47%;              /* text/icon/link accent */
+  --brand-soft: 351 100% 97%;        /* selected background */
+  --brand-soft-foreground: 352 69% 47%;
+  --primary-hover: 352 69% 39%;
+  --primary-pressed: 351 70% 34%;
+  --icon: 216 18% 34%;
+  --input-border: 218 15% 65%;
+  --success: 152 69% 28%; --success-bg: 145 81% 96%;
+  --warning: 34 100% 32%; --warning-bg: 45 100% 96%;
+  --error: 4 76% 40%;     --error-bg: 5 86% 97%;
+  --info: 218 80% 46%;    --info-bg: 206 100% 97%;
+
+  --background: 220 23% 97%;
+  --foreground: 215 28% 13%;
 
   /* Brand colors - sharp, 100% opacity */
-  --brand-red: 0 100% 50%;
-  --brand-yellow: 50 100% 40%;
-  --brand-dark: 0 0% 10%;
-  --brand-medium: 0 0% 40%;
-  --brand-light-text: 0 0% 60%;
-  --brand-light-bg: 0 0% 96%;
-  --brand-border: 0 0% 90%;
-  --brand-hover: 0 0% 94%;
+  --brand-red: 352 69% 47%;
+  --brand-yellow: 352 69% 47%;
+  --brand-dark: 215 28% 13%;
+  --brand-medium: 221 13% 46%;
+  --brand-light-text: 221 13% 46%;
+  --brand-light-bg: 216 24% 96%;
+  --brand-border: 218 17% 91%;
+  --brand-hover: 216 24% 96%;
 
   /* User customization (kept for ColorContext) */
   --background-custom: 0 0% 100%;
   --text-custom: 0 0% 0%;
-  --button-custom: 0 100% 50%;
+  --button-custom: 352 69% 47%;
   --logo-custom: 0 0% 0%;
 
   --search-background: 0 0% 100%;
-  --search-text: 0 0% 0%;
-  --search-border: 220 13% 91%;
+  --search-text: 215 28% 13%;
+  --search-border: 218 15% 65%;
 
   --auth-background: 0 0% 100%;
-  --auth-text: 0 0% 0%;
-  --auth-primary: 0 100% 50%;
-  --auth-secondary: 220 14% 96%;
-  --auth-border: 220 13% 91%;
+  --auth-text: 215 28% 13%;
+  --auth-primary: 352 69% 47%;
+  --auth-secondary: 216 24% 96%;
+  --auth-border: 218 17% 91%;
   --auth-input-bg: 0 0% 100%;
-  --auth-footer-bg: 210 20% 98%;
-  --auth-footer-text: 220 9% 46%;
-  --auth-link: 0 100% 50%;
-  --auth-link-hover: 0 100% 45%;
+  --auth-footer-bg: 220 23% 97%;
+  --auth-footer-text: 221 13% 46%;
+  --auth-link: 352 69% 47%;
+  --auth-link-hover: 352 69% 39%;
 
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card-foreground: 215 28% 13%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover-foreground: 215 28% 13%;
 
   /* Primary = Brand Red */
-  --primary: 0 100% 50%;
+  --primary: 352 69% 47%;
   --primary-foreground: 0 0% 100%;
 
   /* Highlight = Brand Yellow */
-  --highlight: 50 100% 40%;
-  --highlight-foreground: 0 0% 0%;
+  --highlight: 352 69% 47%;
+  --highlight-foreground: 0 0% 100%;
 
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 216 24% 96%;
+  --secondary-foreground: 215 28% 13%;
 
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  --muted: 216 24% 96%;
+  --muted-foreground: 221 13% 46%;
 
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  --accent: 351 100% 97%;
+  --accent-foreground: 352 69% 47%;
 
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive: 4 76% 40%;
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 0 100% 50%;
+  --border: 218 17% 91%;
+  --input: 218 15% 65%;
+  --ring: 352 69% 47%;
 
   --radius: 0.5rem;
 
   /* Surface colors for components */
   --surface: 0 0% 100%;
-  --surface-hover: 0 0% 96%;
-  --surface-active: 0 0% 94%;
-  --surface-secondary: 0 0% 96%;
-  --text-primary: 0 0% 10%;
-  --text-secondary: 0 0% 40%;
-  --text-tertiary: 0 0% 60%;
-  --divider: 0 0% 90%;
+  --surface-hover: 216 24% 96%;
+  --surface-active: 218 17% 91%;
+  --surface-secondary: 216 24% 96%;
+  --text-primary: 215 28% 13%;
+  --text-secondary: 221 13% 46%;
+  --text-tertiary: 221 13% 46%;
+  --divider: 218 17% 91%;
 }
 
 /* ===== YouTube-style Dark Mode ===== */
 .dark {
-  --background: 0 0% 6.3%;         /* #0f0f0f - YouTube dark bg */
-  --foreground: 0 0% 93%;           /* #ededed */
+  --brand: 352 83% 65%;
+  --brand-soft: 336 26% 15%;
+  --brand-soft-foreground: 352 83% 65%;
+  --primary-hover: 352 69% 39%;
+  --primary-pressed: 351 70% 34%;
+  --icon: 217 21% 83%;
+  --input-border: 221 13% 46%;
+  --success: 149 54% 65%; --success-bg: 152 39% 12%;
+  --warning: 39 86% 69%;  --warning-bg: 34 33% 15%;
+  --error: 4 96% 80%;     --error-bg: 0 30% 16%;
+  --info: 220 100% 76%;   --info-bg: 217 43% 16%;
 
-  --brand-dark: 0 0% 93%;
-  --brand-medium: 0 0% 68%;
-  --brand-light-text: 0 0% 60%;
-  --brand-light-bg: 0 0% 12%;
-  --brand-border: 0 0% 20%;
-  --brand-hover: 0 0% 16%;
+  --background: 220 16% 7%;         /* #0f0f0f - YouTube dark bg */
+  --foreground: 216 24% 96%;           /* #ededed */
 
-  --search-background: 0 0% 7%;
-  --search-text: 0 0% 93%;
-  --search-border: 0 0% 20%;
+  --brand-dark: 216 24% 96%;
+  --brand-medium: 218 14% 70%;
+  --brand-light-text: 218 14% 70%;
+  --brand-light-bg: 222 16% 12%;
+  --brand-border: 220 15% 24%;
+  --brand-hover: 223 16% 17%;
 
-  --auth-background: 0 0% 10%;
-  --auth-text: 0 0% 93%;
-  --auth-primary: 0 100% 50%;
-  --auth-secondary: 0 0% 15%;
-  --auth-border: 0 0% 20%;
-  --auth-input-bg: 0 0% 12%;
-  --auth-footer-bg: 0 0% 8%;
-  --auth-footer-text: 0 0% 60%;
-  --auth-link: 0 100% 55%;
-  --auth-link-hover: 0 100% 60%;
+  --search-background: 222 16% 12%;
+  --search-text: 216 24% 96%;
+  --search-border: 221 13% 46%;
 
-  --card: 0 0% 10%;                 /* #1a1a1a */
-  --card-foreground: 0 0% 93%;
+  --auth-background: 222 16% 12%;
+  --auth-text: 216 24% 96%;
+  --auth-primary: 352 69% 47%;
+  --auth-secondary: 223 16% 17%;
+  --auth-border: 220 15% 24%;
+  --auth-input-bg: 222 16% 12%;
+  --auth-footer-bg: 220 16% 7%;
+  --auth-footer-text: 218 14% 70%;
+  --auth-link: 352 83% 65%;
+  --auth-link-hover: 352 83% 72%;
 
-  --popover: 0 0% 12%;              /* #1f1f1f */
-  --popover-foreground: 0 0% 93%;
+  --card: 222 16% 12%;                 /* #1a1a1a */
+  --card-foreground: 216 24% 96%;
 
-  --primary: 0 100% 50%;
+  --popover: 222 16% 12%;              /* #1f1f1f */
+  --popover-foreground: 216 24% 96%;
+
+  --primary: 352 69% 47%;
   --primary-foreground: 0 0% 100%;
 
-  --highlight: 50 100% 40%;
-  --highlight-foreground: 0 0% 0%;
+  --highlight: 352 69% 47%;
+  --highlight-foreground: 0 0% 100%;
 
-  --secondary: 0 0% 15%;
-  --secondary-foreground: 0 0% 90%;
+  --secondary: 223 16% 17%;
+  --secondary-foreground: 216 24% 96%;
 
-  --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 64%;
+  --muted: 223 16% 17%;
+  --muted-foreground: 218 14% 70%;
 
-  --accent: 0 0% 15%;
-  --accent-foreground: 0 0% 93%;
+  --accent: 336 26% 15%;
+  --accent-foreground: 352 83% 65%;
 
-  --destructive: 0 72% 51%;
+  --destructive: 4 76% 40%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 0 0% 20%;               /* #333 */
-  --input: 0 0% 20%;
-  --ring: 0 100% 50%;
+  --border: 220 15% 24%;               /* #333 */
+  --input: 221 13% 46%;
+  --ring: 352 83% 65%;
 
   /* Surface colors for components */
-  --surface: 0 0% 10%;              /* #1a1a1a */
-  --surface-hover: 0 0% 16%;        /* #282828 - YouTube hover */
-  --surface-active: 0 0% 20%;       /* #333 */
-  --surface-secondary: 0 0% 12%;    /* #1f1f1f */
-  --text-primary: 0 0% 93%;         /* #ededed */
-  --text-secondary: 0 0% 68%;       /* #aaaaaa */
-  --text-tertiary: 0 0% 47%;        /* #787878 */
-  --divider: 0 0% 20%;              /* #333 */
+  --surface: 222 16% 12%;              /* #1a1a1a */
+  --surface-hover: 223 16% 17%;        /* #282828 - YouTube hover */
+  --surface-active: 220 15% 24%;       /* #333 */
+  --surface-secondary: 223 16% 17%;    /* #1f1f1f */
+  --text-primary: 216 24% 96%;         /* #ededed */
+  --text-secondary: 218 14% 70%;       /* #aaaaaa */
+  --text-tertiary: 218 14% 70%;        /* #787878 */
+  --divider: 220 15% 24%;              /* #333 */
 }
