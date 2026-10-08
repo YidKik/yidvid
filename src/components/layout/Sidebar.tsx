@@ -105,6 +105,7 @@ export const Sidebar = ({ isAuthenticated = false }: SidebarProps) => {
     expanded ? <h2 id={id} className="px-3 pt-2 pb-1 type-label text-muted-foreground">{text}</h2> : <h2 id={id} className="sr-only">{text}</h2>;
 
   const CatIcon = CATEGORIES_ICON;
+  const AboutIcon = ACCOUNT_ITEMS[1].icon;
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -113,13 +114,11 @@ export const Sidebar = ({ isAuthenticated = false }: SidebarProps) => {
         style={{ width: "var(--sidebar-w)" }}
       >
         {/* Brand + collapse */}
-        <div className={cn("flex items-center h-14 shrink-0 px-3", expanded ? "justify-between" : "justify-center")}>
-          {expanded && (
-            <Link to="/" className="flex items-center gap-2 min-h-11 rounded-control" aria-label="YidVid home">
-              <img src={yidvidLogoIcon} alt="" className="w-8 h-8 object-contain" />
-              <span className="type-h3 text-foreground">YidVid</span>
-            </Link>
-          )}
+        <div className={cn("flex shrink-0 px-3", expanded ? "items-center justify-between h-14" : "flex-col items-center gap-1 py-2")}>
+          <Link to="/" className="flex items-center gap-2 min-h-11 min-w-11 justify-center rounded-control focus-visible:ring-2 focus-visible:ring-ring outline-none" aria-label="YidVid home">
+            <img src={yidvidLogoIcon} alt="" className="w-8 h-8 object-contain" />
+            {expanded && <span className="type-h3 text-foreground">YidVid</span>}
+          </Link>
           {withTip(expanded ? "Collapse sidebar" : "Expand sidebar",
             <button
               type="button"
@@ -208,7 +207,7 @@ export const Sidebar = ({ isAuthenticated = false }: SidebarProps) => {
                 <DropdownMenuContent side={expanded ? "top" : "right"} align="start" className="w-56">
                   <DropdownMenuItem asChild className="min-h-11">
                     <Link to="/about" aria-current={location.pathname === "/about" ? "page" : undefined}>
-                      <ACCOUNT_ITEMS[1].icon className="w-4 h-4 mr-2" /> About YidVid
+                      <AboutIcon className="w-4 h-4 mr-2" /> About YidVid
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="min-h-11" onSelect={() => openDialog("contact")}>
