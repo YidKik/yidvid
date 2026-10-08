@@ -133,7 +133,7 @@ export const GlobalHeader = () => {
               ref={searchContainerRef}
               className="flex-1 min-w-0 max-w-xl relative"
             >
-              <form onSubmit={handleSearchSubmit}>
+              <form onSubmit={handleSearchSubmit} className="min-w-0">
                 <div 
                   className={`flex items-center rounded-control border-2 transition-all duration-200 bg-muted dark:bg-[#121212] ${
                     isSearchOpen 
@@ -141,7 +141,7 @@ export const GlobalHeader = () => {
                       : 'border-border dark:border-border hover:border-brand hover:bg-white dark:hover:bg-card'
                   }`}
                 >
-                  <div className={`flex items-center flex-1 ${isMobile ? 'pl-2.5 pr-1' : 'pl-4 pr-2'}`}>
+                  <div className={`flex items-center flex-1 min-w-0 ${isMobile ? 'pl-2.5 pr-1' : 'pl-4 pr-2'}`}>
                     <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-muted-foreground dark:text-muted-foreground shrink-0 mr-2`} />
                     <input
                       type="text"
@@ -152,7 +152,7 @@ export const GlobalHeader = () => {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       placeholder="Search videos..."
-                      className={`flex-1 bg-transparent border-none outline-none py-2 text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground`}
+                      className={`flex-1 min-w-0 w-full bg-transparent border-none outline-none py-2 text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground`}
                     />
                     {searchQuery && (
                       <button
