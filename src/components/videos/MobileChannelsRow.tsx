@@ -49,7 +49,7 @@ export const MobileChannelsRow = () => {
     return (
       <section className="mb-4">
         <div className="flex items-center justify-between mb-3 px-1">
-          <h2 className="text-xs font-medium text-muted-foreground uppercase">
+          <h2 className="type-h2 text-foreground">
             Most Viewed Channels
           </h2>
         </div>
@@ -66,7 +66,7 @@ export const MobileChannelsRow = () => {
     <section className="mb-4">
       {/* Header - YouTube style, smaller */}
       <div className="flex items-center justify-between mb-3 px-1">
-        <h2 className="text-xs font-medium text-muted-foreground uppercase">
+        <h2 className="type-h2 text-foreground">
           Most Viewed Channels
         </h2>
         <Link 
