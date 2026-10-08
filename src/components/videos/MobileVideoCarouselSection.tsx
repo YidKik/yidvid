@@ -23,9 +23,9 @@ export const MobileVideoCarouselSection = ({
   if (!videos || videos.length === 0) return null;
 
   return (
-    <section className={`mb-4 ${hasBackground ? 'py-4 px-2 -mx-2 bg-muted/30 rounded-card' : ''}`}>
+    <section className={`mb-8 ${hasBackground ? 'p-4 -mx-4 bg-muted/30 rounded-card' : ''}`}>
       {/* Header - YouTube style, smaller */}
-      <div className="flex items-center justify-between mb-3 px-1">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="type-h2 text-foreground">
           {title}
         </h2>

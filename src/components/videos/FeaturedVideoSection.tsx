@@ -51,7 +51,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
   if (!featuredVideos || featuredVideos.length === 0) return null;
 
   return (
-    <section className="mb-10">
+    <section className="mb-8 md:mb-12">
       {/* Header - YouTube style, smaller font */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="type-h2 text-foreground">

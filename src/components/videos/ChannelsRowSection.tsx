@@ -125,8 +125,8 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   // Show skeleton while loading instead of hiding the section
   if (isLoading) {
     return (
-      <section className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 rounded-card shadow-sm border border-gray-100 dark:border-gray-800`}>
-        <div className="flex items-center justify-between mb-6">
+      <section className={`mb-8 md:mb-12 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-gray-50 dark:bg-gray-900/30 rounded-card shadow-sm border border-gray-100 dark:border-gray-800`}>
+        <div className="flex items-center justify-between mb-4">
           <h2 className="type-h2 text-foreground">
             Most Viewed Channels
           </h2>
@@ -192,7 +192,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   return (
     <section 
       ref={sectionRef}
-      className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-8 md:mb-12 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="sync">
         {showAllChannels ? (
@@ -205,7 +205,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
             transition={{ duration: 0.15 }}
           >
             {/* Header with Back button */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
                 <button
                   onClick={handleBackClick}
@@ -245,7 +245,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
             transition={{ duration: 0.15 }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="type-h2 text-foreground">
                 Most Viewed Channels
               </h2>

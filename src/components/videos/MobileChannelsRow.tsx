@@ -47,8 +47,8 @@ export const MobileChannelsRow = () => {
   // Show skeleton while loading instead of hiding the section
   if (isLoading) {
     return (
-      <section className="mb-4">
-        <div className="flex items-center justify-between mb-3 px-1">
+      <section className="mb-8">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="type-h2 text-foreground">
             Most Viewed Channels
           </h2>
@@ -63,9 +63,9 @@ export const MobileChannelsRow = () => {
   if (sortedChannels.length === 0) return null;
 
   return (
-    <section className="mb-4">
+    <section className="mb-8">
       {/* Header - YouTube style, smaller */}
-      <div className="flex items-center justify-between mb-3 px-1">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="type-h2 text-foreground">
           Most Viewed Channels
         </h2>
