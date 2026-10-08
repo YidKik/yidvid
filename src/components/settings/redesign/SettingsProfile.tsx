@@ -228,7 +228,7 @@ export const SettingsProfile = () => {
             <Button
               onClick={() => removeAvatar.mutate()}
               disabled={removeAvatar.isPending}
-              className="w-full bg-primary hover:bg-primary-hover text-white rounded-card h-10 font-semibold"
+              className="w-full bg-primary hover:bg-primary-hover text-white rounded-control h-11 font-semibold"
             >
               {removeAvatar.isPending ? "Removing..." : "Yes, Remove"}
             </Button>
@@ -236,7 +236,7 @@ export const SettingsProfile = () => {
               variant="outline"
               onClick={() => setIsRemoveAvatarDialogOpen(false)}
               disabled={removeAvatar.isPending}
-              className="w-full rounded-card h-10 font-semibold"
+              className="w-full rounded-control h-11 font-semibold"
             >
               Cancel
             </Button>

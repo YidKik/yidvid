@@ -244,7 +244,7 @@ const LandingPage = () => {
           >
             <motion.button
               onClick={() => navigate('/videos')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-card overflow-hidden bg-primary text-white`}
+              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-control min-h-11 overflow-hidden bg-primary text-white`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 boxShadow: '0 6px 25px rgba(255, 0, 0, 0.3)'
@@ -262,7 +262,7 @@ const LandingPage = () => {
 
             <motion.button
               onClick={() => navigate('/videos?view=channels')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-card overflow-hidden bg-white border border-border`}
+              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-control min-h-11 overflow-hidden bg-white border border-border`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 color: 'hsl(var(--foreground))',

@@ -82,7 +82,7 @@ export const SettingsContent = () => {
           placeholder="Search channels..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 h-10 rounded-card border-border dark:border-border bg-muted dark:bg-background text-sm"
+          className="pl-9 h-11 rounded-control border-border dark:border-border bg-muted dark:bg-background text-sm"
         />
       </div>
 
@@ -160,7 +160,7 @@ export const SettingsContent = () => {
             {unlockError && <p className="text-xs text-brand text-center mt-2">Incorrect PIN</p>}
           </div>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-            <Button onClick={handleUnlockSubmit} className="w-full bg-primary hover:bg-primary-hover text-white rounded-control h-10 font-semibold">
+            <Button onClick={handleUnlockSubmit} className="w-full bg-primary hover:bg-primary-hover text-white rounded-control h-11 font-semibold">
               Unlock
             </Button>
             <Button variant="ghost" size="sm" onClick={handleDelete} className="text-muted-foreground hover:text-brand text-xs">
@@ -191,7 +191,7 @@ export const SettingsContent = () => {
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
               className="text-center text-2xl tracking-widest h-12 rounded-card mb-4 bg-muted dark:bg-background border-border dark:border-border"
             />
-            <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white rounded-control h-10 font-semibold">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white rounded-control h-11 font-semibold">
               Set PIN & Lock
             </Button>
           </form>
