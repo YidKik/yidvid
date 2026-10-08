@@ -555,8 +555,3 @@ textarea:focus-visible,
 @media (pointer: coarse) {
   .touch-target { min-height: 44px; min-width: 44px; }
 }
-/* Expands only the invisible hit area (keeps compact header visuals) */
-@media (pointer: coarse) {
-  .touch-hit { position: relative; }
-  .touch-hit::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
-}

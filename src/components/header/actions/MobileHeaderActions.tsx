@@ -51,7 +51,7 @@ export const MobileHeaderActions = ({
             onClick={onAuthOpen}
             variant="ghost" 
             size="sm"
-            className={`touch-hit ${buttonClass} text-[0.6rem] rounded-control flex items-center px-1.5 py-0.5 gap-0.5`}
+            className={`${buttonClass} text-xs rounded-control flex items-center min-h-11 min-w-11 px-2 gap-0.5`}
           >
             <User className="h-2.5 w-2.5" />
             <span className="hidden min-[360px]:inline">Sign in</span>
