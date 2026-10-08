@@ -49,14 +49,14 @@ export const AuthSuccessOverlay = ({ show, type, onComplete }: AuthSuccessOverla
             >
               {/* Pulse rings */}
               <motion.div
-                className="absolute inset-0 rounded-full"
+                className="absolute inset-0 rounded-control"
                 style={{ border: '3px solid #C9253A' }}
                 initial={{ scale: 1, opacity: 0.8 }}
                 animate={{ scale: 1.8, opacity: 0 }}
                 transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
               />
               <motion.div
-                className="absolute inset-0 rounded-full"
+                className="absolute inset-0 rounded-control"
                 style={{ border: '3px solid #C9253A' }}
                 initial={{ scale: 1, opacity: 0.6 }}
                 animate={{ scale: 2.2, opacity: 0 }}
@@ -65,7 +65,7 @@ export const AuthSuccessOverlay = ({ show, type, onComplete }: AuthSuccessOverla
 
               {/* Main circle */}
               <motion.div
-                className="w-24 h-24 rounded-full flex items-center justify-center"
+                className="w-24 h-24 rounded-card flex items-center justify-center"
                 style={{ backgroundColor: 'hsl(var(--primary))' }}
                 initial={{ rotate: -180, scale: 0 }}
                 animate={{ rotate: 0, scale: 1 }}

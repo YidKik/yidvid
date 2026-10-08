@@ -31,7 +31,7 @@ export default function WritingVideos() {
             Array.from({ length: 8 }).map((_, index) => (
               <div 
                 key={index}
-                className="aspect-video bg-gray-200 rounded-lg animate-pulse"
+                className="aspect-video bg-gray-200 rounded-card animate-pulse"
               />
             ))
           ) : (

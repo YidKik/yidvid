@@ -13,7 +13,7 @@ export const VideoDescription = ({ description }: VideoDescriptionProps) => {
   }
 
   return (
-    <div className="bg-card/30 rounded-xl p-6 border border-border/50 shadow-sm">
+    <div className="bg-card/30 rounded-card p-6 border border-border/50 shadow-sm">
       <h3 className="text-lg font-semibold mb-4 text-foreground">Description</h3>
       
       <div className="flex justify-between items-start">
@@ -28,7 +28,7 @@ export const VideoDescription = ({ description }: VideoDescriptionProps) => {
         {description.length > 300 && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex-shrink-0 p-2 hover:bg-accent rounded-lg transition-colors duration-200 group"
+            className="flex-shrink-0 p-2 hover:bg-accent rounded-control transition-colors duration-200 group"
             aria-label={isExpanded ? "Show less" : "Show more"}
           >
             {isExpanded ? (

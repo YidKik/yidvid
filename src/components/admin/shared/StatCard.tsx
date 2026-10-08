@@ -10,8 +10,8 @@ interface StatCardProps {
 }
 
 export const StatCard = ({ label, value, icon: Icon, color = "bg-[hsl(250,80%,60%)]", subtitle }: StatCardProps) => (
-  <div className="bg-white rounded-xl border border-[hsl(220,13%,91%)] p-5 flex items-start gap-4">
-    <div className={cn("w-11 h-11 rounded-lg flex items-center justify-center shrink-0 text-white", color)}>
+  <div className="bg-white rounded-card border border-[hsl(220,13%,91%)] p-5 flex items-start gap-4">
+    <div className={cn("w-11 h-11 rounded-control flex items-center justify-center shrink-0 text-white", color)}>
       <Icon className="w-5 h-5" />
     </div>
     <div className="min-w-0">

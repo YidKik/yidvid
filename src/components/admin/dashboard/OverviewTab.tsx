@@ -163,7 +163,7 @@ export const OverviewTab = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-green-50 rounded-card">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span className="text-sm font-medium">Approved</span>
@@ -171,7 +171,7 @@ export const OverviewTab = () => {
                 <span className="text-2xl font-bold text-green-600">{videoStats?.approved || 0}</span>
               </div>
               
-              <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-red-50 rounded-card">
                 <div className="flex items-center gap-2">
                   <XCircle className="h-4 w-4 text-brand" />
                   <span className="text-sm font-medium">Rejected</span>
@@ -179,7 +179,7 @@ export const OverviewTab = () => {
                 <span className="text-2xl font-bold text-brand">{videoStats?.rejected || 0}</span>
               </div>
               
-              <div className="flex items-center justify-between p-4 bg-warning-bg rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-warning-bg rounded-card">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-brand" />
                   <span className="text-sm font-medium">Pending</span>
@@ -187,7 +187,7 @@ export const OverviewTab = () => {
                 <span className="text-2xl font-bold text-brand">{videoStats?.pending || 0}</span>
               </div>
               
-              <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-orange-50 rounded-card">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 text-orange-600" />
                   <span className="text-sm font-medium">Manual Review</span>
@@ -199,7 +199,7 @@ export const OverviewTab = () => {
             <div className="pt-4 border-t">
               <button
                 onClick={() => navigate('/admin?tab=content-analysis')}
-                className="w-full py-2 px-4 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                className="w-full py-2 px-4 bg-primary text-white rounded-control hover:bg-primary/90 transition-colors font-medium"
               >
                 View Detailed Analysis
               </button>
@@ -217,14 +217,14 @@ export const OverviewTab = () => {
           </CardHeader>
           <CardContent className="space-y-3 max-h-[300px] overflow-y-auto">
             {recentActivity?.videos.slice(0, 3).map((video, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-3 bg-muted rounded-lg border border-border">
+              <div key={idx} className="flex items-start gap-3 p-3 bg-muted rounded-card border border-border">
                 <Video className="h-4 w-4 text-gray-500 mt-1" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{video.title}</p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(video.created_at).toLocaleString()}
                   </p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full inline-block mt-1 ${
+                  <span className={`text-xs px-2 py-0.5 rounded-badge inline-block mt-1 ${
                     video.content_analysis_status === 'approved' ? 'bg-green-100 text-green-700' :
                     video.content_analysis_status === 'rejected' ? 'bg-red-100 text-error' :
                     'bg-warning-bg text-warning'
@@ -235,7 +235,7 @@ export const OverviewTab = () => {
               </div>
             ))}
             {recentActivity?.comments.slice(0, 2).map((comment, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-3 bg-muted rounded-lg border border-border">
+              <div key={idx} className="flex items-start gap-3 p-3 bg-muted rounded-card border border-border">
                 <MessageSquare className="h-4 w-4 text-gray-500 mt-1" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm truncate">{comment.content}</p>

@@ -112,7 +112,7 @@ const ResetPassword = () => {
   if (sessionChecked && linkInvalid) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+        <div className="w-full max-w-md rounded-card bg-white p-8 shadow-md">
           <div className="mb-6 text-center">
             <img src="/yidvid-logo-full.png" alt="YidVid Logo" className="h-20 w-auto mx-auto mb-4" />
             <h1 className="text-2xl font-semibold text-foreground">This reset link has expired</h1>
@@ -121,7 +121,7 @@ const ResetPassword = () => {
             </p>
           </div>
           {recoverySent ? (
-            <div role="status" className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+            <div role="status" className="rounded-card border border-green-200 bg-green-50 p-3 text-sm text-green-800">
               If an account exists for that email, a new reset link is on its way. Check your inbox.
             </div>
           ) : (
@@ -153,7 +153,7 @@ const ResetPassword = () => {
   if (!sessionChecked) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md text-center">
+        <div className="w-full max-w-md rounded-card bg-white p-8 shadow-md text-center">
           <p className="text-muted-foreground">Verifying your reset link...</p>
         </div>
       </div>
@@ -162,7 +162,7 @@ const ResetPassword = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+      <div className="w-full max-w-md rounded-card bg-white p-8 shadow-md">
         <div className="mb-6 text-center">
           <img 
             src="/yidvid-logo-full.png"
@@ -187,7 +187,7 @@ const ResetPassword = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter new password"
-                className="h-12 text-base px-4 border-border bg-muted focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-foreground"
+                className="h-12 text-base px-4 border-border bg-muted focus:bg-white transition-all duration-300 rounded-control focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-foreground"
                 required
                 minLength={6}
                 disabled={isLoading}
@@ -204,7 +204,7 @@ const ResetPassword = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm new password"
-                className="h-12 text-base px-4 border-border bg-muted focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-foreground"
+                className="h-12 text-base px-4 border-border bg-muted focus:bg-white transition-all duration-300 rounded-control focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-foreground"
                 required
                 minLength={6}
                 disabled={isLoading}
@@ -212,21 +212,21 @@ const ResetPassword = () => {
             </div>
 
             {error && (
-              <div className="text-sm text-brand font-medium p-2 bg-red-50 rounded-lg border border-red-100">
+              <div className="text-sm text-brand font-medium p-2 bg-red-50 rounded-card border border-red-100">
                 {error}
               </div>
             )}
 
             <Button
               type="submit"
-              className="w-full h-12 text-base py-0 mt-6 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg"
+              className="w-full h-12 text-base py-0 mt-6 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-card font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-raised"
               disabled={isLoading}
             >
               {isLoading ? "Resetting..." : "Reset Password"}
             </Button>
           </form>
         ) : (
-          <div className="bg-green-50 p-4 rounded-lg border border-green-100 text-green-700">
+          <div className="bg-green-50 p-4 rounded-card border border-green-100 text-green-700">
             <p className="font-medium">Password reset successfully!</p>
             <p className="text-sm mt-1">You will be redirected to the home page shortly.</p>
           </div>

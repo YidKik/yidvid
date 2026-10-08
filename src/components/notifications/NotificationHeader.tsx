@@ -30,7 +30,7 @@ export const NotificationHeader = ({
               variant="ghost"
               size="sm"
               onClick={onClearAll}
-              className="text-[10px] sm:text-xs text-white hover:text-white hover:bg-surface-hover h-7 px-2 rounded-md"
+              className="text-[10px] sm:text-xs text-white hover:text-white hover:bg-surface-hover h-7 px-2 rounded-control"
             >
               Clear All
             </Button>
@@ -40,7 +40,7 @@ export const NotificationHeader = ({
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-7 w-7 rounded-full bg-[#333333] hover:bg-[#444444] text-white"
+              className="h-7 w-7 rounded-control bg-[#333333] hover:bg-[#444444] text-white"
             >
               <X className="h-4 w-4" />
             </Button>

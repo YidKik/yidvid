@@ -7,7 +7,7 @@ interface ChannelsErrorProps {
 
 export const ChannelsError: React.FC<ChannelsErrorProps> = ({ refetch }) => {
   return (
-    <div className="bg-card text-card-foreground rounded-lg shadow p-6 border border-border">
+    <div className="bg-card text-card-foreground rounded-card shadow p-6 border border-border">
       <div className="text-center">
         <h2 className="text-xl font-semibold text-brand mb-2">Error Loading Channels</h2>
         <p className="text-muted-foreground">There was a problem fetching the channels.</p>

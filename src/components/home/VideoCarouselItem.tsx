@@ -30,7 +30,7 @@ export const VideoCarouselItem = ({ video, onClick }: VideoCarouselItemProps) =>
       onHoverEnd={() => setIsHovered(false)}
       onClick={() => onClick(video.video_id)}
     >
-      <div className="w-full h-full overflow-hidden rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md">
+      <div className="w-full h-full overflow-hidden rounded-card shadow-sm transition-all duration-300 group-hover:shadow-md">
         <div className="relative w-full h-full">
           <VideoGridItem video={video} />
           
@@ -41,7 +41,7 @@ export const VideoCarouselItem = ({ video, onClick }: VideoCarouselItemProps) =>
             animate={{ opacity: isHovered ? 1 : 0 }}
           >
             <motion.div 
-              className="bg-white/90 text-foreground px-4 py-2 rounded-full font-medium"
+              className="bg-white/90 text-foreground px-4 py-2 rounded-control font-medium"
               initial={{ scale: 0.8 }}
               animate={{ scale: isHovered ? 1 : 0.8 }}
               transition={{ type: "spring", stiffness: 200 }}

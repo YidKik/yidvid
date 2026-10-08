@@ -65,7 +65,7 @@ export const SignInFormContent = ({
         className={`w-full ${isMobile 
           ? 'h-12 text-sm' 
           : 'h-13 text-base'} 
-          mt-2 bg-primary hover:brightness-90 text-white rounded-2xl font-semibold
+          mt-2 bg-primary hover:brightness-90 text-white rounded-card font-semibold
           transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed 
           hover:scale-[1.01] active:scale-[0.99] disabled:hover:scale-100 
           shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 py-4`}

@@ -31,7 +31,7 @@ export const MobileContactSection = () => {
       >
         <Button 
           variant="default" 
-          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-control"
           onClick={() => setIsContactOpen(true)}
         >
           Send feedback
@@ -39,7 +39,7 @@ export const MobileContactSection = () => {
         
         <Button 
           variant="default" 
-          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-control"
           onClick={() => setIsContactOpen(true)}
         >
           Contact
@@ -47,7 +47,7 @@ export const MobileContactSection = () => {
         
         <Button 
           variant="default" 
-          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+          className="w-full py-4 text-base bg-[#135d66] text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-control"
           onClick={() => setIsRequestChannelOpen(true)}
         >
           Request channel

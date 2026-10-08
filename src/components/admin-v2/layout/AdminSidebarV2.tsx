@@ -75,7 +75,7 @@ export const AdminSidebarV2 = ({
       <div className="h-[60px] flex items-center px-4 border-b border-[#1e2028]">
         {!collapsed && (
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-bold text-sm shrink-0">
+            <div className="w-8 h-8 rounded-control bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-bold text-sm shrink-0">
               Y
             </div>
             <div className="min-w-0">
@@ -89,7 +89,7 @@ export const AdminSidebarV2 = ({
           </div>
         )}
         {collapsed && (
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-bold text-sm mx-auto">
+          <div className="w-8 h-8 rounded-control bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-bold text-sm mx-auto">
             Y
           </div>
         )}
@@ -114,7 +114,7 @@ export const AdminSidebarV2 = ({
                     key={item.id}
                     onClick={() => onTabChange(item.id)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150",
+                      "w-full flex items-center gap-3 px-3 py-2 rounded-control text-[13px] font-medium transition-all duration-150",
                       isActive
                         ? "bg-[#6366f1]/15 text-[#818cf8] border border-[#6366f1]/20"
                         : "hover:bg-[#1a1c25] hover:text-[#c4c7d4] border border-transparent"
@@ -141,7 +141,7 @@ export const AdminSidebarV2 = ({
       <div className="border-t border-[#1e2028] p-3 space-y-1">
         <button
           onClick={() => navigate("/")}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium text-[#8b8fa3] hover:bg-[#1a1c25] hover:text-[#c4c7d4] transition-colors border border-transparent"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-control text-[13px] font-medium text-[#8b8fa3] hover:bg-[#1a1c25] hover:text-[#c4c7d4] transition-colors border border-transparent"
           title={collapsed ? "Exit Admin" : undefined}
         >
           <LogOut className={cn("w-[18px] h-[18px] shrink-0", collapsed && "mx-auto")} />
@@ -150,7 +150,7 @@ export const AdminSidebarV2 = ({
 
         <button
           onClick={onToggleCollapse}
-          className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-[#1a1c25] text-[#565b6e] hover:text-[#8b8fa3] transition-colors"
+          className="w-full flex items-center justify-center p-2 rounded-control hover:bg-[#1a1c25] text-[#565b6e] hover:text-[#8b8fa3] transition-colors"
         >
           {collapsed ? (
             <ChevronRight className="w-4 h-4" />

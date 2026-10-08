@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 
 export const ChannelsLoading: React.FC = () => {
   return (
-    <div className="bg-card text-card-foreground rounded-lg shadow p-6 border border-border">
+    <div className="bg-card text-card-foreground rounded-card shadow p-6 border border-border">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">YouTube Channels</h2>
       </div>

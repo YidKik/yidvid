@@ -97,7 +97,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             size="icon"
             className={cn(
               compact ? "h-6 w-6" : "h-8 w-8",
-              "rounded-full transition-colors duration-200",
+              "rounded-control transition-colors duration-200",
               variant === "overlay" && "bg-[#1A1A1A] hover:bg-primary text-white",
               variant === "icon" && "hover:bg-surface-hover",
               className
@@ -111,7 +111,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
           align="end" 
           className={cn(
             "bg-white dark:bg-secondary border border-border dark:border-border shadow-xl z-50 p-1",
-            compact ? "w-36 rounded-lg" : "w-48 rounded-xl"
+            compact ? "w-36 rounded-control" : "w-48 rounded-card"
           )}
           onClick={(e) => e.stopPropagation()}
         >
@@ -119,7 +119,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             onClick={handleToggleFavorite}
             className={cn(
               "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
-              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
+              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
             )}
           >
             <Heart className={cn(compact ? "w-3 h-3" : "w-3.5 h-3.5", "shrink-0", isFavorite && "fill-brand text-brand")} />
@@ -130,7 +130,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             onClick={handleToggleWatchLater}
             className={cn(
               "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
-              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
+              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
             )}
           >
             <Clock className={cn(compact ? "w-3 h-3" : "w-3.5 h-3.5", "shrink-0", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
@@ -142,14 +142,14 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
           <DropdownMenuSub>
             <DropdownMenuSubTrigger className={cn(
               "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
-              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
+              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
             )}>
               <ListPlus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
               <span>Add to Playlist</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className={cn(
               "bg-white dark:bg-secondary border border-border dark:border-border shadow-xl p-1",
-              compact ? "w-40 rounded-lg" : "w-44 rounded-xl"
+              compact ? "w-40 rounded-control" : "w-44 rounded-card"
             )}>
               {playlists && playlists.length > 0 ? (
                 <>
@@ -159,7 +159,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
                       onClick={() => handleAddToPlaylist(playlist.id)}
                       className={cn(
                         "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
-                        compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
+                        compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
                       )}
                     >
                       <ListPlus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
@@ -179,7 +179,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
                 }}
                 className={cn(
                   "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08] text-muted-foreground",
-                  compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
+                  compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
                 )}
               >
                 <Plus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
@@ -192,7 +192,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
 
       {/* Create Playlist Dialog */}
       <Dialog open={showCreatePlaylist} onOpenChange={setShowCreatePlaylist}>
-        <DialogContent className="sm:max-w-md bg-white rounded-2xl">
+        <DialogContent className="sm:max-w-md bg-white rounded-dialog">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Create New Playlist</DialogTitle>
           </DialogHeader>
@@ -201,7 +201,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
               placeholder="Playlist name"
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
-              className="rounded-xl border-border"
+              className="rounded-card border-border"
               onKeyDown={(e) => e.key === "Enter" && handleCreatePlaylist()}
             />
           </div>
@@ -209,14 +209,14 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             <Button
               variant="ghost"
               onClick={() => setShowCreatePlaylist(false)}
-              className="rounded-xl"
+              className="rounded-card"
             >
               Cancel
             </Button>
             <Button
               onClick={handleCreatePlaylist}
               disabled={!newPlaylistName.trim() || createPlaylist.isPending}
-              className="rounded-xl bg-primary hover:brightness-90 text-white"
+              className="rounded-card bg-primary hover:brightness-90 text-white"
             >
               Create & Add
             </Button>

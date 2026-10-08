@@ -191,7 +191,7 @@ export const AdminEmailManagementSection = () => {
       <CardContent>
         <div className="space-y-4">
           {emailSettings?.map((setting) => (
-            <div key={setting.id} className="flex items-center justify-between p-4 border rounded-lg">
+            <div key={setting.id} className="flex items-center justify-between p-4 border rounded-card">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <p className="font-medium">{setting.email}</p>

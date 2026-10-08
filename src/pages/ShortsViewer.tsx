@@ -169,7 +169,7 @@ const ShortsViewer = () => {
           <p className="text-lg mb-4">No shorts available</p>
           <button
             onClick={() => navigate("/videos")}
-            className="px-6 py-2 bg-primary text-primary-foreground rounded-full text-sm font-semibold hover:brightness-95 transition"
+            className="px-6 py-2 bg-primary text-primary-foreground rounded-control text-sm font-semibold hover:brightness-95 transition"
           >
             Back to Videos
           </button>
@@ -290,7 +290,7 @@ const ShortsViewer = () => {
             } ${
               isMobile
                 ? "w-full h-full"
-                : "rounded-[28px] ring-1 ring-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]"
+                : "rounded-card ring-1 ring-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]"
             }`}
             style={
               isMobile

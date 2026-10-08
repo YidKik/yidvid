@@ -67,7 +67,7 @@ export const Sidebar = () => {
   return (
     <ShadcnSidebar className="border-r border-border bg-card text-card-foreground sidebar">
       <motion.button
-        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow border border-border"
+        className="fixed top-4 left-4 z-50 p-2 rounded-card bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow border border-border"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -95,7 +95,7 @@ export const Sidebar = () => {
                     {menuGroups.map((group, groupIndex) => (
                       <div key={groupIndex} className="mb-2">
                         <motion.button
-                          className="w-full p-2 rounded-lg hover:bg-surface-hover flex items-center justify-center"
+                          className="w-full p-2 rounded-control hover:bg-surface-hover flex items-center justify-center"
                           onClick={() => setExpandedGroup(expandedGroup === groupIndex ? null : groupIndex)}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}

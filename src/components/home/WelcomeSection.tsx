@@ -36,13 +36,13 @@ export const WelcomeSection = () => {
         <div className="flex justify-center gap-4 flex-wrap">
           <a 
             href="/videos" 
-            className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors"
+            className="px-6 py-3 bg-primary text-white font-medium rounded-control hover:bg-primary-hover transition-colors"
           >
             Explore Videos
           </a>
           <a 
             href="/channel" 
-            className="px-6 py-3 border border-brand text-brand font-medium rounded-lg hover:bg-red-50 transition-colors"
+            className="px-6 py-3 border border-brand text-brand font-medium rounded-control hover:bg-red-50 transition-colors"
           >
             Browse Channels
           </a>

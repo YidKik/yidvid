@@ -132,7 +132,7 @@ export const UserAnalyticsSection = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="p-6 bg-gray-100 rounded-xl text-center">
+      <div className="p-6 bg-gray-100 rounded-card text-center">
         <Play className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
         <p className="text-muted-foreground font-medium">Sign in to see your viewing stats</p>
         <p className="text-sm text-muted-foreground mt-1">Track your watch history and activity</p>
@@ -199,7 +199,7 @@ export const UserAnalyticsSection = () => {
           className={`p-4 ${stat.lightColor} border-0 shadow-sm hover:shadow-md transition-shadow`}
         >
           <div className="flex items-start justify-between mb-2">
-            <div className={`p-2 rounded-lg ${stat.color}`}>
+            <div className={`p-2 rounded-control ${stat.color}`}>
               <stat.icon className="h-4 w-4 text-white" />
             </div>
           </div>

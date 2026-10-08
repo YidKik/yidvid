@@ -38,7 +38,7 @@ export const AnalyticsPage = ({ userId }: AnalyticsPageProps) => {
       </div>
 
       {/* Google Analytics */}
-      <div className="bg-white rounded-xl border border-[hsl(220,13%,91%)] p-6">
+      <div className="bg-white rounded-card border border-[hsl(220,13%,91%)] p-6">
         <h2 className="text-base font-semibold text-[hsl(220,15%,18%)] mb-4">Google Analytics</h2>
         <GoogleAnalyticsOverview />
       </div>

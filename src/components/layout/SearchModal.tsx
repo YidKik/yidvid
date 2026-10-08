@@ -114,7 +114,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
             className="fixed inset-0 z-[101] flex items-center justify-center p-4"
           >
             <div 
-              className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-red-100 dark:border-red-900/30"
+              className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-dialog shadow-overlay overflow-hidden border border-red-100 dark:border-red-900/30"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header accent bar */}
@@ -125,7 +125,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="absolute top-5 right-4 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 z-10 transition-colors"
+                className="absolute top-5 right-4 rounded-control hover:bg-red-50 dark:hover:bg-red-900/20 z-10 transition-colors"
               >
                 <X className="w-5 h-5 text-red-400" />
               </Button>
@@ -134,7 +134,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               <div className="p-8 pt-10">
                 {/* Header */}
                 <div className="text-center mb-4">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-900/20 mb-3">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-control bg-red-50 dark:bg-red-900/20 mb-3">
                     <Search className="w-4 h-4 text-brand" />
                     <span className="text-sm font-medium text-brand dark:text-red-400">Search YidVid</span>
                   </div>
@@ -155,7 +155,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 <form onSubmit={handleSearch}>
                   <div className="relative">
                     <div 
-                      className="flex items-center gap-3 px-6 py-4 rounded-2xl border-2 border-warning/40 dark:border-brand bg-warning-bg/50 dark:bg-yellow-900/10 transition-all duration-200 focus-within:border-red-400 focus-within:shadow-lg focus-within:shadow-red-100/50 dark:focus-within:shadow-red-900/20"
+                      className="flex items-center gap-3 px-6 py-4 rounded-card border-2 border-warning/40 dark:border-brand bg-warning-bg/50 dark:bg-yellow-900/10 transition-all duration-200 focus-within:border-red-400 focus-within:shadow-lg focus-within:shadow-red-100/50 dark:focus-within:shadow-red-900/20"
                     >
                       <Search className="w-6 h-6 shrink-0 text-brand dark:text-brand" />
                       <input
@@ -173,7 +173,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                           variant="ghost"
                           size="icon"
                           onClick={() => setSearchQuery("")}
-                          className="shrink-0 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="shrink-0 rounded-control hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
                           <X className="w-4 h-4 text-red-400" />
                         </Button>
@@ -184,7 +184,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                   {/* Search Button */}
                   <motion.button
                     type="submit"
-                    className="w-full mt-6 py-4 rounded-2xl font-bold text-lg transition-all duration-200 bg-gradient-to-r from-brand to-brand hover:from-brand hover:to-red-700 text-white shadow-lg shadow-red-200/50 dark:shadow-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full mt-6 py-4 rounded-card font-bold text-lg transition-all duration-200 bg-gradient-to-r from-brand to-brand hover:from-brand hover:to-red-700 text-white shadow-raised shadow-red-200/50 dark:shadow-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ fontFamily: "'Quicksand', sans-serif" }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -207,7 +207,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                         navigate(`/search?q=${encodeURIComponent(tag)}`);
                         onClose();
                       }}
-                      className="px-4 py-2 rounded-full text-sm font-medium bg-muted/50 text-muted-foreground hover:bg-red-50 hover:text-brand dark:hover:bg-red-900/20 dark:hover:text-red-400 border border-transparent hover:border-red-200 dark:hover:border-red-800 transition-all"
+                      className="px-4 py-2 rounded-control text-sm font-medium bg-muted/50 text-muted-foreground hover:bg-red-50 hover:text-brand dark:hover:bg-red-900/20 dark:hover:text-red-400 border border-transparent hover:border-red-200 dark:hover:border-red-800 transition-all"
                       style={{ fontFamily: "'Quicksand', sans-serif" }}
                     >
                       {tag}

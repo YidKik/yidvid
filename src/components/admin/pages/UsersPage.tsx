@@ -93,7 +93,7 @@ export const UsersPage = ({ currentUserId }: UsersPageProps) => {
 };
 
 const Section = ({ title, count, children }: { title: string; count: number; children: React.ReactNode }) => (
-  <div className="bg-white rounded-xl border border-[hsl(220,13%,91%)]">
+  <div className="bg-white rounded-card border border-[hsl(220,13%,91%)]">
     <div className="px-5 py-3 border-b border-[hsl(220,13%,93%)]">
       <h3 className="text-sm font-semibold text-[hsl(220,15%,18%)]">
         {title} <span className="text-[hsl(220,10%,55%)] font-normal">({count})</span>
@@ -106,7 +106,7 @@ const Section = ({ title, count, children }: { title: string; count: number; chi
 const UserRow = ({ user, onToggle, isCurrentUser }: { user: any; onToggle: (id: string, current: boolean) => void; isCurrentUser: boolean }) => (
   <div className="flex items-center justify-between px-5 py-3">
     <div className="flex items-center gap-3 min-w-0">
-      <div className="w-8 h-8 rounded-full bg-[hsl(220,14%,92%)] flex items-center justify-center text-xs font-medium text-[hsl(220,15%,35%)]">
+      <div className="w-8 h-8 rounded-control bg-[hsl(220,14%,92%)] flex items-center justify-center text-xs font-medium text-[hsl(220,15%,35%)]">
         {(user.display_name || user.email || "U")[0].toUpperCase()}
       </div>
       <div className="min-w-0">

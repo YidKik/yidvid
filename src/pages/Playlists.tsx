@@ -88,7 +88,7 @@ const Playlists = () => {
       <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
         <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-12">
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
+            <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-card bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
               <ListMusic className="w-12 h-12 text-brand" />
             </div>
             <h1 className="text-2xl font-bold text-foreground mb-2 font-friendly">Sign in to view your playlists</h1>
@@ -97,7 +97,7 @@ const Playlists = () => {
             </p>
             <Button
               onClick={() => setIsAuthOpen(true)}
-              className="rounded-full gap-2 bg-primary hover:bg-primary-hover text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
+              className="rounded-control gap-2 bg-primary hover:bg-primary-hover text-white px-8 py-3 font-semibold transition-all"
             >
               <LogIn className="w-4 h-4" />
               Sign In
@@ -126,7 +126,7 @@ const Playlists = () => {
           {/* Header */}
           <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-lg`}>
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-card bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-raised`}>
                 <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
@@ -141,11 +141,11 @@ const Playlists = () => {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100">
+                <Button variant="ghost" size="icon" className="rounded-control hover:bg-gray-100">
                   <MoreVertical className="w-5 h-5 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-xl shadow-lg">
+              <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-card shadow-raised">
                 <DropdownMenuItem
                   onClick={() => {
                     setEditingPlaylist({
@@ -176,9 +176,9 @@ const Playlists = () => {
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex gap-4 animate-pulse">
-                  <div className="w-44 aspect-video bg-gray-100 rounded-xl" />
+                  <div className="w-44 aspect-video bg-gray-100 rounded-card" />
                   <div className="flex-1">
-                    <div className="h-4 bg-gray-100 rounded-full w-3/4 mb-2" />
+                    <div className="h-4 bg-gray-100 rounded-badge w-3/4 mb-2" />
                     <div className="h-3 bg-gray-100 rounded-full w-1/2" />
                   </div>
                 </div>
@@ -186,14 +186,14 @@ const Playlists = () => {
             </div>
           ) : !playlistItems || playlistItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-20 h-20 rounded-full bg-brand-soft flex items-center justify-center mb-4">
+              <div className="w-20 h-20 rounded-card bg-brand-soft flex items-center justify-center mb-4">
                 <ListMusic className="w-10 h-10 text-red-400" />
               </div>
               <h2 className="text-lg font-semibold text-foreground mb-2 font-friendly">No videos in this playlist</h2>
               <p className="text-muted-foreground">Add videos from any video page using the menu.</p>
               <Button
                 onClick={() => navigate('/videos')}
-                className="mt-6 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+                className="mt-6 rounded-control bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 transition-all"
               >
                 Browse Videos
               </Button>
@@ -206,10 +206,10 @@ const Playlists = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className={`${isMobile ? 'flex-col' : 'flex'} gap-3 p-3 rounded-2xl hover:bg-gray-50 transition-all group cursor-pointer border border-transparent hover:border-gray-100 hover:shadow-sm`}
+                  className={`${isMobile ? 'flex-col' : 'flex'} gap-3 p-3 rounded-card hover:bg-gray-50 transition-all group cursor-pointer border border-transparent hover:border-gray-100 hover:shadow-sm`}
                   onClick={() => navigate(`/video/${item.video?.video_id}?playlist=${selectedPlaylistId}`)}
                 >
-                  <div className={`relative ${isMobile ? 'w-full' : 'w-44'} aspect-video rounded-xl overflow-hidden bg-gray-100 shrink-0 shadow-sm`}>
+                  <div className={`relative ${isMobile ? 'w-full' : 'w-44'} aspect-video rounded-card overflow-hidden bg-gray-100 shrink-0 shadow-sm`}>
                     <img
                       src={item.video?.thumbnail}
                       alt={cleanVideoTitle(item.video?.title)}
@@ -231,7 +231,7 @@ const Playlists = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-brand hover:bg-red-50"
+                      className="h-9 w-9 rounded-control opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-brand hover:bg-red-50"
                       onClick={() => removeFromPlaylist.mutate({ playlistId: selectedPlaylistId, videoId: item.video?.id })}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -246,7 +246,7 @@ const Playlists = () => {
 
         {/* Edit Playlist Dialog */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent className="sm:max-w-md bg-white rounded-2xl border-0 shadow-xl">
+          <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-overlay">
             <DialogHeader>
               <DialogTitle className="text-xl font-bold font-friendly">Edit Playlist</DialogTitle>
             </DialogHeader>
@@ -255,24 +255,24 @@ const Playlists = () => {
                 placeholder="Playlist name"
                 value={editingPlaylist?.title || ""}
                 onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, title: e.target.value } : null)}
-                className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand"
+                className="rounded-card border-gray-200 focus:border-brand focus:ring-brand"
               />
               <Textarea
                 placeholder="Description (optional)"
                 value={editingPlaylist?.description || ""}
                 onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, description: e.target.value } : null)}
-                className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand resize-none"
+                className="rounded-card border-gray-200 focus:border-brand focus:ring-brand resize-none"
                 rows={3}
               />
             </div>
             <DialogFooter>
-              <Button variant="ghost" onClick={() => setShowEditDialog(false)} className="rounded-xl">
+              <Button variant="ghost" onClick={() => setShowEditDialog(false)} className="rounded-control">
                 Cancel
               </Button>
               <Button
                 onClick={handleUpdatePlaylist}
                 disabled={!editingPlaylist?.title.trim() || updatePlaylist.isPending}
-                className="rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold"
+                className="rounded-card bg-primary hover:bg-primary-hover text-white font-semibold"
               >
                 Save Changes
               </Button>
@@ -290,7 +290,7 @@ const Playlists = () => {
         {/* Header */}
           <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-lg`}>
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-card bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-raised`}>
                 <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
@@ -300,7 +300,7 @@ const Playlists = () => {
           </div>
           <Button
             onClick={() => setShowCreateDialog(true)}
-            className={`rounded-full gap-2 bg-primary hover:bg-primary-hover text-white font-semibold ${isMobile ? 'px-4 text-xs' : 'px-6'} shadow-md hover:shadow-lg transition-all`}
+            className={`rounded-control gap-2 bg-primary hover:bg-primary-hover text-white font-semibold ${isMobile ? 'px-4 text-xs' : 'px-6'} transition-all`}
           >
             <Plus className="w-4 h-4" />
             New Playlist
@@ -312,14 +312,14 @@ const Playlists = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="aspect-video bg-gray-100 rounded-2xl mb-3" />
-                <div className="h-4 bg-gray-100 rounded-full w-3/4" />
+                <div className="aspect-video bg-gray-100 rounded-card mb-3" />
+                <div className="h-4 bg-gray-100 rounded-badge w-3/4" />
               </div>
             ))}
           </div>
         ) : !playlists || playlists.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-24 h-24 rounded-full bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
+            <div className="w-24 h-24 rounded-card bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
               <ListMusic className="w-12 h-12 text-red-400" />
             </div>
             <h2 className="text-xl font-semibold text-foreground mb-2 font-friendly">No playlists yet</h2>
@@ -328,7 +328,7 @@ const Playlists = () => {
             </p>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="rounded-full gap-2 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+              className="rounded-control gap-2 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 transition-all"
             >
               <Plus className="w-4 h-4" />
               Create Playlist
@@ -342,10 +342,10 @@ const Playlists = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03 }}
-                className="group cursor-pointer bg-white rounded-2xl p-5 hover:shadow-lg transition-all border border-gray-100 hover:border-gray-200"
+                className="group cursor-pointer bg-white rounded-card p-5 hover:shadow-raised transition-all border border-gray-100 hover:border-gray-200"
                 onClick={() => setSearchParams({ id: playlist.id })}
               >
-                <div className="relative aspect-video rounded-xl overflow-hidden bg-brand-soft mb-4 flex items-center justify-center shadow-sm">
+                <div className="relative aspect-video rounded-card overflow-hidden bg-brand-soft mb-4 flex items-center justify-center shadow-sm">
                   <ListMusic className="w-14 h-14 text-red-400" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   {/* Play overlay */}
@@ -366,11 +366,11 @@ const Playlists = () => {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full shrink-0 hover:bg-gray-100">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-control shrink-0 hover:bg-gray-100">
                         <MoreVertical className="w-4 h-4 text-muted-foreground" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-xl shadow-lg">
+                    <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-card shadow-raised">
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
@@ -408,7 +408,7 @@ const Playlists = () => {
 
       {/* Create Playlist Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="sm:max-w-md bg-white rounded-2xl border-0 shadow-xl">
+        <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-overlay">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-friendly">Create New Playlist</DialogTitle>
           </DialogHeader>
@@ -417,24 +417,24 @@ const Playlists = () => {
               placeholder="Playlist name"
               value={newPlaylistTitle}
               onChange={(e) => setNewPlaylistTitle(e.target.value)}
-              className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand"
+              className="rounded-card border-gray-200 focus:border-brand focus:ring-brand"
             />
             <Textarea
               placeholder="Description (optional)"
               value={newPlaylistDescription}
               onChange={(e) => setNewPlaylistDescription(e.target.value)}
-              className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand resize-none"
+              className="rounded-card border-gray-200 focus:border-brand focus:ring-brand resize-none"
               rows={3}
             />
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowCreateDialog(false)} className="rounded-xl">
+            <Button variant="ghost" onClick={() => setShowCreateDialog(false)} className="rounded-control">
               Cancel
             </Button>
             <Button
               onClick={handleCreatePlaylist}
               disabled={!newPlaylistTitle.trim() || createPlaylist.isPending}
-              className="rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold"
+              className="rounded-card bg-primary hover:bg-primary-hover text-white font-semibold"
             >
               Create
             </Button>
@@ -444,7 +444,7 @@ const Playlists = () => {
 
       {/* Edit Playlist Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="sm:max-w-md bg-white rounded-2xl border-0 shadow-xl">
+        <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-overlay">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-friendly">Edit Playlist</DialogTitle>
           </DialogHeader>
@@ -453,24 +453,24 @@ const Playlists = () => {
               placeholder="Playlist name"
               value={editingPlaylist?.title || ""}
               onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, title: e.target.value } : null)}
-              className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand"
+              className="rounded-card border-gray-200 focus:border-brand focus:ring-brand"
             />
             <Textarea
               placeholder="Description (optional)"
               value={editingPlaylist?.description || ""}
               onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, description: e.target.value } : null)}
-              className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand resize-none"
+              className="rounded-card border-gray-200 focus:border-brand focus:ring-brand resize-none"
               rows={3}
             />
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowEditDialog(false)} className="rounded-xl">
+            <Button variant="ghost" onClick={() => setShowEditDialog(false)} className="rounded-control">
               Cancel
             </Button>
             <Button
               onClick={handleUpdatePlaylist}
               disabled={!editingPlaylist?.title.trim() || updatePlaylist.isPending}
-              className="rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold"
+              className="rounded-card bg-primary hover:bg-primary-hover text-white font-semibold"
             >
               Save Changes
             </Button>

@@ -41,15 +41,15 @@ export const SitemapManager = () => {
       <CardContent className="space-y-4">
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-muted/50 rounded-lg p-4">
+            <div className="bg-muted/50 rounded-card p-4">
               <p className="text-sm text-muted-foreground">Total URLs</p>
               <p className="text-2xl font-bold">{stats.totalUrls}</p>
             </div>
-            <div className="bg-muted/50 rounded-lg p-4">
+            <div className="bg-muted/50 rounded-card p-4">
               <p className="text-sm text-muted-foreground">Static Pages</p>
               <p className="text-2xl font-bold">{stats.staticPages}</p>
             </div>
-            <div className="bg-muted/50 rounded-lg p-4">
+            <div className="bg-muted/50 rounded-card p-4">
               <p className="text-sm text-muted-foreground">Video Pages</p>
               <p className="text-2xl font-bold">{stats.videoPages}</p>
             </div>
@@ -66,7 +66,7 @@ export const SitemapManager = () => {
             Download Updated Sitemap
           </Button>
           
-          <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-2">
+          <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-card p-4 space-y-2">
             <h4 className="font-semibold text-sm flex items-center gap-2">
               <AlertCircle className="w-4 h-4" />
               Next Steps
@@ -80,7 +80,7 @@ export const SitemapManager = () => {
           </div>
         </div>
         
-        <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4 space-y-2">
+        <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-card p-4 space-y-2">
           <h4 className="font-semibold text-sm flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4" />
             Submit to Search Engines

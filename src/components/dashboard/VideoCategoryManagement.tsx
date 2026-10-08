@@ -133,7 +133,7 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
-            <SelectContent className="bg-popover text-popover-foreground shadow-lg border border-border rounded-md z-50">
+            <SelectContent className="bg-popover text-popover-foreground border border-border rounded-control z-50">
               {defaultCategories.map((category) => (
                 <SelectItem key={category.value} value={category.value}>
                   {category.label}
@@ -149,7 +149,7 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
         </div>
       </div>
 
-      <div className="bg-card text-card-foreground rounded-lg shadow border border-border">
+      <div className="bg-card text-card-foreground rounded-card shadow border border-border">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -186,12 +186,12 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
                     <div className="text-sm text-muted-foreground">{video.channel_name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-control bg-gray-100">
                       {getChannelCategory(video.channel_id)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-control bg-gray-100">
                       {video.category || "No category"}
                     </span>
                     {video.category !== getChannelCategory(video.channel_id) && video.category && getChannelCategory(video.channel_id) !== "none" && (

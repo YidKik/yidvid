@@ -214,7 +214,7 @@ export const SettingsProfile = () => {
 
       {/* Remove Avatar Confirmation Dialog */}
       <Dialog open={isRemoveAvatarDialogOpen} onOpenChange={setIsRemoveAvatarDialogOpen}>
-        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-xl">
+        <DialogContent className="rounded-dialog max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-overlay">
           <DialogHeader className="text-center sm:text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted dark:bg-card">
               <ImageOff className="h-6 w-6 text-muted-foreground" />
@@ -228,7 +228,7 @@ export const SettingsProfile = () => {
             <Button
               onClick={() => removeAvatar.mutate()}
               disabled={removeAvatar.isPending}
-              className="w-full bg-primary hover:bg-primary-hover text-white rounded-xl h-10 font-semibold"
+              className="w-full bg-primary hover:bg-primary-hover text-white rounded-card h-10 font-semibold"
             >
               {removeAvatar.isPending ? "Removing..." : "Yes, Remove"}
             </Button>
@@ -236,7 +236,7 @@ export const SettingsProfile = () => {
               variant="outline"
               onClick={() => setIsRemoveAvatarDialogOpen(false)}
               disabled={removeAvatar.isPending}
-              className="w-full rounded-xl h-10 font-semibold"
+              className="w-full rounded-card h-10 font-semibold"
             >
               Cancel
             </Button>
@@ -253,7 +253,7 @@ export const SettingsProfile = () => {
       </div>
 
       {/* Video Digest Email Preferences */}
-      <div className="mb-8 p-4 rounded-xl bg-muted dark:bg-background border border-border dark:border-border">
+      <div className="mb-8 p-4 rounded-card bg-muted dark:bg-background border border-border dark:border-border">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2.5">
             <Bell className="h-4 w-4 text-brand" />
@@ -302,7 +302,7 @@ export const SettingsProfile = () => {
         <Button
           onClick={signOut}
           variant="outline"
-          className="w-full h-11 rounded-xl font-semibold text-foreground dark:text-foreground border-border dark:border-border hover:bg-surface-hover dark:hover:bg-secondary"
+          className="w-full h-11 rounded-card font-semibold text-foreground dark:text-foreground border-border dark:border-border hover:bg-surface-hover dark:hover:bg-secondary"
         >
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
@@ -312,15 +312,15 @@ export const SettingsProfile = () => {
           <DialogTrigger asChild>
             <Button
               variant="outline"
-              className="w-full h-11 rounded-xl font-semibold text-brand border-brand/30 hover:bg-primary/5 hover:border-brand/50"
+              className="w-full h-11 rounded-card font-semibold text-brand border-brand/30 hover:bg-primary/5 hover:border-brand/50"
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Delete Account
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-2xl max-w-md">
+          <DialogContent className="rounded-dialog max-w-md">
             <DialogHeader className="text-center sm:text-center">
-              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-card bg-primary/10">
                 <AlertTriangle className="h-7 w-7 text-brand" />
               </div>
               <DialogTitle className="text-brand text-xl font-bold">Delete Account</DialogTitle>
@@ -330,11 +330,11 @@ export const SettingsProfile = () => {
             </DialogHeader>
             <DialogFooter className="flex flex-col gap-3 sm:flex-col pt-4">
               <Button onClick={handleDeleteAccount} disabled={isDeleting}
-                className="w-full bg-primary hover:bg-primary-hover text-white rounded-xl h-11 font-semibold">
+                className="w-full bg-primary hover:bg-primary-hover text-white rounded-card h-11 font-semibold">
                 {isDeleting ? "Deleting..." : "Yes, Delete My Account"}
               </Button>
               <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isDeleting}
-                className="w-full rounded-xl h-11 font-semibold">
+                className="w-full rounded-card h-11 font-semibold">
                 Cancel
               </Button>
             </DialogFooter>
@@ -347,7 +347,7 @@ export const SettingsProfile = () => {
 
 function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 px-3 rounded-xl bg-muted dark:bg-background border border-border dark:border-border">
+    <div className="flex items-center gap-3 py-2.5 px-3 rounded-control bg-muted dark:bg-background border border-border dark:border-border">
       <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="text-xs text-muted-foreground font-medium">{label}</p>

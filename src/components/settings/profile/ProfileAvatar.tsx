@@ -49,7 +49,7 @@ export const ProfileAvatar = ({
         <Button
           variant="ghost"
           size="icon"
-          className="absolute inset-0 bg-primary/40 hover:bg-primary/60 rounded-full flex items-center justify-center text-primary-foreground"
+          className="absolute inset-0 bg-primary/40 hover:bg-primary/60 rounded-control flex items-center justify-center text-primary-foreground"
           onClick={handleEditAvatar}
         >
           <Camera className="h-5 w-5" />

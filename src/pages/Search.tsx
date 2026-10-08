@@ -178,7 +178,7 @@ const Search = () => {
                 <Link
                   key={channel.id}
                   to={`/channel/${channel.channel_id}`}
-                  className="group flex items-center gap-2.5 px-3 py-2 rounded-full bg-muted dark:bg-card border border-border dark:border-border hover:border-brand hover:bg-white dark:hover:bg-card transition-all duration-200"
+                  className="group flex items-center gap-2.5 px-3 py-2 rounded-control bg-muted dark:bg-card border border-border dark:border-border hover:border-brand hover:bg-white dark:hover:bg-card transition-all duration-200"
                 >
                   <Avatar className={`${isMobile ? 'w-7 h-7' : 'w-8 h-8'} flex-shrink-0`}>
                     <AvatarImage src={channel.thumbnail_url} alt={channel.title} />
@@ -211,7 +211,7 @@ const Search = () => {
                   className="cursor-pointer group"
                   onClick={() => navigate(`/shorts/${short.video_id}`)}
                 >
-                  <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '9/16' }}>
+                  <div className="relative w-full overflow-hidden rounded-card" style={{ aspectRatio: '9/16' }}>
                     <img
                       src={short.thumbnail}
                       alt={cleanVideoTitle(short.title)}
@@ -256,10 +256,10 @@ const Search = () => {
                 <Link
                   key={video.id}
                   to={`/video/${video.video_id || video.id}`}
-                  className="group flex gap-3 rounded-xl hover:bg-surface-hover dark:hover:bg-card transition-colors p-1.5 -mx-1.5"
+                  className="group flex gap-3 rounded-card hover:bg-surface-hover dark:hover:bg-card transition-colors p-1.5 -mx-1.5"
                 >
                   {/* Thumbnail */}
-                  <div className={`${isMobile ? 'w-[140px]' : 'w-[280px]'} flex-shrink-0 aspect-video rounded-xl overflow-hidden bg-muted dark:bg-card relative`}>
+                  <div className={`${isMobile ? 'w-[140px]' : 'w-[280px]'} flex-shrink-0 aspect-video rounded-card overflow-hidden bg-muted dark:bg-card relative`}>
                     <img
                       src={video.thumbnail || "/placeholder.svg"}
                       alt={cleanVideoTitle(video.title)}

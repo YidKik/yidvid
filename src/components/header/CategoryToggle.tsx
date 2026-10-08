@@ -36,7 +36,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
 
   // Match the header icon button styling
   const isFilled = isVideosPage || isSearchPage;
-  const buttonClass = `h-9 w-9 rounded-full ${isFilled ? '' : 'bg-secondary hover:bg-surface-active text-white'}`;
+  const buttonClass = `h-9 w-9 rounded-control ${isFilled ? '' : 'bg-secondary hover:bg-surface-active text-white'}`;
 
   return (
     <>
@@ -70,7 +70,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                 animate={{ x: 0 }}
                 exit={{ x: -280 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="fixed left-0 top-[80px] z-50 w-64 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl rounded-r-3xl border-2 border-red-400"
+                className="fixed left-0 top-[80px] z-50 w-64 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl rounded-r-card border-2 border-red-400"
               >
                 <div className="p-5">
                   <div className="flex items-center justify-between mb-4">
@@ -79,7 +79,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                       variant="ghost"
                       size="icon"
                       onClick={() => setIsOpen(false)}
-                      className="h-7 w-7 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                      className="h-7 w-7 rounded-control hover:bg-red-50 dark:hover:bg-red-900/20"
                     >
                       <span className="text-lg text-brand">×</span>
                     </Button>
@@ -94,7 +94,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                           setIsOpen(false);
                         }}
                         className={cn(
-                          "w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-friendly font-medium transition-all duration-200",
+                          "w-full text-left px-3.5 py-2.5 rounded-control text-sm font-friendly font-medium transition-all duration-200",
                           "hover:bg-red-50 hover:text-brand dark:hover:bg-red-900/20",
                           selectedCategory === category.id
                             ? "bg-primary text-white shadow-md"

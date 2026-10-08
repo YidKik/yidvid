@@ -140,7 +140,7 @@ export const RestoreDeletedItems = () => {
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {deletedVideos?.map((video) => (
-                <div key={video.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                <div key={video.id} className="flex items-center justify-between p-3 bg-muted rounded-card">
                   <div className="flex-1">
                     <h4 className="font-medium truncate">{video.title}</h4>
                     <p className="text-sm text-muted-foreground">
@@ -176,7 +176,7 @@ export const RestoreDeletedItems = () => {
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {deletedChannels?.map((channel) => (
-                <div key={channel.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                <div key={channel.id} className="flex items-center justify-between p-3 bg-muted rounded-card">
                   <div className="flex-1">
                     <h4 className="font-medium">{channel.title}</h4>
                     <p className="text-sm text-muted-foreground">

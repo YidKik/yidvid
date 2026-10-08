@@ -10,7 +10,7 @@ export const VideoPlaceholder = ({ size = 'medium' }: VideoPlaceholderProps) => 
                       'h-48';
   
   return (
-    <div className={`${heightClass} w-full flex items-center justify-center bg-muted/10 rounded-lg`}>
+    <div className={`${heightClass} w-full flex items-center justify-center bg-muted/10 rounded-control`}>
       {/* Intentionally minimal - loading shown by yellow bar at top */}
     </div>
   );

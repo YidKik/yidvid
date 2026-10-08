@@ -100,7 +100,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 repeatType: "reverse",
                 ease: "easeInOut"
               }}
-              className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-gradient-to-r from-red-200/20 to-pink-200/20"
+              className="absolute top-1/4 left-1/4 w-96 h-96 rounded-card bg-gradient-to-r from-red-200/20 to-pink-200/20"
             />
             
             <motion.div
@@ -118,7 +118,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 ease: "easeInOut",
                 delay: 2
               }}
-              className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-gradient-to-r from-pink-200/15 to-red-200/15"
+              className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-card bg-gradient-to-r from-pink-200/15 to-red-200/15"
             />
             
             {/* Small floating dots for subtle movement */}
@@ -155,7 +155,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
             onClick={handleSkip}
-            className="absolute top-6 right-6 z-10 p-3 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white/90 transition-colors text-muted-foreground shadow-lg"
+            className="absolute top-6 right-6 z-10 p-3 rounded-control bg-white/80 backdrop-blur-sm hover:bg-white/90 transition-colors text-muted-foreground shadow-lg"
           >
             <X className="w-6 h-6" />
           </motion.button>
@@ -270,7 +270,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                     initial={{ width: '0%' }}
                     animate={{ width: preloadComplete ? '100%' : '60%' }}
                     transition={{ duration: preloadComplete ? 0.5 : 2, ease: "linear" }}
-                    className="h-full bg-primary rounded-full"
+                    className="h-full bg-primary rounded-control"
                   />
                 </div>
               </motion.div>

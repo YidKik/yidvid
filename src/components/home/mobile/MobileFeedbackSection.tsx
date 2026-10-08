@@ -106,7 +106,7 @@ export const MobileFeedbackSection = () => {
                 key={testimonial.id}
                 className="w-[75vw] flex-shrink-0 first:ml-4 last:mr-4 snap-center"
               >
-                <div className="border border-[#ddf9f2] rounded-2xl p-4 bg-[#135d66] min-h-[100px] flex flex-col">
+                <div className="border border-[#ddf9f2] rounded-card p-4 bg-[#135d66] min-h-[100px] flex flex-col">
                   <p className="text-[#e3fef7] text-sm leading-relaxed line-clamp-3">
                     {testimonial.content}
                   </p>

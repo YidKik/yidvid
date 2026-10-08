@@ -29,7 +29,7 @@ export const Footer = () => {
             <motion.button
               key={label}
               onClick={action}
-              className="group flex items-center gap-3 px-10 py-4 rounded-full border border-[#77b0aa]/30 text-[#ddf9f2] text-lg hover:bg-[#77b0aa]/10 hover:border-[#ddf9f2]/40 transition-all duration-300"
+              className="group flex items-center gap-3 px-10 py-4 rounded-control border border-[#77b0aa]/30 text-[#ddf9f2] text-lg hover:bg-[#77b0aa]/10 hover:border-[#ddf9f2]/40 transition-all duration-300"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >

@@ -30,7 +30,7 @@ export const LivePreview = ({ sections }: LivePreviewProps) => {
           <div
             key={section.id}
             className={`
-              bg-white rounded-lg border-2 border-dashed border-gray-300
+              bg-white rounded-card border-2 border-dashed border-gray-300
               ${section.spacing.marginTop}
               ${section.spacing.marginBottom}
               ${section.spacing.padding}

@@ -56,7 +56,7 @@ export const ChannelControl = () => {
 
   if (!isAuthenticated || !session?.user?.id) {
     return (
-      <Card className="p-3 md:p-6 bg-gradient-to-br from-primary/5 to-card border-2 border-primary/30 shadow-lg rounded-3xl">
+      <Card className="p-3 md:p-6 bg-gradient-to-br from-primary/5 to-card border-2 border-primary/30 shadow-raised rounded-card">
         <div className="space-y-4 text-center py-6">
           <AlertDescription className="text-foreground mb-4 font-medium">
             You need to be signed in to manage your channel preferences.
@@ -74,7 +74,7 @@ export const ChannelControl = () => {
   }
 
   return (
-    <Card className="p-4 md:p-8 bg-gradient-to-br from-primary/5 to-card border-2 border-primary/30 shadow-lg rounded-3xl">
+    <Card className="p-4 md:p-8 bg-gradient-to-br from-primary/5 to-card border-2 border-primary/30 shadow-raised rounded-card">
       <div className="space-y-6">
         <ChannelControlHeader
           isLocked={isLocked}

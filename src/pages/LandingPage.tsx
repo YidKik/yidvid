@@ -130,7 +130,7 @@ const LandingPage = () => {
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className={`group relative rounded-2xl ${isMobile ? 'p-3 text-center flex flex-col items-center' : isTablet ? 'p-4 text-center flex flex-col items-center' : 'p-6'} border-2 transition-all duration-300 hover:shadow-lg cursor-pointer bg-white`}
+                className={`group relative rounded-card ${isMobile ? 'p-3 text-center flex flex-col items-center' : isTablet ? 'p-4 text-center flex flex-col items-center' : 'p-6'} border-2 transition-all duration-300 hover:shadow-raised cursor-pointer bg-white`}
                 style={{
                   borderColor: 'hsl(var(--border))'
                 }}
@@ -139,7 +139,7 @@ const LandingPage = () => {
                 animate="rest"
               >
                 <motion.div 
-                  className={`${isMobile ? 'w-10 h-10 rounded-lg mb-2' : isTablet ? 'w-11 h-11 rounded-lg mb-3' : 'w-14 h-14 rounded-xl mb-4'} flex items-center justify-center bg-muted`}
+                  className={`${isMobile ? 'w-10 h-10 rounded-control mb-2' : isTablet ? 'w-11 h-11 rounded-control mb-3' : 'w-14 h-14 rounded-card mb-4'} flex items-center justify-center bg-muted`}
                   variants={{ rest: { y: 0 }, hover: { y: -5 } }}
                   transition={{ duration: 0.3 }}
                 >
@@ -201,7 +201,7 @@ const LandingPage = () => {
               <motion.button
                 key={category.label}
                 onClick={() => navigate(category.path)}
-                className={`group relative flex flex-col items-center ${isMobile ? 'gap-1.5 px-3 py-4' : isTablet ? 'gap-2 px-4 py-5' : 'gap-3 px-6 py-8'} rounded-2xl font-semibold transition-all duration-500 overflow-hidden bg-white border border-border`}
+                className={`group relative flex flex-col items-center ${isMobile ? 'gap-1.5 px-3 py-4' : isTablet ? 'gap-2 px-4 py-5' : 'gap-3 px-6 py-8'} rounded-card font-semibold transition-all duration-500 overflow-hidden bg-white border border-border`}
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: 'hsl(var(--foreground))',
@@ -220,7 +220,7 @@ const LandingPage = () => {
                 
                 {/* Icon container */}
                 <div 
-                  className={`relative z-10 ${isMobile ? 'w-10 h-10 rounded-lg' : isTablet ? 'w-11 h-11 rounded-lg' : 'w-14 h-14 rounded-xl'} flex items-center justify-center transition-all duration-300 group-hover:scale-110 bg-muted`}
+                  className={`relative z-10 ${isMobile ? 'w-10 h-10 rounded-control' : isTablet ? 'w-11 h-11 rounded-control' : 'w-14 h-14 rounded-card'} flex items-center justify-center transition-all duration-300 group-hover:scale-110 bg-muted`}
                 >
                   <category.icon className={`${isMobile ? 'w-5 h-5' : isTablet ? 'w-5 h-5' : 'w-7 h-7'} transition-colors duration-300`} style={{ color: 'hsl(var(--brand))' }} />
                 </div>
@@ -244,7 +244,7 @@ const LandingPage = () => {
           >
             <motion.button
               onClick={() => navigate('/videos')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-primary text-white`}
+              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-card overflow-hidden bg-primary text-white`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 boxShadow: '0 6px 25px rgba(255, 0, 0, 0.3)'
@@ -262,7 +262,7 @@ const LandingPage = () => {
 
             <motion.button
               onClick={() => navigate('/videos?view=channels')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-white border border-border`}
+              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-card overflow-hidden bg-white border border-border`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 color: 'hsl(var(--foreground))',

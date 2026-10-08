@@ -21,7 +21,7 @@ export const HeroSection = () => {
         </p>
         <Link 
           to="/videos"
-          className="inline-flex items-center justify-center px-12 py-4 bg-transparent border-2 border-brand-light text-[#77b0aa] text-xl rounded-full hover:bg-[#e3fef7] hover:text-[#135d66] transition-all duration-300"
+          className="inline-flex items-center justify-center px-12 py-4 bg-transparent border-2 border-brand-light text-[#77b0aa] text-xl rounded-control hover:bg-[#e3fef7] hover:text-[#135d66] transition-all duration-300"
         >
           Explore
         </Link>
@@ -36,9 +36,9 @@ export const HeroSection = () => {
       >
         <Link 
           to="/videos" 
-          className="relative w-full h-full cursor-pointer rounded-3xl"
+          className="relative w-full h-full cursor-pointer rounded-card"
         >
-          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-xl transform transition-all duration-1000 ease-in-out hover:scale-[1.05]">
+          <div className="relative w-full h-full rounded-card overflow-hidden shadow-raised transform transition-all duration-1000 ease-in-out hover:scale-[1.05]">
             <img 
               src="/lovable-uploads/1daf0100-84f7-491c-b2d1-cd5e363cbd17.png" 
               alt="Collection of Jewish content videos" 

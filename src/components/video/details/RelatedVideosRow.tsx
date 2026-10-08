@@ -50,7 +50,7 @@ export const RelatedVideosRow = ({
 
   if (isLoading) {
     return (
-      <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm">
+      <div className="bg-card/80 backdrop-blur-sm rounded-card border border-border p-5 shadow-sm">
         <h2 className="text-lg font-semibold text-foreground mb-4">More from {channelName}</h2>
         <div className="flex items-center justify-center py-8">
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
@@ -61,7 +61,7 @@ export const RelatedVideosRow = ({
 
   if (!videos || videos.length === 0) {
     return (
-      <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm">
+      <div className="bg-card/80 backdrop-blur-sm rounded-card border border-border p-5 shadow-sm">
         <h2 className="text-lg font-semibold text-foreground mb-4">More from {channelName}</h2>
         <p className="text-muted-foreground text-sm text-center py-6">
           No other videos found from this channel
@@ -71,7 +71,7 @@ export const RelatedVideosRow = ({
   }
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border overflow-hidden shadow-sm">
+    <div className="bg-card/80 backdrop-blur-sm rounded-card border border-border overflow-hidden shadow-sm">
       <div className="p-5 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-foreground">
@@ -89,7 +89,7 @@ export const RelatedVideosRow = ({
             size="icon"
             onClick={() => scroll('left')}
             disabled={!canScrollLeft}
-            className="h-8 w-8 rounded-full"
+            className="h-8 w-8 rounded-control"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -98,7 +98,7 @@ export const RelatedVideosRow = ({
             size="icon"
             onClick={() => scroll('right')}
             disabled={!canScrollRight}
-            className="h-8 w-8 rounded-full"
+            className="h-8 w-8 rounded-control"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>

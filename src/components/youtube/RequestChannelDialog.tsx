@@ -116,7 +116,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-white dark:bg-card border border-border dark:border-border shadow-xl rounded-2xl p-0 overflow-hidden [&>button]:hidden">
+      <DialogContent className="sm:max-w-[480px] bg-white dark:bg-card border border-border dark:border-border shadow-overlay rounded-dialog p-0 overflow-hidden [&>button]:hidden">
         {/* Header — solid color, no gradient */}
         <div className="bg-primary p-5 relative">
           <button 
@@ -126,7 +126,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
             <X className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#1A1A1A]/10 rounded-lg">
+            <div className="p-2.5 bg-[#1A1A1A]/10 rounded-control">
               <Tv className="h-5 w-5 text-foreground" />
             </div>
             <div>
@@ -156,7 +156,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                     <FormControl>
                       <Input 
                         placeholder="Enter the channel name" 
-                        className="h-11 rounded-lg border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
+                        className="h-11 rounded-card border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
                         {...field} 
                       />
                     </FormControl>
@@ -178,7 +178,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                     <FormControl>
                       <Input 
                         placeholder="https://youtube.com/@channelname" 
-                        className="h-11 rounded-lg border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
+                        className="h-11 rounded-card border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
                         {...field} 
                       />
                     </FormControl>
@@ -202,7 +202,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                         <Input 
                           type="email"
                           placeholder="your@email.com" 
-                          className="h-11 rounded-lg border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
+                          className="h-11 rounded-card border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
                           {...field} 
                         />
                       </FormControl>
@@ -216,7 +216,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
               )}
 
               {isLoggedIn && (
-                <div className="flex items-center gap-3 p-3 bg-muted dark:bg-card rounded-lg border border-border dark:border-border">
+                <div className="flex items-center gap-3 p-3 bg-muted dark:bg-card rounded-card border border-border dark:border-border">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-sm font-medium text-foreground">Submitting as</p>
@@ -233,7 +233,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-11 rounded-lg bg-primary hover:bg-primary-hover text-primary-foreground font-semibold transition-colors disabled:opacity-50"
+                className="w-full h-11 rounded-control bg-primary hover:bg-primary-hover text-primary-foreground font-semibold transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">

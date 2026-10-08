@@ -159,7 +159,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
   return (
     <section 
       ref={sectionRef}
-      className={`mb-8 ${isMobile ? 'py-5 -mx-3 px-3' : 'py-8 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllVideos ? (isMobile ? 'pb-6' : 'min-h-screen pb-20') : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-8 ${isMobile ? 'py-5 -mx-3 px-3' : 'py-8 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllVideos ? (isMobile ? 'pb-6' : 'min-h-screen pb-20') : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="sync">
         {showAllVideos ? (
@@ -176,7 +176,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-4'}`}>
                 <button
                   onClick={handleBackClick}
-                  className={`flex items-center gap-1.5 ${isMobile ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-medium text-muted-foreground hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm`}
+                  className={`flex items-center gap-1.5 ${isMobile ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-medium text-muted-foreground hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-control transition-all duration-200 shadow-sm`}
                 >
                   <ChevronLeft className={isMobile ? 'w-3 h-3' : 'w-4 h-4'} />
                   Back
@@ -207,7 +207,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
-                className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-badge font-semibold transition-all duration-300 ${
                   currentPage === 0
                     ? 'bg-gray-100 dark:bg-gray-800 text-muted-foreground dark:text-gray-600 cursor-not-allowed'
                     : 'bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:scale-105'
@@ -217,7 +217,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
                 Prev
               </button>
               
-              <div className={`flex items-center gap-1 ${isMobile ? 'px-2 py-0.5' : isTablet ? 'px-2.5 py-1' : 'px-4 py-2'} bg-white dark:bg-gray-800 rounded-full shadow-sm`}>
+              <div className={`flex items-center gap-1 ${isMobile ? 'px-2 py-0.5' : isTablet ? 'px-2.5 py-1' : 'px-4 py-2'} bg-white dark:bg-gray-800 rounded-control shadow-sm`}>
                 <span className={`${isMobile ? 'text-[10px]' : isTablet ? 'text-xs' : 'text-sm'} font-medium text-foreground`}>{currentPage + 1}</span>
                 <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground`}>/</span>
                 <span className={`${isMobile ? 'text-[10px]' : isTablet ? 'text-xs' : 'text-sm'} text-muted-foreground`}>{totalPages}</span>
@@ -226,7 +226,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               <button
                 onClick={handleNextPage}
                 disabled={currentPage >= totalPages - 1}
-                className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-badge font-semibold transition-all duration-300 ${
                   currentPage >= totalPages - 1
                     ? 'bg-gray-100 dark:bg-gray-800 text-muted-foreground dark:text-gray-600 cursor-not-allowed'
                     : 'bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:scale-105'
@@ -255,7 +255,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-4'}`}>
                 <button 
                   onClick={handleViewAllClick}
-                  className={`${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1 text-[11px]' : 'px-4 py-1.5 text-xs'} font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-full transition-all duration-200 hover:scale-105 shadow-sm`}
+                  className={`${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1 text-[11px]' : 'px-4 py-1.5 text-xs'} font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-control transition-all duration-200 hover:scale-105 shadow-sm`}
                 >
                   View all
                 </button>
@@ -264,7 +264,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
                   <button
                     onClick={scrollPrev}
                     disabled={!canScrollPrev}
-                    className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
+                    className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
                       canScrollPrev 
                         ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
@@ -275,7 +275,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
                   <button
                     onClick={scrollNext}
                     disabled={!canScrollNext}
-                    className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
+                    className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
                       canScrollNext 
                         ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'

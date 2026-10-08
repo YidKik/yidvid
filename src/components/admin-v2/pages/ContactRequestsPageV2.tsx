@@ -337,7 +337,7 @@ export const ContactRequestsPageV2 = () => {
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                className={`px-3 py-1 rounded-control text-xs font-medium transition-colors ${
                   statusFilter === s
                     ? "bg-white/15 text-white"
                     : "bg-white/5 text-gray-400 hover:bg-white/10"
@@ -362,7 +362,7 @@ export const ContactRequestsPageV2 = () => {
               return (
                 <Card
                   key={request.id}
-                  className={`cursor-pointer transition-all rounded-lg border border-white/10 ${
+                  className={`cursor-pointer transition-all rounded-card border border-white/10 ${
                     isSelected ? `${status.selectedBg} ring-1 ring-white/20` : `bg-[#1a1b23] hover:bg-white/5`
                   }`}
                   onClick={() => setSelectedId(request.id)}
@@ -443,7 +443,7 @@ export const ContactRequestsPageV2 = () => {
             <Card className="bg-[#1a1b23] border-white/10 h-full flex flex-col">
               <CardContent className="p-5 flex-1 overflow-auto">
                 {/* Header with status color bar */}
-                <div className={`-mx-5 -mt-5 px-5 py-4 mb-4 rounded-t-lg ${selStatus.bg}`}>
+                <div className={`-mx-5 -mt-5 px-5 py-4 mb-4 rounded-t-control ${selStatus.bg}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <selStatus.icon className="w-5 h-5 text-white drop-shadow" />
@@ -486,7 +486,7 @@ export const ContactRequestsPageV2 = () => {
 
                 <div>
                   <p className="text-xs text-gray-500 mb-2">Message</p>
-                  <div className="bg-white/5 rounded-lg p-3">
+                  <div className="bg-white/5 rounded-card p-3">
                     <p className="text-sm text-gray-300 whitespace-pre-wrap">{selected.message}</p>
                   </div>
                 </div>
@@ -494,7 +494,7 @@ export const ContactRequestsPageV2 = () => {
                 {selected.admin_reply && (
                   <div className="mt-4">
                     <p className="text-xs text-gray-500 mb-2">Admin Reply</p>
-                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-card p-3">
                       <p className="text-sm text-gray-300 whitespace-pre-wrap">{selected.admin_reply}</p>
                       {selected.replied_at && (
                         <p className="text-[10px] text-gray-500 mt-2">
@@ -517,7 +517,7 @@ export const ContactRequestsPageV2 = () => {
                         <button
                           key={key}
                           onClick={() => updateStatus(selected.id, key)}
-                          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+                          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-control text-xs font-bold transition-all ${
                             isActive
                               ? `${cfg.bg} text-white ring-2 ring-white/30 shadow-lg`
                               : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white"

@@ -48,7 +48,7 @@ export const VideoCardWithOptions = ({
         className="block"
       >
         {/* Thumbnail with hover effects */}
-        <div className={`relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-brand transition-all duration-300`}>
+        <div className={`relative aspect-video rounded-card overflow-hidden border-2 border-transparent group-hover:border-brand transition-all duration-300`}>
           <img
             src={thumbnail}
             alt={title}
@@ -66,7 +66,7 @@ export const VideoCardWithOptions = ({
             {/* Duration badge - bottom right */}
             {duration && (
               <div className="absolute bottom-2 right-2 pointer-events-auto">
-                <div className={`bg-[#1A1A1A] rounded-full ${isMobile ? 'px-1.5 py-0.5' : 'px-2.5 py-1'} flex items-center gap-1 shadow-lg`}>
+                <div className={`bg-[#1A1A1A] rounded-control ${isMobile ? 'px-1.5 py-0.5' : 'px-2.5 py-1'} flex items-center gap-1`}>
                   <Clock size={isMobile ? 9 : 11} className="text-white" />
                   <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold text-white`}>{duration}</span>
                 </div>

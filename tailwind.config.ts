@@ -158,7 +158,16 @@ export default {
         "fourth": "fourth 22s linear infinite",
         "fifth": "fifth 18s linear infinite"
       },
+      boxShadow: {
+        raised: "var(--shadow-raised)",
+        overlay: "var(--shadow-overlay)",
+      },
       borderRadius: {
+        badge: "var(--radius-badge)",
+        control: "var(--radius-control)",
+        card: "var(--radius-card)",
+        dialog: "var(--radius-dialog)",
+        circle: "var(--radius-circle)",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",

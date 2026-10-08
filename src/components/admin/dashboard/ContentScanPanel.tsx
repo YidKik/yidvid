@@ -147,7 +147,7 @@ export const ContentScanPanel: React.FC = () => {
             { label: "To review", value: job?.review_count || 0 },
             { label: "Errors", value: job?.error_count || 0 },
           ].map((s) => (
-            <div key={s.label} className="rounded-lg border p-3">
+            <div key={s.label} className="rounded-card border p-3">
               <p className="text-xl font-bold">{s.value.toLocaleString()}</p>
               <p className="text-xs text-muted-foreground">{s.label}</p>
             </div>
@@ -155,7 +155,7 @@ export const ContentScanPanel: React.FC = () => {
         </div>
 
         {job?.pause_reason && (
-          <p className="text-sm text-orange-600 bg-orange-50 dark:bg-orange-950/30 rounded-md p-3">
+          <p className="text-sm text-orange-600 bg-orange-50 dark:bg-orange-950/30 rounded-control p-3">
             {job.pause_reason}
           </p>
         )}

@@ -36,7 +36,7 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
           <img
             src={notification.youtube_videos.thumbnail}
             alt={notification.youtube_videos.title}
-            className="w-full h-full object-cover rounded-md"
+            className="w-full h-full object-cover rounded-control"
             onError={(e) => {
               console.error("Failed to load thumbnail");
               e.currentTarget.src = "/placeholder.svg";

@@ -88,7 +88,7 @@ export const MobileChannelsRow = () => {
               className="flex-none w-[100px] group"
             >
               {/* Friendly card */}
-              <div className="bg-card rounded-xl p-3 border border-border/50 hover:border-primary/40 transition-all text-center">
+              <div className="bg-card rounded-card p-3 border border-border/50 hover:border-primary/40 transition-all text-center">
                 {/* Channel Avatar - Bigger */}
                 <div className="mx-auto w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20 shadow-sm">
                   {channel.thumbnail_url ? (

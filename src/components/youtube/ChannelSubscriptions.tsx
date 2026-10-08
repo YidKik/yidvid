@@ -218,11 +218,11 @@ export const ChannelSubscriptions = () => {
   }
 
   return (
-    <Card className="w-full border-2 border-primary/20 shadow-lg rounded-3xl bg-gradient-to-br from-white to-primary/5">
+    <Card className="w-full border-2 border-primary/20 shadow-raised rounded-card bg-gradient-to-br from-white to-primary/5">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-2xl">
+            <div className="p-2 bg-primary/10 rounded-card">
               <Bell className="w-6 h-6 text-primary" />
             </div>
             <div>
@@ -243,7 +243,7 @@ export const ChannelSubscriptions = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-primary/10 hover:bg-primary/20 text-primary shadow-lg rounded-full border border-primary/30"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-primary/10 hover:bg-primary/20 text-primary shadow-lg rounded-control border border-primary/30"
                 onClick={() => scroll('left')}
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -253,7 +253,7 @@ export const ChannelSubscriptions = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-primary/10 hover:bg-primary/20 text-primary shadow-lg rounded-full border border-primary/30"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-primary/10 hover:bg-primary/20 text-primary shadow-lg rounded-control border border-primary/30"
                 onClick={() => scroll('right')}
               >
                 <ArrowRight className="h-6 w-6" />
@@ -268,7 +268,7 @@ export const ChannelSubscriptions = () => {
                 {subscriptions.map((subscription) => (
                   <div
                     key={subscription.channel.channel_id}
-                    className="flex-shrink-0 w-[200px] bg-card rounded-2xl shadow-md border-2 border-primary/10 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group"
+                    className="flex-shrink-0 w-[200px] bg-card rounded-card shadow-md border-2 border-primary/10 hover:shadow-raised hover:border-primary/30 transition-all duration-300 group"
                   >
                     <div className="p-4 flex flex-col h-[220px]">
 ...
@@ -280,7 +280,7 @@ export const ChannelSubscriptions = () => {
                         size="sm"
                         onClick={() => handleUnsubscribe(subscription.channel.channel_id, subscription.channel.title)}
                         disabled={processingUnsubscribe === subscription.channel.channel_id}
-                        className="w-full text-destructive hover:text-destructive/90 hover:bg-destructive/10 gap-2 text-xs border border-destructive/30 hover:border-destructive/50 rounded-xl"
+                        className="w-full text-destructive hover:text-destructive/90 hover:bg-destructive/10 gap-2 text-xs border border-destructive/30 hover:border-destructive/50 rounded-card"
                       >
                         {processingUnsubscribe === subscription.channel.channel_id ? (
                           <>
@@ -301,8 +301,8 @@ export const ChannelSubscriptions = () => {
             </ScrollArea>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 px-4 bg-gradient-to-br from-secondary/20 to-primary/10 rounded-2xl border border-primary/20">
-            <div className="p-4 bg-primary/10 rounded-full mb-4">
+          <div className="flex flex-col items-center justify-center py-12 px-4 bg-gradient-to-br from-secondary/20 to-primary/10 rounded-card border border-primary/20">
+            <div className="p-4 bg-primary/10 rounded-control mb-4">
               <Bell className="w-12 h-12 text-primary" />
             </div>
             <h3 className="font-semibold text-primary mb-2">No Subscriptions Yet</h3>

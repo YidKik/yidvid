@@ -86,7 +86,7 @@ export const VideoChannelCard = ({
             size="sm"
             onClick={handleSubscribeClick}
             disabled={isLoading}
-            className={`rounded-full text-xs px-3 ${
+            className={`rounded-control text-xs px-3 ${
               isSubscribed 
                 ? "bg-primary text-primary-foreground" 
                 : "hover:bg-primary/10 hover:text-primary hover:border-primary"
@@ -162,7 +162,7 @@ export const VideoChannelCard = ({
             variant={isSubscribed ? "default" : "outline"}
             onClick={handleSubscribeClick}
             disabled={isLoading}
-            className={`w-full rounded-full transition-all ${
+            className={`w-full rounded-control transition-all ${
               isSubscribed 
                 ? "bg-primary text-primary-foreground" 
                 : "hover:bg-primary/10 hover:text-primary hover:border-primary"

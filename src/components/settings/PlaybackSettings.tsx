@@ -25,7 +25,7 @@ export const PlaybackSettings = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-primary/10 rounded-2xl">
+        <div className="p-2 bg-primary/10 rounded-card">
           <Volume2 className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -34,7 +34,7 @@ export const PlaybackSettings = ({
         </div>
       </div>
       
-      <div className="p-4 bg-card/70 rounded-2xl border border-primary/10 space-y-4">
+      <div className="p-4 bg-card/70 rounded-card border border-primary/10 space-y-4">
         <div className="space-y-2">
           <Label htmlFor="volume" className={`${isMobile ? 'text-sm' : ''}`}>{t('defaultVolume')} ({volume}%)</Label>
           <Slider
@@ -51,10 +51,10 @@ export const PlaybackSettings = ({
         <div className="space-y-2">
           <Label htmlFor="playback-speed" className={`${isMobile ? 'text-sm' : ''}`}>{t('defaultPlaybackSpeed')}</Label>
           <Select value={playbackSpeed} onValueChange={setPlaybackSpeed}>
-            <SelectTrigger className={`${isMobile ? 'w-[120px] h-8 text-sm' : 'w-[140px]'} bg-background border-input rounded-xl`}>
+            <SelectTrigger className={`${isMobile ? 'w-[120px] h-8 text-sm' : 'w-[140px]'} bg-background border-input rounded-card`}>
               <SelectValue placeholder="Select speed" />
             </SelectTrigger>
-            <SelectContent className="bg-background border-2 border-input shadow-lg min-w-[120px] rounded-xl">
+            <SelectContent className="bg-background border-2 border-input shadow-raised min-w-[120px] rounded-card">
               <SelectItem value="0.25">0.25x</SelectItem>
               <SelectItem value="0.5">0.5x</SelectItem>
               <SelectItem value="0.75">0.75x</SelectItem>

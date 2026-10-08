@@ -94,7 +94,7 @@ const MainContent = () => {
       {/* Desktop/Tablet scroll to top button */}
       {!isMobile && (
         <motion.div 
-          className={`fixed ${isTablet ? 'bottom-24' : 'bottom-4'} right-4 p-3 rounded-full cursor-pointer z-40`}
+          className={`fixed ${isTablet ? 'bottom-24' : 'bottom-4'} right-4 p-3 rounded-control cursor-pointer z-40`}
           style={{
             backgroundColor: 'transparent',
             border: '2px solid hsl(var(--brand))'

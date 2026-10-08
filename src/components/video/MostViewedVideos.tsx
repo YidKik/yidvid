@@ -82,10 +82,10 @@ export const MostViewedVideos = ({ videos }: MostViewedVideosProps) => {
 
   return (
     <div className="w-full max-w-[1200px] mx-auto mb-2 md:mb-8">
-      <div className="bg-gradient-to-r from-[#f8f8f8] via-[#ffffff] to-[#f8f8f8] rounded-lg md:rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="bg-gradient-to-r from-[#f8f8f8] via-[#ffffff] to-[#f8f8f8] rounded-card md:rounded-card shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="px-3 md:px-6 pt-4 md:pt-6 pb-6 md:pb-8">
           <div className="flex items-center gap-2 mb-3 md:mb-6">
-            <div className="bg-[#333333] p-1.5 md:p-2 rounded-full">
+            <div className="bg-[#333333] p-1.5 md:p-2 rounded-control">
               <Sparkle className="h-3 w-3 md:h-4 md:w-4 text-primary" />
             </div>
             <h2 className="text-sm md:text-xl font-bold text-foreground">

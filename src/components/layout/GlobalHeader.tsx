@@ -95,7 +95,7 @@ export const GlobalHeader = () => {
           {isAuthenticated ? (
             <Link
               to="/settings"
-              className="flex items-center justify-center w-10 h-10 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 shadow-lg bg-primary"
+              className="flex items-center justify-center w-10 h-10 rounded-control text-white font-semibold text-sm transition-transform hover:scale-105 bg-primary"
               style={{ fontFamily: "'Quicksand', sans-serif" }}
               title="Profile"
             >
@@ -105,7 +105,7 @@ export const GlobalHeader = () => {
             <Button
               onClick={() => setIsAuthOpen(true)}
               size="icon"
-              className="rounded-full w-10 h-10 shadow-lg hover:opacity-90 transition-all bg-primary text-white"
+              className="rounded-control w-10 h-10 hover:opacity-90 transition-all bg-primary text-white"
               title="Sign In"
             >
               <LogIn className="w-5 h-5" />
@@ -135,7 +135,7 @@ export const GlobalHeader = () => {
             >
               <form onSubmit={handleSearchSubmit}>
                 <div 
-                  className={`flex items-center rounded-full border-2 transition-all duration-200 bg-muted dark:bg-[#121212] ${
+                  className={`flex items-center rounded-control border-2 transition-all duration-200 bg-muted dark:bg-[#121212] ${
                     isSearchOpen 
                       ? 'border-brand shadow-md bg-white dark:bg-card' 
                       : 'border-border dark:border-border hover:border-brand hover:bg-white dark:hover:bg-card'
@@ -162,7 +162,7 @@ export const GlobalHeader = () => {
                           setSearchQuery("");
                           setIsSearchOpen(false);
                         }}
-                        className="p-1 rounded-full hover:bg-surface-active dark:hover:bg-secondary transition-colors"
+                        className="p-1 rounded-control hover:bg-surface-active dark:hover:bg-secondary transition-colors"
                       >
                         <X className="w-4 h-4 text-muted-foreground dark:text-muted-foreground" />
                       </button>
@@ -170,7 +170,7 @@ export const GlobalHeader = () => {
                   </div>
                   <button
                     type="submit"
-                    className={`${isMobile ? 'h-7 px-2.5' : 'h-10 px-4'} rounded-r-full border-l border-border dark:border-border hover:bg-surface-active dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
+                    className={`${isMobile ? 'h-7 px-2.5' : 'h-10 px-4'} rounded-r-control border-l border-border dark:border-border hover:bg-surface-active dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
                   >
                     <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-muted-foreground dark:text-muted-foreground`} />
                   </button>
@@ -185,7 +185,7 @@ export const GlobalHeader = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-card rounded-2xl shadow-xl border border-border dark:border-border overflow-hidden z-[100]"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-card rounded-card shadow-raised border border-border dark:border-border overflow-hidden z-[100]"
                     style={{ maxHeight: '70vh' }}
                   >
                     {isSearching && (
@@ -211,7 +211,7 @@ export const GlobalHeader = () => {
                                 <img
                                   src={video.thumbnail}
                                   alt={cleanVideoTitle(video.title)}
-                                  className="w-16 h-10 object-cover rounded-lg"
+                                  className="w-16 h-10 object-cover rounded-card"
                                 />
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm font-medium text-foreground dark:text-foreground truncate">{cleanVideoTitle(video.title)}</p>
@@ -279,7 +279,7 @@ export const GlobalHeader = () => {
               {isAuthenticated ? (
                 <Link
                   to="/settings"
-                  className={`flex items-center justify-center rounded-full font-semibold transition-all duration-200 hover:bg-surface-hover dark:hover:bg-secondary border-2 border-border dark:border-border bg-transparent text-muted-foreground dark:text-muted-foreground ${
+                  className={`flex items-center justify-center rounded-control font-semibold transition-all duration-200 hover:bg-surface-hover dark:hover:bg-secondary border-2 border-border dark:border-border bg-transparent text-muted-foreground dark:text-muted-foreground ${
                     isMobile ? 'w-7 h-7 text-xs' : 'w-9 h-9 text-sm'
                   }`}
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
@@ -291,7 +291,7 @@ export const GlobalHeader = () => {
                 <Button
                   onClick={() => setIsAuthOpen(true)}
                   size={isMobile ? "sm" : "default"}
-                  className={`rounded-full gap-1.5 font-medium hover:brightness-90 transition-all bg-primary text-white ${
+                  className={`rounded-control gap-1.5 font-medium hover:brightness-90 transition-all bg-primary text-white ${
                     isMobile ? 'h-7 px-2.5 text-[11px]' : ''
                   }`}
                   style={{ fontFamily: "'Quicksand', sans-serif" }}

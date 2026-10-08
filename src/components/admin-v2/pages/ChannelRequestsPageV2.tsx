@@ -119,7 +119,7 @@ export const ChannelRequestsPageV2 = () => {
             <button
               key={btn.key}
               onClick={() => setFilter(btn.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-control text-xs font-medium transition-colors ${
                 filter === btn.key
                   ? "bg-[#6366f1]/15 text-[#818cf8] border border-[#6366f1]/20"
                   : "text-[#8b8fa3] hover:bg-[#1a1c25] hover:text-[#c4c7d4] border border-transparent"
@@ -131,11 +131,11 @@ export const ChannelRequestsPageV2 = () => {
         </div>
 
         {/* Request list */}
-        <div className="rounded-xl border border-[#1e2028] bg-[#0f1117] overflow-hidden flex-1 min-h-0">
+        <div className="rounded-card border border-[#1e2028] bg-[#0f1117] overflow-hidden flex-1 min-h-0">
           {isLoading ? (
             <div className="p-6 space-y-3">
               {[...Array(6)].map((_, i) => (
-                <Skeleton key={i} className="h-14 w-full bg-[#1a1c25] rounded-lg" />
+                <Skeleton key={i} className="h-14 w-full bg-[#1a1c25] rounded-control" />
               ))}
             </div>
           ) : filtered.length === 0 ? (
@@ -152,7 +152,7 @@ export const ChannelRequestsPageV2 = () => {
                     <button
                       key={request.id}
                       onClick={() => setSelectedId(isActive ? null : request.id)}
-                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left transition-all ${
+                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-control text-left transition-all ${
                         isActive
                           ? "bg-[#6366f1]/10 border border-[#6366f1]/20"
                           : "hover:bg-[#1a1c25] border border-transparent"
@@ -177,7 +177,7 @@ export const ChannelRequestsPageV2 = () => {
       </div>
 
       {/* Right: detail panel — always visible */}
-      <div className="w-[400px] shrink-0 rounded-xl border border-[#1e2028] bg-[#0f1117] flex flex-col overflow-hidden">
+      <div className="w-[400px] shrink-0 rounded-card border border-[#1e2028] bg-[#0f1117] flex flex-col overflow-hidden">
         {selected ? (
           <>
             {/* Panel header */}
@@ -197,12 +197,12 @@ export const ChannelRequestsPageV2 = () => {
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Channel</p>
                   <div className="space-y-2.5">
-                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                    <div className="bg-[#13141b] rounded-card p-3.5 border border-[#1e2028]">
                       <p className="text-[10px] text-[#565b6e] mb-1">Channel Name</p>
                       <p className="text-sm font-medium text-[#c4c7d4]">{selected.channel_name}</p>
                     </div>
                     {selected.channel_id && (
-                      <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                      <div className="bg-[#13141b] rounded-card p-3.5 border border-[#1e2028]">
                         <p className="text-[10px] text-[#565b6e] mb-1">Channel ID</p>
                         <div className="flex items-center gap-2">
                           <p className="text-xs text-[#8b8fa3] font-mono truncate flex-1">{selected.channel_id}</p>
@@ -221,7 +221,7 @@ export const ChannelRequestsPageV2 = () => {
                 {/* Status */}
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Status</p>
-                  <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028] flex items-center justify-between">
+                  <div className="bg-[#13141b] rounded-card p-3.5 border border-[#1e2028] flex items-center justify-between">
                     {statusBadge(selected.status, "lg")}
                     <p className="text-[10px] text-[#565b6e]">
                       Updated {formatDistanceToNow(new Date(selected.updated_at), { addSuffix: true })}
@@ -269,7 +269,7 @@ export const ChannelRequestsPageV2 = () => {
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-[#565b6e] px-6">
-            <div className="w-12 h-12 rounded-xl bg-[#1a1c25] flex items-center justify-center mb-4">
+            <div className="w-12 h-12 rounded-card bg-[#1a1c25] flex items-center justify-center mb-4">
               <Search className="w-5 h-5 opacity-50" />
             </div>
             <p className="text-sm font-medium text-[#8b8fa3] mb-1">No request selected</p>
@@ -290,7 +290,7 @@ function InfoRow({ icon: Icon, label, value, mono, copyable, onCopy }: {
   onCopy?: () => void;
 }) {
   return (
-    <div className="flex items-start gap-3 bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+    <div className="flex items-start gap-3 bg-[#13141b] rounded-card p-3.5 border border-[#1e2028]">
       <Icon className="w-4 h-4 text-[#818cf8] mt-0.5 shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="text-[10px] text-[#565b6e] mb-0.5">{label}</p>

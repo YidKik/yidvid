@@ -48,7 +48,7 @@ export const FeedbackSection = () => {
             {[...feedbackData, ...feedbackData].map((feedback, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-[#135d66]/60 to-[#0e4a52]/40 border border-[#77b0aa]/20 rounded-2xl p-6 w-80 h-40 flex-shrink-0 flex flex-col justify-between backdrop-blur-sm"
+                className="bg-gradient-to-br from-[#135d66]/60 to-[#0e4a52]/40 border border-[#77b0aa]/20 rounded-card p-6 w-80 h-40 flex-shrink-0 flex flex-col justify-between backdrop-blur-sm"
               >
                 <div className="flex gap-3">
                   <Quote className="w-5 h-5 text-[#77b0aa]/50 flex-shrink-0 mt-0.5" />

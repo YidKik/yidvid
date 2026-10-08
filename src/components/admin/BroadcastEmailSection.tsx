@@ -160,7 +160,7 @@ export const BroadcastEmailSection = () => {
           ) : broadcasts?.length ? (
             <div className="space-y-3">
               {broadcasts.map((b: any) => (
-                <div key={b.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div key={b.id} className="flex items-center justify-between p-4 border rounded-card">
                   <div className="space-y-1">
                     <p className="font-medium">{b.subject}</p>
                     <p className="text-sm text-muted-foreground">
@@ -211,7 +211,7 @@ export const BroadcastEmailSection = () => {
           <DialogHeader>
             <DialogTitle>Email Preview</DialogTitle>
           </DialogHeader>
-          <div className="border rounded-lg p-6 bg-white">
+          <div className="border rounded-card p-6 bg-white">
             <p className="text-sm text-muted-foreground mb-1">From: YidVid &lt;noreply@yidvid.co&gt;</p>
             <p className="text-sm text-muted-foreground mb-4">Subject: {subject}</p>
             <hr className="mb-4" />

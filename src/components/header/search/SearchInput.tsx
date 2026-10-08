@@ -41,7 +41,7 @@ export const SearchInput = ({
 
   return (
     <div className={`
-      relative flex items-center bg-transparent backdrop-blur-sm rounded-full
+      relative flex items-center bg-transparent backdrop-blur-sm rounded-control
       border-2 border-border transition-all duration-200
       ${shouldShowDropdown ? 'border-brand shadow-lg' : 'hover:border-brand'}
       ${isMobile ? 'h-9' : 'h-11'}

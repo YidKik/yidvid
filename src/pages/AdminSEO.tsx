@@ -36,7 +36,7 @@ const AdminSEO = () => {
               <div className="space-y-3">
                 <h4 className="font-semibold">Verification Methods:</h4>
                 
-                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <div className="bg-muted/50 rounded-card p-4 space-y-2">
                   <p className="font-medium text-sm">1. HTML Tag Method (Recommended)</p>
                   <p className="text-sm text-muted-foreground">
                     Google will provide a meta tag like:
@@ -49,14 +49,14 @@ const AdminSEO = () => {
                   </p>
                 </div>
                 
-                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <div className="bg-muted/50 rounded-card p-4 space-y-2">
                   <p className="font-medium text-sm">2. Domain Name Provider</p>
                   <p className="text-sm text-muted-foreground">
                     Add a TXT record to your domain's DNS settings
                   </p>
                 </div>
                 
-                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <div className="bg-muted/50 rounded-card p-4 space-y-2">
                   <p className="font-medium text-sm">3. HTML File Upload</p>
                   <p className="text-sm text-muted-foreground">
                     Upload the provided HTML file to your public folder

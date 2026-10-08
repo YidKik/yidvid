@@ -78,7 +78,7 @@ export const DashboardAnalytics = () => {
       
       <h2 className="text-2xl font-semibold mt-12 mb-4">User Activity</h2>
       {isLoading ? (
-        <div className="w-full p-4 bg-gray-50 rounded-lg">
+        <div className="w-full p-4 bg-gray-50 rounded-card">
           <p className="text-center text-muted-foreground">Loading user statistics...</p>
         </div>
       ) : (

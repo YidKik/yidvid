@@ -113,7 +113,7 @@ export const ChannelHeader = ({
             <img src={fallbackLogo} alt="YidVid" className="w-9 h-9 md:w-11 md:h-11" />
           </AvatarFallback>
           {!imageLoaded && !imageError && (
-            <div className="absolute inset-0 bg-muted dark:bg-secondary rounded-full flex items-center justify-center">
+            <div className="absolute inset-0 bg-muted dark:bg-secondary rounded-control flex items-center justify-center">
               <img src={fallbackLogo} alt="Loading" className="w-9 h-9 animate-pulse" />
             </div>
           )}
@@ -135,7 +135,7 @@ export const ChannelHeader = ({
             variant={displaySubscribed && subscriptionStateKnown ? "default" : "outline"}
             onClick={handleSubscribeClick}
             disabled={buttonLoading}
-            className={`h-9 text-xs md:text-sm px-5 rounded-full font-semibold transition-all duration-200 ${
+            className={`h-9 text-xs md:text-sm px-5 rounded-control font-semibold transition-all duration-200 ${
               displaySubscribed && subscriptionStateKnown
                 ? "bg-primary hover:brightness-90 text-white border-0"
                 : "border border-input-border dark:border-border text-foreground dark:!text-foreground hover:bg-surface-hover dark:hover:bg-secondary"
@@ -156,7 +156,7 @@ export const ChannelHeader = ({
 
           <button
             onClick={() => setShareOpen(true)}
-            className="h-9 px-4 rounded-full bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium"
+            className="h-9 px-4 rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium"
           >
             <Share2 className="w-3.5 h-3.5" />
             Share
@@ -171,12 +171,12 @@ export const ChannelHeader = ({
           {channel.description && (
             <Dialog>
               <DialogTrigger asChild>
-                <button className="h-9 px-4 rounded-full bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium">
+                <button className="h-9 px-4 rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium">
                   <Info className="w-3.5 h-3.5" />
                   Description
                 </button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-lg bg-white dark:bg-card border border-gray-200 dark:border-border rounded-3xl shadow-xl [&>button]:opacity-100 [&>button]:text-black [&>button]:dark:text-white [&>button]:rounded-full [&>button]:w-8 [&>button]:h-8 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button]:hover:bg-gray-100 [&>button]:dark:hover:bg-secondary [&>button]:transition-colors">
+              <DialogContent className="sm:max-w-lg bg-white dark:bg-card border border-gray-200 dark:border-border rounded-dialog shadow-overlay [&>button]:opacity-100 [&>button]:text-black [&>button]:dark:text-white [&>button]:rounded-control [&>button]:w-8 [&>button]:h-8 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button]:hover:bg-gray-100 [&>button]:dark:hover:bg-secondary [&>button]:transition-colors">
                 <DialogHeader>
                   <DialogTitle className="text-foreground dark:!text-foreground">About {channel.title}</DialogTitle>
                 </DialogHeader>

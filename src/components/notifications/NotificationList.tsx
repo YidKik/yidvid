@@ -36,7 +36,7 @@ export const NotificationList = ({
           variant="ghost" 
           size="sm" 
           onClick={onRetry}
-          className="mt-2 text-white hover:text-white hover:bg-surface-hover h-8 text-xs rounded-md"
+          className="mt-2 text-white hover:text-white hover:bg-surface-hover h-8 text-xs rounded-control"
         >
           Try Again
         </Button>

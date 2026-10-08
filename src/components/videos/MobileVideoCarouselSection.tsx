@@ -23,7 +23,7 @@ export const MobileVideoCarouselSection = ({
   if (!videos || videos.length === 0) return null;
 
   return (
-    <section className={`mb-4 ${hasBackground ? 'py-4 px-2 -mx-2 bg-muted/30 rounded-xl' : ''}`}>
+    <section className={`mb-4 ${hasBackground ? 'py-4 px-2 -mx-2 bg-muted/30 rounded-card' : ''}`}>
       {/* Header - YouTube style, smaller */}
       <div className="flex items-center justify-between mb-3 px-1">
         <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -50,7 +50,7 @@ export const MobileVideoCarouselSection = ({
               className="flex-none w-[160px] group"
             >
               {/* Thumbnail */}
-              <div className="relative aspect-video rounded-lg overflow-hidden shadow-sm">
+              <div className="relative aspect-video rounded-card overflow-hidden shadow-sm">
                 <img
                   src={video.thumbnail}
                   alt={cleanVideoTitle(video.title)}

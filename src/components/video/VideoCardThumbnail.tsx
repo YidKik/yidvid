@@ -58,7 +58,7 @@ export const VideoCardThumbnail = ({
     <div 
       className={cn(
         "relative overflow-hidden aspect-video w-full group video-card-thumbnail",
-        "rounded-xl transition-all duration-300",
+        "rounded-card transition-all duration-300",
         "border-2 border-gray-200/50 bg-gray-50"
       )}
       style={{
@@ -72,14 +72,14 @@ export const VideoCardThumbnail = ({
         src={imageError ? "/placeholder.svg" : thumbnail}
         alt={title}
         loading="lazy"
-        className="w-full h-full object-cover transition-all duration-300 ease-out rounded-xl"
+        className="w-full h-full object-cover transition-all duration-300 ease-out rounded-card"
         onError={() => setImageError(true)}
       />
       
       {/* Hover overlay */}
       <div 
         className={cn(
-          "absolute inset-0 transition-opacity duration-300 rounded-xl",
+          "absolute inset-0 transition-opacity duration-300 rounded-card",
           isHovering ? "opacity-100" : "opacity-0"
         )}
       >
@@ -87,7 +87,7 @@ export const VideoCardThumbnail = ({
         <div className="absolute top-0 right-0 p-2.5">
           {duration && (
             <div 
-              className="bg-[#1A1A1A] rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-lg"
+              className="bg-[#1A1A1A] rounded-control px-2.5 py-1 flex items-center gap-1.5"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
               <Clock size={11} className="text-white" />
@@ -100,7 +100,7 @@ export const VideoCardThumbnail = ({
         {showChannelOnHover && channelName && (
           <div className="absolute bottom-0 left-0 right-0 p-2.5">
             <div 
-              className="inline-flex items-center gap-1.5 bg-[#1A1A1A] rounded-full px-3 py-1.5 shadow-lg max-w-[85%]"
+              className="inline-flex items-center gap-1.5 bg-[#1A1A1A] rounded-control px-3 py-1.5 max-w-[85%]"
               style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
             >
               <span className="text-xs font-bold text-white truncate">{channelName}</span>

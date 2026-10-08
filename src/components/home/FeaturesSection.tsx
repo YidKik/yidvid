@@ -34,7 +34,7 @@ export const FeaturesSection = () => {
             return (
               <motion.div 
                 key={feature.title}
-                className="relative rounded-2xl border border-[#77b0aa]/30 bg-gradient-to-b from-[#135d66] to-[#0e4a52] p-8 flex flex-col items-center justify-center text-center min-h-[300px] shadow-lg shadow-black/20"
+                className="relative rounded-card border border-[#77b0aa]/30 bg-gradient-to-b from-[#135d66] to-[#0e4a52] p-8 flex flex-col items-center justify-center text-center min-h-[300px] shadow-raised shadow-black/20"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 + i * 0.15 }}
@@ -48,7 +48,7 @@ export const FeaturesSection = () => {
                   inactiveZone={0.01}
                   borderWidth={3}
                 />
-                <div className="w-16 h-16 rounded-2xl bg-[#77b0aa]/15 border border-[#77b0aa]/30 flex items-center justify-center mb-6 relative z-10">
+                <div className="w-16 h-16 rounded-card bg-[#77b0aa]/15 border border-[#77b0aa]/30 flex items-center justify-center mb-6 relative z-10">
                   <Icon className="w-8 h-8 text-[#77b0aa]" />
                 </div>
                 <h3 className="text-5xl font-display text-[#e3fef7] mb-4 font-bold relative z-10">{feature.title}</h3>

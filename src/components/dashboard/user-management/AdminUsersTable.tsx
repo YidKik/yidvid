@@ -72,7 +72,7 @@ export const AdminUsersTable = ({
   };
 
   return (
-    <div className="bg-card text-card-foreground rounded-md border border-border shadow-sm overflow-hidden">
+    <div className="bg-card text-card-foreground rounded-control border border-border shadow-sm overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>

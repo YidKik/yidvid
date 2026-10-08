@@ -79,7 +79,7 @@ export const ChannelListView = ({
           <div
             key={channel.id}
             className={`
-              p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md
+              p-4 border rounded-card cursor-pointer transition-all hover:shadow-md
               ${selectedChannels.includes(channel.channel_id)
                 ? 'border-blue-500 bg-blue-50 shadow-sm'
                 : 'border-gray-200 hover:border-gray-300'

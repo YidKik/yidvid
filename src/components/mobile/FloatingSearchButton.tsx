@@ -18,7 +18,7 @@ export const FloatingSearchButton = ({ hasScrolled }: FloatingSearchButtonProps)
 
   return (
     <motion.button
-      className="fixed bottom-24 right-4 p-2.5 bg-card/80 backdrop-blur-sm rounded-full shadow-lg z-40 hover:bg-card transition-colors"
+      className="fixed bottom-24 right-4 p-2.5 bg-card/80 backdrop-blur-sm rounded-control shadow-lg z-40 hover:bg-card transition-colors"
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ 
         opacity: hasScrolled ? 1 : 0,

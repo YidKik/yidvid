@@ -86,7 +86,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
         <h2 className="text-lg font-bold text-foreground">Admin Settings</h2>
       </div>
       
-      <div className="p-4 bg-white border-2 border-gray-200 rounded-xl">
+      <div className="p-4 bg-white border-2 border-gray-200 rounded-card">
         <p className="text-sm font-medium text-foreground">Admin Dashboard</p>
         <p className="text-xs text-muted-foreground mt-1">Press <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Shift</kbd> + <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-mono">D</kbd> to access the admin dashboard</p>
       </div>

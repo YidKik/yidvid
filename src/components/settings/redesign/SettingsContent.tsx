@@ -45,7 +45,7 @@ export const SettingsContent = () => {
               variant="outline"
               size="sm"
               onClick={isLocked ? () => setShowLockDialog(true) : handleLock}
-              className="h-8 rounded-lg text-xs font-semibold gap-1.5 border-border dark:border-border"
+              className="h-8 rounded-card text-xs font-semibold gap-1.5 border-border dark:border-border"
             >
               {isLocked ? <Lock className="h-3.5 w-3.5 text-brand" /> : <Unlock className="h-3.5 w-3.5 text-green-600" />}
               {isLocked ? "Locked" : "Lock"}
@@ -55,7 +55,7 @@ export const SettingsContent = () => {
               variant="outline"
               size="sm"
               onClick={() => setShowSetPinDialog(true)}
-              className="h-8 rounded-lg text-xs font-semibold gap-1.5 border-border dark:border-border"
+              className="h-8 rounded-card text-xs font-semibold gap-1.5 border-border dark:border-border"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
               Set PIN
@@ -64,7 +64,7 @@ export const SettingsContent = () => {
         </div>
       </div>
 
-      <div className="bg-muted dark:bg-background border border-border dark:border-border rounded-xl p-4 mb-4">
+      <div className="bg-muted dark:bg-background border border-border dark:border-border rounded-card p-4 mb-4">
         <p className="text-sm font-medium text-foreground dark:text-foreground mb-1">
           Control your feed
         </p>
@@ -82,7 +82,7 @@ export const SettingsContent = () => {
           placeholder="Search channels..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 h-10 rounded-xl border-border dark:border-border bg-muted dark:bg-background text-sm"
+          className="pl-9 h-10 rounded-card border-border dark:border-border bg-muted dark:bg-background text-sm"
         />
       </div>
 
@@ -104,7 +104,7 @@ export const SettingsContent = () => {
               <div
                 key={channel.channel_id}
                 className={cn(
-                  "flex items-center gap-3 py-2.5 px-3 rounded-xl transition-colors",
+                  "flex items-center gap-3 py-2.5 px-3 rounded-control transition-colors",
                   isHidden
                     ? "bg-muted dark:bg-background opacity-60"
                     : "hover:bg-surface-hover dark:hover:bg-background"
@@ -138,9 +138,9 @@ export const SettingsContent = () => {
 
       {/* Unlock Dialog */}
       <Dialog open={showLockDialog} onOpenChange={setShowLockDialog}>
-        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-xl">
+        <DialogContent className="rounded-dialog max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-overlay">
           <DialogHeader className="text-center sm:text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-control bg-brand-soft">
               <KeyRound className="h-6 w-6 text-brand" />
             </div>
             <DialogTitle className="text-lg font-bold text-foreground dark:text-foreground">Enter PIN to Unlock</DialogTitle>
@@ -155,12 +155,12 @@ export const SettingsContent = () => {
               placeholder="••••••"
               value={unlockPin}
               onChange={(e) => { setUnlockPin(e.target.value.replace(/\D/g, "")); setUnlockError(false); }}
-              className={cn("text-center text-2xl tracking-widest h-12 rounded-xl", unlockError && "border-brand")}
+              className={cn("text-center text-2xl tracking-widest h-12 rounded-card", unlockError && "border-brand")}
             />
             {unlockError && <p className="text-xs text-brand text-center mt-2">Incorrect PIN</p>}
           </div>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-            <Button onClick={handleUnlockSubmit} className="w-full bg-primary hover:bg-primary-hover text-white rounded-xl h-10 font-semibold">
+            <Button onClick={handleUnlockSubmit} className="w-full bg-primary hover:bg-primary-hover text-white rounded-control h-10 font-semibold">
               Unlock
             </Button>
             <Button variant="ghost" size="sm" onClick={handleDelete} className="text-muted-foreground hover:text-brand text-xs">
@@ -172,9 +172,9 @@ export const SettingsContent = () => {
 
       {/* Set PIN Dialog */}
       <Dialog open={showSetPinDialog} onOpenChange={setShowSetPinDialog}>
-        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-xl">
+        <DialogContent className="rounded-dialog max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-overlay">
           <DialogHeader className="text-center sm:text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-control bg-brand-soft">
               <ShieldCheck className="h-6 w-6 text-brand" />
             </div>
             <DialogTitle className="text-lg font-bold text-foreground dark:text-foreground">Set Parental PIN</DialogTitle>
@@ -189,9 +189,9 @@ export const SettingsContent = () => {
               placeholder="••••••"
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-              className="text-center text-2xl tracking-widest h-12 rounded-xl mb-4 bg-muted dark:bg-background border-border dark:border-border"
+              className="text-center text-2xl tracking-widest h-12 rounded-card mb-4 bg-muted dark:bg-background border-border dark:border-border"
             />
-            <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white rounded-xl h-10 font-semibold">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white rounded-control h-10 font-semibold">
               Set PIN & Lock
             </Button>
           </form>

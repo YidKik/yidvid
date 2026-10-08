@@ -40,7 +40,7 @@ export const MobileHeaderActions = ({
             onClick={handleSettingsClick}
             variant="ghost" 
             size="sm"
-            className={`${buttonClass} text-[0.7rem] rounded-full flex items-center w-7 h-7 min-w-0 p-0`}
+            className={`${buttonClass} text-[0.7rem] rounded-control flex items-center w-7 h-7 min-w-0 p-0`}
           >
             <Settings className="h-3 w-3" />
           </Button>
@@ -51,7 +51,7 @@ export const MobileHeaderActions = ({
             onClick={onAuthOpen}
             variant="ghost" 
             size="sm"
-            className={`${buttonClass} text-[0.6rem] rounded-full flex items-center px-1.5 py-0.5 gap-0.5`}
+            className={`${buttonClass} text-[0.6rem] rounded-control flex items-center px-1.5 py-0.5 gap-0.5`}
           >
             <User className="h-2.5 w-2.5" />
             <span className="hidden min-[360px]:inline">Sign in</span>

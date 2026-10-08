@@ -34,14 +34,14 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                     key={category.value}
                     type="button"
                     onClick={() => field.onChange(category.value)}
-                    className="flex flex-col items-center gap-2 p-3 rounded-xl border transition-colors duration-200 cursor-pointer text-center dark:border-border dark:bg-card"
+                    className="flex flex-col items-center gap-2 p-3 rounded-card border transition-colors duration-200 cursor-pointer text-center dark:border-border dark:bg-card"
                     style={{
                       borderColor: isSelected ? '#C9253A' : undefined,
                       backgroundColor: isSelected ? 'rgba(255,204,0,0.08)' : undefined,
                     }}
                   >
                     <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center dark:bg-secondary"
+                      className="w-9 h-9 rounded-control flex items-center justify-center dark:bg-secondary"
                       style={{
                         backgroundColor: isSelected ? '#C9253A' : undefined,
                       }}

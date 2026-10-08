@@ -56,7 +56,7 @@ export const ShortsSection = () => {
   };
 
   return (
-    <section className={`${isMobile ? 'py-4 -mx-3 px-3' : 'py-6 -mx-6 px-6'} rounded-3xl`}>
+    <section className={`${isMobile ? 'py-4 -mx-3 px-3' : 'py-6 -mx-6 px-6'} rounded-card`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
@@ -67,7 +67,7 @@ export const ShortsSection = () => {
           <button
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
+            className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
               canScrollPrev
                 ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
@@ -78,7 +78,7 @@ export const ShortsSection = () => {
           <button
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
+            className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
               canScrollNext
                 ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
@@ -122,7 +122,7 @@ const ShortCard = ({
       onClick={() => navigate(`/shorts/${short.video_id}`)}
     >
       {/* Thumbnail - 9:16 aspect ratio */}
-      <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '9/16' }}>
+      <div className="relative w-full overflow-hidden rounded-card" style={{ aspectRatio: '9/16' }}>
         <img
           src={short.thumbnail}
           alt={cleanVideoTitle(short.title)}

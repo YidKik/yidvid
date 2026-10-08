@@ -51,7 +51,7 @@ export const DislikeButton = ({ videoId }: DislikeButtonProps) => {
     <Button
       variant="outline"
       onClick={handleDislike}
-      className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
+      className={`group relative rounded-control p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
         isDisliked 
           ? "bg-card border-brand hover:bg-surface-hover" 
           : "bg-card border-border hover:bg-surface-hover hover:border-brand"

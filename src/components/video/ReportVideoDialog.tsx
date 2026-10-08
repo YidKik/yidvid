@@ -105,7 +105,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
         <Button 
           variant="ghost" 
           size="sm" 
-          className={`rounded-full transition-all duration-200 bg-muted hover:bg-surface-active text-muted-foreground hover:text-foreground ${
+          className={`rounded-control transition-all duration-200 bg-muted hover:bg-surface-active text-muted-foreground hover:text-foreground ${
             compact ? "h-8 px-3" : "h-9 px-4"
           }`}
         >
@@ -113,7 +113,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           {!compact && <span className="ml-2 font-medium">Report</span>}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[75vh] max-[768px]:overflow-y-auto bg-white border-2 border-border shadow-xl rounded-2xl p-0 overflow-hidden [&>button]:hidden">
+      <DialogContent className="sm:max-w-[450px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[75vh] max-[768px]:overflow-y-auto bg-white border-2 border-border shadow-overlay rounded-dialog p-0 overflow-hidden [&>button]:hidden">
         {/* Header - solid red */}
         <div className="bg-primary px-6 py-5 max-[768px]:px-4 max-[768px]:py-3.5 text-white">
           <button 
@@ -123,7 +123,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
             <X className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-3">
-              <div className="p-2 max-[768px]:p-1.5 bg-white/20 rounded-full">
+              <div className="p-2 max-[768px]:p-1.5 bg-white/20 rounded-control">
                 <AlertTriangle className="h-6 w-6 max-[768px]:h-5 max-[768px]:w-5" />
             </div>
             <div>
@@ -148,7 +148,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
                 placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 rounded-xl border-2 border-border focus:border-brand transition-colors"
+                className="h-11 rounded-card border-2 border-border focus:border-brand transition-colors"
               />
               <p className="text-xs text-muted-foreground">
                 We may contact you for more details about this report
@@ -158,8 +158,8 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
 
           {/* Logged-in user info */}
           {isAuthenticated && user?.email && (
-            <div className="flex items-center gap-3 p-3 bg-muted rounded-xl border border-border">
-              <div className="p-2 bg-white rounded-full border border-border">
+            <div className="flex items-center gap-3 p-3 bg-muted rounded-card border border-border">
+              <div className="p-2 bg-white rounded-control border border-border">
                 <Mail className="h-4 w-4 text-brand" />
               </div>
               <div>
@@ -180,12 +180,12 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
               placeholder="Please describe what's wrong with this video..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="min-h-[120px] max-[768px]:min-h-[80px] rounded-xl border-2 border-border focus:border-brand transition-colors resize-none"
+              className="min-h-[120px] max-[768px]:min-h-[80px] rounded-card border-2 border-border focus:border-brand transition-colors resize-none"
             />
           </div>
 
           {/* Info box */}
-          <div className="flex items-start gap-3 p-3 bg-primary rounded-xl">
+          <div className="flex items-start gap-3 p-3 bg-primary rounded-card">
             <AlertTriangle className="h-5 w-5 text-foreground flex-shrink-0 mt-0.5" />
             <p className="text-xs font-medium text-foreground">
               Our team reviews all reports carefully. We take every report seriously to ensure a safe viewing experience for everyone.
@@ -196,7 +196,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           <Button
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
-            className="w-full h-12 max-[768px]:h-10 rounded-xl bg-primary hover:brightness-90 text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 max-[768px]:h-10 rounded-card bg-primary hover:brightness-90 text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">

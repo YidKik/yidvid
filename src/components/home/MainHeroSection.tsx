@@ -15,7 +15,7 @@ export const MainHeroSection: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="inline-block mb-6"
         >
-          <span className="px-5 py-2 rounded-full border border-[#77b0aa]/40 bg-[#135d66]/30 text-[#77b0aa] text-sm font-medium tracking-widest uppercase backdrop-blur-sm">
+          <span className="px-5 py-2 rounded-control border border-[#77b0aa]/40 bg-[#135d66]/30 text-[#77b0aa] text-sm font-medium tracking-widest uppercase backdrop-blur-sm">
             ✡ Curated Jewish Content
           </span>
         </motion.div>
@@ -56,7 +56,7 @@ export const MainHeroSection: React.FC = () => {
         >
           <Link to="/videos">
             <motion.button 
-              className="px-10 py-4 bg-gradient-to-r from-[#135d66] to-[#0e4a52] hover:from-[#1a7a85] hover:to-[#135d66] text-[#e3fef7] text-xl font-medium rounded-full transition-all duration-300 border border-[#77b0aa]/50 shadow-[0_0_30px_rgba(119,176,170,0.15)] hover:shadow-[0_0_40px_rgba(119,176,170,0.3)]"
+              className="px-10 py-4 bg-gradient-to-r from-[#135d66] to-[#0e4a52] hover:from-[#1a7a85] hover:to-[#135d66] text-[#e3fef7] text-xl font-medium rounded-control transition-all duration-300 border border-[#77b0aa]/50 shadow-[0_0_30px_rgba(119,176,170,0.15)] hover:shadow-[0_0_40px_rgba(119,176,170,0.3)]"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

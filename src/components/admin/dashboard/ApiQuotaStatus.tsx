@@ -126,7 +126,7 @@ export const ApiQuotaStatus = () => {
             YouTube API Quota Status
           </div>
           {showAlert && (
-            <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+            <div className={`flex items-center gap-2 px-3 py-1 rounded-control ${
               alertLevel.level === "critical" 
                 ? "bg-destructive text-destructive-foreground" 
                 : alertLevel.level === "high"

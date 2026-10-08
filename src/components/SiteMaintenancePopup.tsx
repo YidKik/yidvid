@@ -36,7 +36,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
         onClick={handleClose}
       >
         <motion.div
-          className="bg-gradient-to-br from-background via-background to-muted/30 border-2 border-primary/20 rounded-2xl shadow-2xl w-full max-w-sm md:max-w-lg mx-auto relative overflow-hidden"
+          className="bg-gradient-to-br from-background via-background to-muted/30 border-2 border-primary/20 rounded-card shadow-raised w-full max-w-sm md:max-w-lg mx-auto relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -49,7 +49,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 p-2 rounded-full bg-muted/80 hover:bg-surface-hover transition-all duration-200 z-10 backdrop-blur-sm border border-border/50"
+            className="absolute top-4 right-4 p-2 rounded-control bg-muted/80 hover:bg-surface-hover transition-all duration-200 z-10 backdrop-blur-sm border border-border/50"
             aria-label="Close welcome message"
           >
             <X className="w-5 h-5 text-foreground" />
@@ -59,7 +59,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
           <div className="relative p-5 md:p-8">
             <div className="text-center space-y-4 md:space-y-5">
               {/* Icon */}
-              <div className="mx-auto w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="mx-auto w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-primary/70 rounded-card flex items-center justify-center shadow-raised">
                 <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-white" />
               </div>
 
@@ -74,7 +74,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
               </div>
 
               {/* Message */}
-              <div className="space-y-3 md:space-y-4 bg-white/80 dark:bg-black/20 rounded-xl p-4 md:p-5 border border-border/50">
+              <div className="space-y-3 md:space-y-4 bg-white/80 dark:bg-black/20 rounded-card p-4 md:p-5 border border-border/50">
                 <p className="text-sm md:text-base leading-relaxed text-foreground dark:text-gray-100 font-medium">
                   Thank you for visiting! We're excited to have you here as we continue building and enhancing your experience.
                 </p>
@@ -89,7 +89,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
               {/* Continue Button */}
               <motion.button
                 onClick={handleClose}
-                className="w-full mt-4 md:mt-6 px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-primary to-primary/90 text-white rounded-xl font-semibold hover:from-primary/90 hover:to-primary transition-all duration-300 shadow-lg hover:shadow-xl border border-primary/20 text-sm md:text-base"
+                className="w-full mt-4 md:mt-6 px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-primary to-primary/90 text-white rounded-control font-semibold hover:from-primary/90 hover:to-primary transition-all duration-300 border border-primary/20 text-sm md:text-base"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

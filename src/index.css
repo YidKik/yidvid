@@ -146,9 +146,9 @@ body {
 
 /* Toast styles - Clean minimal design */
 [data-sonner-toast] {
-  border-radius: 0.625rem !important;
+  border-radius: var(--radius-card) !important;
   padding: 0.625rem 0.875rem !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: var(--shadow-overlay) !important;
   border: 1px solid hsl(var(--border)) !important;
   background: hsl(var(--card)) !important;
   font-size: 0.8125rem !important;
@@ -218,7 +218,7 @@ body {
   opacity: 0.6 !important;
   border: 1px solid hsl(var(--input-border)) !important;
   background: hsl(var(--muted)) !important;
-  border-radius: 50% !important;
+  border-radius: var(--radius-control) !important;
   width: 20px !important;
   height: 20px !important;
   top: 50% !important;
@@ -248,7 +248,7 @@ body {
   [data-sonner-toast] {
     padding: 0.5rem 0.75rem !important;
     font-size: 0.75rem !important;
-    border-radius: 0.5rem !important;
+    border-radius: var(--radius-card) !important;
   }
   [data-sonner-toast] [data-title] {
     font-size: 0.75rem !important;

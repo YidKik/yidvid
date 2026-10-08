@@ -99,7 +99,7 @@ export const CategoriesPageV2 = () => {
               {recentChanges.slice(0, 5).map((change) => (
                 <div
                   key={change.id}
-                  className="flex items-center gap-2 bg-[#1a1b24] border border-[#2a2b35] rounded-md px-3 py-1.5 text-xs"
+                  className="flex items-center gap-2 bg-[#1a1b24] border border-[#2a2b35] rounded-control px-3 py-1.5 text-xs"
                 >
                   <span className="text-gray-300 font-medium">{change.channel_title}</span>
                   <span className="text-gray-500">→</span>
@@ -159,7 +159,7 @@ export const CategoriesPageV2 = () => {
 
           {/* Bulk Actions */}
           {selectedChannels.length > 0 && (
-            <div className="flex items-center gap-3 bg-[#1a1b24] border border-indigo-500/30 rounded-lg p-3">
+            <div className="flex items-center gap-3 bg-[#1a1b24] border border-indigo-500/30 rounded-card p-3">
               <CheckSquare className="h-4 w-4 text-indigo-400" />
               <span className="text-sm text-gray-300">{selectedChannels.length} selected</span>
               <Select
@@ -225,7 +225,7 @@ export const CategoriesPageV2 = () => {
                 {channels.map((channel) => (
                   <div
                     key={channel.channel_id}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-colors ${
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-control border transition-colors ${
                       selectedChannels.includes(channel.channel_id)
                         ? "bg-indigo-500/10 border-indigo-500/30"
                         : "bg-[#1a1b24] border-[#1e2028] hover:border-[#2a2b35]"

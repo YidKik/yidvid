@@ -23,7 +23,7 @@ export const TermsOfServiceDialog: React.FC<TermsOfServiceDialogProps> = ({
           style={{ animation: isOpen ? 'legalFadeIn 0.3s ease-out' : undefined }}
         />
         <DialogPrimitive.Content
-          className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[75vh]' : 'w-[640px] max-h-[80vh]'} rounded-2xl overflow-hidden shadow-xl p-0 bg-white dark:bg-card`}
+          className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[75vh]' : 'w-[640px] max-h-[80vh]'} rounded-card overflow-hidden shadow-xl p-0 bg-white dark:bg-card`}
           style={{
             border: '2px solid #C9253A',
             animation: isOpen ? 'legalScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
@@ -32,7 +32,7 @@ export const TermsOfServiceDialog: React.FC<TermsOfServiceDialogProps> = ({
           {/* Close button */}
           <button
             onClick={() => onOpenChange(false)}
-            className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100 dark:hover:bg-secondary"
+            className="absolute right-4 top-4 z-10 w-8 h-8 rounded-control flex items-center justify-center transition-colors hover:bg-gray-100 dark:hover:bg-secondary"
           >
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
@@ -41,7 +41,7 @@ export const TermsOfServiceDialog: React.FC<TermsOfServiceDialogProps> = ({
           {/* Header */}
           <div className="px-6 pt-6 pb-4 border-b border-border dark:border-border">
             <div className="flex items-center gap-3 pr-10">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--primary))' }}>
+              <div className="w-10 h-10 rounded-control flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--primary))' }}>
                 <FileText className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
               </div>
               <div>

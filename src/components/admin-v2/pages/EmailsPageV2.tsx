@@ -147,7 +147,7 @@ export const EmailsPageV2 = () => {
   return (
     <div className="space-y-6">
       {/* Tab Switcher */}
-      <div className="flex gap-1 p-1 rounded-xl bg-[#13141b] border border-[#1e2028] w-fit">
+      <div className="flex gap-1 p-1 rounded-card bg-[#13141b] border border-[#1e2028] w-fit">
         {([
           { id: "analytics", label: "Analytics", icon: BarChart3 },
           { id: "logs", label: "Email Logs", icon: Inbox },
@@ -157,7 +157,7 @@ export const EmailsPageV2 = () => {
             key={id}
             onClick={() => setActiveTab(id)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium transition-all",
+              "flex items-center gap-2 px-4 py-2 rounded-control text-[13px] font-medium transition-all",
               activeTab === id
                 ? "bg-[#6366f1]/15 text-[#818cf8]"
                 : "text-[#8b8fa3] hover:text-[#c4c7d4] hover:bg-[#1a1c25]"
@@ -210,7 +210,7 @@ function EmailAnalytics() {
             key={range}
             onClick={() => setTimeRange(range)}
             className={cn(
-              "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all",
+              "px-3.5 py-1.5 rounded-control text-xs font-semibold transition-all",
               timeRange === range
                 ? "bg-[#6366f1] text-white"
                 : "bg-[#13141b] text-[#8b8fa3] hover:bg-[#1a1c25] hover:text-[#c4c7d4] border border-[#1e2028]"
@@ -234,7 +234,7 @@ function EmailAnalytics() {
           </div>
 
           {/* By Template */}
-          <div className="rounded-xl bg-[#13141b] border border-[#1e2028] overflow-hidden">
+          <div className="rounded-card bg-[#13141b] border border-[#1e2028] overflow-hidden">
             <div className="px-5 py-4 border-b border-[#1e2028]">
               <h3 className="text-[15px] font-semibold text-white flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#818cf8]" />
@@ -248,7 +248,7 @@ function EmailAnalytics() {
                 byTemplate.map(([template, data]) => (
                   <div key={template} className="px-5 py-3.5 flex items-center justify-between hover:bg-[#1a1c25] transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#6366f1]/10 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-control bg-[#6366f1]/10 flex items-center justify-center">
                         <Mail className="w-4 h-4 text-[#818cf8]" />
                       </div>
                       <div>
@@ -273,10 +273,10 @@ function EmailAnalytics() {
 
 function StatCard({ label, value, icon: Icon, color, bgColor }: { label: string; value: number; icon: any; color: string; bgColor: string }) {
   return (
-    <div className="rounded-xl bg-[#13141b] border border-[#1e2028] p-4">
+    <div className="rounded-card bg-[#13141b] border border-[#1e2028] p-4">
       <div className="flex items-center justify-between mb-3">
         <span className="text-[11px] font-semibold text-[#565b6e] uppercase tracking-wider">{label}</span>
-        <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", bgColor)}>
+        <div className={cn("w-8 h-8 rounded-control flex items-center justify-center", bgColor)}>
           <Icon className={cn("w-4 h-4", color)} />
         </div>
       </div>
@@ -335,7 +335,7 @@ function EmailLogs() {
               key={range}
               onClick={() => { setTimeRange(range); setPage(0); }}
               className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                "px-3 py-1.5 rounded-control text-xs font-semibold transition-all",
                 timeRange === range
                   ? "bg-[#6366f1] text-white"
                   : "bg-[#13141b] text-[#8b8fa3] hover:bg-[#1a1c25] border border-[#1e2028]"
@@ -350,7 +350,7 @@ function EmailLogs() {
         <select
           value={templateFilter}
           onChange={(e) => { setTemplateFilter(e.target.value); setPage(0); }}
-          className="bg-[#13141b] border border-[#1e2028] text-[#c4c7d4] text-xs px-3 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
+          className="bg-[#13141b] border border-[#1e2028] text-[#c4c7d4] text-xs px-3 py-2 rounded-control focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
         >
           <option value="all">All Types</option>
           {templates.map(t => <option key={t} value={t}>{TEMPLATE_LABELS[t] || t}</option>)}
@@ -360,7 +360,7 @@ function EmailLogs() {
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setPage(0); }}
-          className="bg-[#13141b] border border-[#1e2028] text-[#c4c7d4] text-xs px-3 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
+          className="bg-[#13141b] border border-[#1e2028] text-[#c4c7d4] text-xs px-3 py-2 rounded-control focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
         >
           <option value="all">All Status</option>
           <option value="sent">Sent</option>
@@ -377,7 +377,7 @@ function EmailLogs() {
             placeholder="Search by recipient..."
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setPage(0); }}
-            className="w-full bg-[#13141b] border border-[#1e2028] text-[#c4c7d4] text-xs pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
+            className="w-full bg-[#13141b] border border-[#1e2028] text-[#c4c7d4] text-xs pl-9 pr-3 py-2 rounded-card focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
           />
         </div>
 
@@ -387,7 +387,7 @@ function EmailLogs() {
       {(isLoading) ? (
         <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 animate-spin text-[#6366f1]" /></div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl bg-[#13141b] border border-[#1e2028] py-16 text-center text-[#565b6e] text-sm">
+        <div className="rounded-card bg-[#13141b] border border-[#1e2028] py-16 text-center text-[#565b6e] text-sm">
           No emails found for this period
         </div>
       ) : (
@@ -397,13 +397,13 @@ function EmailLogs() {
             {grouped.map(([template, logs]) => {
               const isExpanded = expandedTemplate === template;
               return (
-                <div key={template} className="rounded-xl bg-[#13141b] border border-[#1e2028] overflow-hidden">
+                <div key={template} className="rounded-card bg-[#13141b] border border-[#1e2028] overflow-hidden">
                   <button
                     onClick={() => setExpandedTemplate(isExpanded ? null : template)}
                     className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-[#1a1c25] transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#6366f1]/10 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-control bg-[#6366f1]/10 flex items-center justify-center">
                         <Mail className="w-4 h-4 text-[#818cf8]" />
                       </div>
                       <div className="text-left">
@@ -433,7 +433,7 @@ function EmailLogs() {
                           const sc = STATUS_COLORS[log.status] || STATUS_COLORS.pending;
                           return (
                             <div key={log.id} className="px-5 py-2.5 flex items-center gap-4 hover:bg-[#0f1014] transition-colors">
-                              <div className={cn("flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold min-w-[70px]", sc.bg, sc.text)}>
+                              <div className={cn("flex items-center gap-1.5 px-2 py-0.5 rounded-badge text-[11px] font-semibold min-w-[70px]", sc.bg, sc.text)}>
                                 <div className={cn("w-1.5 h-1.5 rounded-full", sc.dot)} />
                                 {log.status}
                               </div>
@@ -473,7 +473,7 @@ function EmailLogs() {
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#13141b] border border-[#1e2028] text-[#8b8fa3] hover:bg-[#1a1c25] disabled:opacity-40"
+                className="px-3 py-1.5 text-xs font-medium rounded-control bg-[#13141b] border border-[#1e2028] text-[#8b8fa3] hover:bg-[#1a1c25] disabled:opacity-40"
               >
                 Previous
               </button>
@@ -483,7 +483,7 @@ function EmailLogs() {
               <button
                 onClick={() => setPage(Math.min(grouped.length - 1, page + 1))}
                 disabled={page >= grouped.length - 1}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#13141b] border border-[#1e2028] text-[#8b8fa3] hover:bg-[#1a1c25] disabled:opacity-40"
+                className="px-3 py-1.5 text-xs font-medium rounded-control bg-[#13141b] border border-[#1e2028] text-[#8b8fa3] hover:bg-[#1a1c25] disabled:opacity-40"
               >
                 Next
               </button>
@@ -582,7 +582,7 @@ function BroadcastComposer() {
   return (
     <div className="space-y-6">
       {/* Compose */}
-      <div className="rounded-xl bg-[#13141b] border border-[#1e2028] overflow-hidden">
+      <div className="rounded-card bg-[#13141b] border border-[#1e2028] overflow-hidden">
         <div className="px-5 py-4 border-b border-[#1e2028] flex items-center gap-2">
           <Send className="w-4 h-4 text-[#818cf8]" />
           <h3 className="text-[15px] font-semibold text-white">Compose Broadcast</h3>
@@ -594,7 +594,7 @@ function BroadcastComposer() {
             <select
               value={filterType}
               onChange={(e) => { setFilterType(e.target.value); setSelectedUserEmails([]); }}
-              className="w-full bg-[#0a0b10] border border-[#1e2028] text-[#c4c7d4] text-sm px-3 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
+              className="w-full bg-[#0a0b10] border border-[#1e2028] text-[#c4c7d4] text-sm px-3 py-2.5 rounded-control focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
             >
               <option value="subscribed">Subscribed Users Only</option>
               <option value="all">All Users</option>
@@ -604,12 +604,12 @@ function BroadcastComposer() {
 
           {/* User Selection Panel */}
           {filterType === "selected" && (
-            <div className="rounded-lg border border-[#1e2028] bg-[#0a0b10] overflow-hidden">
+            <div className="rounded-card border border-[#1e2028] bg-[#0a0b10] overflow-hidden">
               {/* Selected pills */}
               {selectedUserEmails.length > 0 && (
                 <div className="px-3 py-2 border-b border-[#1e2028] flex flex-wrap gap-1.5">
                   {selectedUserEmails.map(email => (
-                    <span key={email} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#6366f1]/15 text-[#818cf8] text-[11px] font-medium">
+                    <span key={email} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-badge bg-[#6366f1]/15 text-[#818cf8] text-[11px] font-medium">
                       {email}
                       <button onClick={() => toggleUser(email)} className="hover:text-white">
                         <X className="w-3 h-3" />
@@ -675,7 +675,7 @@ function BroadcastComposer() {
               placeholder="Enter email subject..."
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="w-full bg-[#0a0b10] border border-[#1e2028] text-[#c4c7d4] text-sm px-3 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
+              className="w-full bg-[#0a0b10] border border-[#1e2028] text-[#c4c7d4] text-sm px-3 py-2.5 rounded-control focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
             />
           </div>
 
@@ -686,7 +686,7 @@ function BroadcastComposer() {
               placeholder="Write your email content here. HTML is supported..."
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              className="w-full bg-[#0a0b10] border border-[#1e2028] text-[#c4c7d4] text-sm px-3 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#6366f1] min-h-[200px] font-mono resize-y"
+              className="w-full bg-[#0a0b10] border border-[#1e2028] text-[#c4c7d4] text-sm px-3 py-2.5 rounded-control focus:outline-none focus:ring-1 focus:ring-[#6366f1] min-h-[200px] font-mono resize-y"
             />
           </div>
 
@@ -694,7 +694,7 @@ function BroadcastComposer() {
             <button
               onClick={() => setShowPreview(true)}
               disabled={!subject || !body}
-              className="px-4 py-2 rounded-lg text-[13px] font-medium bg-[#1a1c25] text-[#c4c7d4] border border-[#1e2028] hover:bg-[#252730] disabled:opacity-40 transition-all"
+              className="px-4 py-2 rounded-control text-[13px] font-medium bg-[#1a1c25] text-[#c4c7d4] border border-[#1e2028] hover:bg-[#252730] disabled:opacity-40 transition-all"
             >
               <Eye className="w-3.5 h-3.5 inline mr-1.5" />
               Preview
@@ -702,7 +702,7 @@ function BroadcastComposer() {
             <button
               onClick={() => setShowConfirm(true)}
               disabled={!canSend || sendBroadcast.isPending}
-              className="px-5 py-2 rounded-lg text-[13px] font-semibold bg-[#6366f1] text-white hover:bg-[#5558e6] disabled:opacity-40 transition-all flex items-center gap-2"
+              className="px-5 py-2 rounded-control text-[13px] font-semibold bg-[#6366f1] text-white hover:bg-[#5558e6] disabled:opacity-40 transition-all flex items-center gap-2"
             >
               {sendBroadcast.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               {sendBroadcast.isPending ? "Sending..." : "Send Broadcast"}
@@ -712,7 +712,7 @@ function BroadcastComposer() {
       </div>
 
       {/* Broadcast History */}
-      <div className="rounded-xl bg-[#13141b] border border-[#1e2028] overflow-hidden">
+      <div className="rounded-card bg-[#13141b] border border-[#1e2028] overflow-hidden">
         <div className="px-5 py-4 border-b border-[#1e2028]">
           <h3 className="text-[15px] font-semibold text-white flex items-center gap-2">
             <Mail className="w-4 h-4 text-[#818cf8]" />
@@ -733,7 +733,7 @@ function BroadcastComposer() {
                       {format(new Date(b.created_at), "MMM d, yyyy h:mm a")} · {b.recipient_count} recipients · {b.filter_type === "all" ? "All Users" : b.filter_type === "selected" ? "Selected Users" : "Subscribed"}
                     </p>
                   </div>
-                  <div className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold", sc.bg, sc.text)}>
+                  <div className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-control text-[11px] font-semibold", sc.bg, sc.text)}>
                     <div className={cn("w-1.5 h-1.5 rounded-full", sc.dot)} />
                     {b.status}
                   </div>
@@ -749,9 +749,9 @@ function BroadcastComposer() {
       {/* Confirm Dialog */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => !sendBroadcast.isPending && setShowConfirm(false)}>
-          <div className="bg-[#13141b] border border-[#1e2028] rounded-2xl w-full max-w-md p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[#13141b] border border-[#1e2028] rounded-card w-full max-w-md p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-card bg-amber-500/10 flex items-center justify-center">
                 <AlertTriangle className="w-5 h-5 text-amber-400" />
               </div>
               <div>
@@ -770,14 +770,14 @@ function BroadcastComposer() {
               <button
                 onClick={() => setShowConfirm(false)}
                 disabled={sendBroadcast.isPending}
-                className="flex-1 px-4 py-2.5 rounded-xl text-[13px] font-medium bg-[#1a1c25] text-[#c4c7d4] border border-[#1e2028] hover:bg-[#252730]"
+                className="flex-1 px-4 py-2.5 rounded-control text-[13px] font-medium bg-[#1a1c25] text-[#c4c7d4] border border-[#1e2028] hover:bg-[#252730]"
               >
                 Cancel
               </button>
               <button
                 onClick={() => sendBroadcast.mutate()}
                 disabled={sendBroadcast.isPending}
-                className="flex-1 px-4 py-2.5 rounded-xl text-[13px] font-semibold bg-[#6366f1] text-white hover:bg-[#5558e6] flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 rounded-control text-[13px] font-semibold bg-[#6366f1] text-white hover:bg-[#5558e6] flex items-center justify-center gap-2"
               >
                 {sendBroadcast.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {sendBroadcast.isPending ? "Sending..." : "Confirm & Send"}
@@ -790,7 +790,7 @@ function BroadcastComposer() {
       {/* Preview Dialog */}
       {showPreview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowPreview(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-card w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
             <div className="mb-4">
               <p className="text-xs text-gray-500">From: YidVid &lt;noreply@yidvid.co&gt;</p>
               <p className="text-xs text-gray-500">Subject: {subject}</p>
@@ -805,7 +805,7 @@ function BroadcastComposer() {
             <div className="mt-4 flex justify-end">
               <button
                 onClick={() => setShowPreview(false)}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                className="px-4 py-2 rounded-control text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
               >
                 Close Preview
               </button>

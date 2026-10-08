@@ -1,0 +1,2 @@
+- Corner radii use role classes `rounded-badge|control|card|dialog|circle` (vars in src/styles/theme.css); never raw rounded-full/2xl/3xl for UI — keeps shape geometry centrally tunable.
+- Elevation uses `shadow-raised` (hover cards) and `shadow-overlay` (menus/dialogs/toasts) only — one theme-aware shadow per role.

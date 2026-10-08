@@ -36,7 +36,7 @@ const AnimatedRow: React.FC<{
         {loopVideos.map((video, i) => (
           <div
             key={video.id + "-row" + rowIdx + "-i" + i}
-            className={`rounded-xl ${cardWidthClass} aspect-video bg-white/60 shadow-md cursor-pointer transition-all duration-200 hover:scale-105`}
+            className={`rounded-card ${cardWidthClass} aspect-video bg-white/60 shadow-md cursor-pointer transition-all duration-200 hover:scale-105`}
             style={{
               boxShadow: `0 2px 12px 0 rgba(80,50,115,0.07)`,
             }}

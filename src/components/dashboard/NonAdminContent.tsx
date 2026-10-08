@@ -11,7 +11,7 @@ export const NonAdminContent = ({ onEnterPin }: NonAdminContentProps) => {
   return (
     <Card className="max-w-md mx-auto mt-12 border-[#1e2028] bg-[#12131a]">
       <CardContent className="flex flex-col items-center gap-5 p-8 text-center">
-        <div className="w-14 h-14 rounded-full bg-indigo-500/10 flex items-center justify-center">
+        <div className="w-14 h-14 rounded-card bg-indigo-500/10 flex items-center justify-center">
           <ShieldCheck className="w-7 h-7 text-indigo-400" />
         </div>
         <div className="space-y-2">

@@ -39,7 +39,7 @@ export const BulkActions = ({
   isUpdating
 }: BulkActionsProps) => {
   return (
-    <div className="flex flex-col md:flex-row gap-4 p-4 bg-blue-50 rounded-lg border">
+    <div className="flex flex-col md:flex-row gap-4 p-4 bg-blue-50 rounded-card border">
       <Select value={bulkCategory} onValueChange={(value) => setBulkCategory(value as VideoCategory)}>
         <SelectTrigger className="w-full md:w-48">
           <SelectValue placeholder="Select category for bulk update" />
