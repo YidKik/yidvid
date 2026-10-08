@@ -373,7 +373,7 @@ export const CustomVideoControls = ({
             {/* Hover / drag timestamp bubble */}
             {!isMobile && (hoverX !== null || isDragging) && duration > 0 && (
               <div
-                className="absolute -top-6 px-2 py-0.5 rounded-badge bg-[#1A1A1A]/95 text-white text-[11px] font-semibold tabular-nums pointer-events-none border border-white/10"
+                className="absolute -top-6 px-2 py-0.5 rounded-badge bg-[#1A1A1A]/95 text-white text-xs font-semibold tabular-nums pointer-events-none border border-white/10"
                 style={{
                   left: isDragging
                     ? `${progress}%`
@@ -469,7 +469,7 @@ export const CustomVideoControls = ({
 
             <span
               className={`text-white/90 ${
-                isMobile ? "text-[10px] ml-1" : "text-xs ml-1.5"
+                isMobile ? "text-xs ml-1" : "text-xs ml-1.5"
               } font-medium tabular-nums select-none`}
             >
               {formatTime(displayTime)}
@@ -487,7 +487,7 @@ export const CustomVideoControls = ({
                   e.stopPropagation();
                   setSpeedOpen(!speedOpen);
                 }}
-                className="transition-all text-[11px] font-bold px-2.5 py-1 rounded-control border"
+                className="transition-all text-xs font-bold px-2.5 py-1 rounded-control border"
                 style={{
                   borderColor: speedOpen ? ACCENT : "rgba(255,255,255,0.28)",
                   color: speedOpen ? ACCENT : "rgba(255,255,255,0.9)",
@@ -514,7 +514,7 @@ export const CustomVideoControls = ({
                           setSpeedOpen(false);
                         }}
                         className={`flex items-center justify-center rounded-full transition-all duration-200 font-bold ${
-                          isMobile ? "w-8 h-8 text-[10px]" : "w-9 h-9 text-[11px]"
+                          isMobile ? "w-8 h-8 text-xs" : "w-9 h-9 text-xs"
                         } ${
                           isActive
                             ? ""

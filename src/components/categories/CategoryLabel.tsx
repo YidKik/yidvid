@@ -28,7 +28,7 @@ export const CategoryLabel = ({ label, textColor }: CategoryLabelProps) => {
     <h3 
       className={`font-medium line-clamp-2 ${
         isMobile 
-          ? 'text-[10px] leading-tight max-w-[70px]' 
+          ? 'text-xs leading-tight max-w-[70px]' 
           : 'text-sm max-w-[120px]'
       }`}
       style={{ 

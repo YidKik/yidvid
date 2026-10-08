@@ -109,7 +109,7 @@ const WatchLater = () => {
                 <h3 className="font-semibold text-foreground line-clamp-2 text-xs lg:text-sm mb-1 lg:mb-1.5 group-hover:text-brand transition-colors">
                   {cleanVideoTitle(item.video?.title)}
                 </h3>
-                <p className="text-[10px] lg:text-xs text-muted-foreground">{item.video?.channel_name}</p>
+                <p className="text-xs lg:text-xs text-muted-foreground">{item.video?.channel_name}</p>
               </motion.div>
             ))}
           </div>

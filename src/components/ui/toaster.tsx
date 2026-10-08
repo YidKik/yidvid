@@ -25,7 +25,7 @@ export function Toaster() {
             <div className={`grid gap-${isMobile ? '0.5' : '1'}`}>
               {title && <ToastTitle className={isMobile ? "text-xs text-black" : "text-sm text-black"}>{title}</ToastTitle>}
               {description && (
-                <ToastDescription className={isMobile ? "text-[10px] leading-tight text-muted-foreground" : "text-xs text-muted-foreground"}>
+                <ToastDescription className={isMobile ? "text-xs leading-tight text-muted-foreground" : "text-xs text-muted-foreground"}>
                   {description}
                 </ToastDescription>
               )}

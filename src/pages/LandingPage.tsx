@@ -227,7 +227,7 @@ const LandingPage = () => {
                 <span className={`relative z-10 ${isMobile ? 'text-sm' : isTablet ? 'text-base' : 'text-lg'}`}>{category.label}</span>
                 
                 <span 
-                  className={`relative z-10 ${isMobile ? 'text-[10px]' : 'text-xs'} flex items-center gap-1 transition-all duration-300 group-hover:gap-2`}
+                  className={`relative z-10 ${isMobile ? 'text-xs' : 'text-xs'} flex items-center gap-1 transition-all duration-300 group-hover:gap-2`}
                   style={{ color: 'hsl(var(--brand))' }}
                 >
                   Watch Now <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" />

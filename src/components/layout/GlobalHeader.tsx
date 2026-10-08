@@ -152,7 +152,7 @@ export const GlobalHeader = () => {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       placeholder="Search videos..."
-                      className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-1.5 text-[11px]' : 'py-2.5 text-sm'} text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground`}
+                      className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-1.5 text-xs' : 'py-2.5 text-sm'} text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground`}
                     />
                     {searchQuery && (
                       <button
@@ -293,7 +293,7 @@ export const GlobalHeader = () => {
                   size={isMobile ? "sm" : "default"}
                   aria-label="Sign In"
                   className={`touch-hit rounded-control gap-1.5 font-medium hover:brightness-90 transition-all bg-primary text-white ${
-                    isMobile ? 'h-7 px-2.5 text-[11px]' : ''
+                    isMobile ? 'h-7 px-2.5 text-xs' : ''
                   }`}
                 >
                   <LogIn className={isMobile ? "w-3 h-3" : "w-4 h-4"} />

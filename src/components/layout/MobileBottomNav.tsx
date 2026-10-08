@@ -127,7 +127,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                 className="flex flex-col items-center justify-center h-full px-3 min-w-0"
               >
                 <Icon className={cn("w-5 h-5 mb-0.5 transition-colors", active ? "text-brand" : "text-muted-foreground dark:text-muted-foreground")} />
-                <span className={cn("text-[10px] font-semibold transition-colors", active ? "text-brand" : "text-muted-foreground dark:text-muted-foreground")}>
+                <span className={cn("text-xs font-semibold transition-colors", active ? "text-brand" : "text-muted-foreground dark:text-muted-foreground")}>
                   {item.label}
                 </span>
               </button>

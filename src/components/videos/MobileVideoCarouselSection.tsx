@@ -62,7 +62,7 @@ export const MobileVideoCarouselSection = ({
               {/* Video Info */}
               <div className="mt-2 flex gap-2">
                 {/* Channel Avatar */}
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-brand flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-brand flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                   {video.channel_name.charAt(0).toUpperCase()}
                 </div>
                 
@@ -72,11 +72,11 @@ export const MobileVideoCarouselSection = ({
                     {cleanVideoTitle(video.title)}
                   </h3>
                   {/* Channel Name */}
-                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
+                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
                     {video.channel_name}
                   </p>
                   {/* Meta */}
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {getFormattedDate(video.uploaded_at)} • {video.views?.toLocaleString() || 0}
                   </p>
                 </div>

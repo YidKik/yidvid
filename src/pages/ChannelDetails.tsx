@@ -246,7 +246,7 @@ const ChannelDetails = () => {
               }`}
             >
               Shorts
-              <span className="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-badge font-medium">{shorts.length}</span>
+              <span className="text-xs bg-primary text-white px-1.5 py-0.5 rounded-badge font-medium">{shorts.length}</span>
               {activeTab === 'shorts' && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}

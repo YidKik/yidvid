@@ -279,12 +279,12 @@ const VideoDetails = () => {
                   ) : (
                     <div className="text-center py-6">
                       <MessageCircle className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-muted-foreground text-[11px] mb-2">
+                      <p className="text-muted-foreground text-xs mb-2">
                         Sign in to view and post comments.
                       </p>
                       <button 
                         onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                        className="inline-block px-4 py-1.5 bg-primary text-white rounded-control text-[11px] font-medium hover:brightness-90 transition-all"
+                        className="inline-block px-4 py-1.5 bg-primary text-white rounded-control text-xs font-medium hover:brightness-90 transition-all"
                       >
                         Sign In
                       </button>

@@ -121,11 +121,11 @@ export const VideoCardInfo = ({
       <div 
         className="flex items-center gap-2 xl:gap-3 mt-1 xl:mt-1.5 text-muted-foreground"
       >
-        <div className="flex items-center gap-1 text-[10px] xl:text-xs">
+        <div className="flex items-center gap-1 text-xs xl:text-xs">
           <Clock size={10} className="text-muted-foreground xl:w-3 xl:h-3" />
           <span>{formattedDate}</span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] xl:text-xs">
+        <div className="flex items-center gap-1 text-xs xl:text-xs">
           <Eye size={10} className="text-muted-foreground xl:w-3 xl:h-3" />
           <span>{formatViewCount(views)}</span>
         </div>

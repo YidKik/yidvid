@@ -138,7 +138,7 @@ const ShortCard = ({
       </p>
       {/* Views below title */}
       {short.views != null && short.views > 0 && (
-        <p className={`mt-0.5 ${isMobile ? 'text-[11px]' : 'text-[12px]'} text-muted-foreground`}>
+        <p className={`mt-0.5 ${isMobile ? 'text-xs' : 'text-[12px]'} text-muted-foreground`}>
           {formatViews(short.views)} views
         </p>
       )}

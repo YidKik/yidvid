@@ -152,7 +152,7 @@ export const FriendlyChannelSection = ({
         <div className={`bg-muted rounded-card ${compact ? 'p-2.5' : 'p-4'}`}>
           <p 
             ref={descriptionRef}
-            className={`${compact ? 'text-[11px]' : 'text-sm'} text-muted-foreground leading-relaxed whitespace-pre-wrap ${
+            className={`${compact ? 'text-xs' : 'text-sm'} text-muted-foreground leading-relaxed whitespace-pre-wrap ${
               !isDescriptionExpanded ? 'line-clamp-3' : ''
             }`}
           >
@@ -162,7 +162,7 @@ export const FriendlyChannelSection = ({
           {needsExpand && (
             <button
               onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-              className={`touch-target inline-flex items-center mt-1.5 ${compact ? 'text-[11px]' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
+              className={`touch-target inline-flex items-center mt-1.5 ${compact ? 'text-xs' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
             >
               {isDescriptionExpanded ? "Show less" : "Show more"}
             </button>
@@ -179,7 +179,7 @@ export const FriendlyChannelSection = ({
         <div>
           <div className="h-px bg-surface-active mb-4" />
           <div className={`flex items-center justify-between ${compact ? 'mb-2' : 'mb-3'}`}>
-            <p className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-foreground`}>
+            <p className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-foreground`}>
               More from {channelName}
             </p>
             {channelId && (
@@ -212,13 +212,13 @@ export const FriendlyChannelSection = ({
                 
                 {/* Info */}
                 <div className="flex-1 min-w-0 py-0.5">
-                  <h4 className={`${compact ? 'text-[11px]' : 'text-[13px]'} font-medium text-foreground line-clamp-2 leading-snug group-hover:text-foreground`}>
+                  <h4 className={`${compact ? 'text-xs' : 'text-[13px]'} font-medium text-foreground line-clamp-2 leading-snug group-hover:text-foreground`}>
                     {cleanVideoTitle(video.title)}
                   </h4>
-                  <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-muted-foreground ${compact ? 'mt-0.5' : 'mt-1'} truncate`}>
+                  <p className={`${compact ? 'text-xs' : 'text-xs'} text-muted-foreground ${compact ? 'mt-0.5' : 'mt-1'} truncate`}>
                     {video.channel_name}
                   </p>
-                  <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-muted-foreground mt-0.5`}>
+                  <p className={`${compact ? 'text-xs' : 'text-xs'} text-muted-foreground mt-0.5`}>
                     {formatViewCount(video.views || 0)} • {getFormattedDate(video.uploaded_at)}
                   </p>
                 </div>

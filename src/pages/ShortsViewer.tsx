@@ -273,10 +273,10 @@ const ShortsViewer = () => {
           >
             <X className="w-5 h-5" />
           </button>
-          <span className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-white/70">
+          <span className="text-xs sm:text-xs font-semibold tracking-[0.2em] uppercase text-white/70">
             Shorts
           </span>
-          <span className="text-[11px] sm:text-xs text-white/50 tabular-nums">
+          <span className="text-xs sm:text-xs text-white/50 tabular-nums">
             {activeIndex + 1}/{shorts.length}
           </span>
         </div>
@@ -345,7 +345,7 @@ const ShortsViewer = () => {
                   {cleanVideoTitle(currentShort.title)}
                 </h1>
                 {currentShort.views != null && currentShort.views > 0 && (
-                  <p className="mt-1.5 text-[11px] sm:text-xs text-white/60">
+                  <p className="mt-1.5 text-xs sm:text-xs text-white/60">
                     {formatViews(currentShort.views)} views
                   </p>
                 )}
@@ -451,7 +451,7 @@ const SideButton = ({
     <div className="w-11 h-11 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/20 transition-colors active:scale-95">
       {icon}
     </div>
-    <span className="text-[10px] font-medium">{label}</span>
+    <span className="text-xs font-medium">{label}</span>
   </button>
 );
 

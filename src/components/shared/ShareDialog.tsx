@@ -88,7 +88,7 @@ export const ShareDialog = ({ open, onOpenChange, url, title }: ShareDialogProps
                 >
                   <Icon className={`w-5 h-5 ${option.iconColor}`} />
                 </div>
-                <span className="text-[10px] font-medium text-muted-foreground dark:text-muted-foreground group-hover:text-foreground dark:group-hover:text-foreground transition-colors">
+                <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground group-hover:text-foreground dark:group-hover:text-foreground transition-colors">
                   {isCopy && copied ? "Copied!" : option.label}
                 </span>
               </button>
