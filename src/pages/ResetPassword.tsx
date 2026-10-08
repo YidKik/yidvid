@@ -137,7 +137,7 @@ const ResetPassword = () => {
                 disabled={recoveryLoading}
               />
               {recoveryError && <p role="alert" className="text-sm text-brand">{recoveryError}</p>}
-              <Button type="submit" disabled={recoveryLoading} className="w-full h-12 bg-primary hover:bg-primary text-white">
+              <Button type="submit" disabled={recoveryLoading} className="w-full h-12 bg-primary hover:bg-primary-hover text-white">
                 {recoveryLoading ? "Sending..." : "Send new reset link"}
               </Button>
             </form>

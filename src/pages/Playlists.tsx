@@ -193,7 +193,7 @@ const Playlists = () => {
               <p className="text-gray-500">Add videos from any video page using the menu.</p>
               <Button
                 onClick={() => navigate('/videos')}
-                className="mt-6 rounded-full bg-primary hover:bg-primary text-gray-900 font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+                className="mt-6 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
               >
                 Browse Videos
               </Button>
@@ -328,7 +328,7 @@ const Playlists = () => {
             </p>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="rounded-full gap-2 bg-primary hover:bg-primary text-gray-900 font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+              className="rounded-full gap-2 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
             >
               <Plus className="w-4 h-4" />
               Create Playlist

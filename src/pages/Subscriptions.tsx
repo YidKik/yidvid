@@ -69,7 +69,7 @@ const Subscriptions = () => {
       <div className="min-h-screen bg-muted dark:bg-background pt-16 pl-0 lg:pl-[200px] pb-24 lg:pb-8 flex flex-col items-center justify-center gap-4 px-4">
         <Users className="w-12 h-12 text-[#ccc]" />
         <p className="text-muted-foreground dark:text-muted-foreground text-center">Please sign in to view your subscriptions.</p>
-        <Button onClick={() => setIsAuthOpen(true)} className="bg-primary hover:bg-primary text-white rounded-full px-6">
+        <Button onClick={() => setIsAuthOpen(true)} className="bg-primary hover:bg-primary-hover text-white rounded-full px-6">
           Sign In
         </Button>
       </div>
