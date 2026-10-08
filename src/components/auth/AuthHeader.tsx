@@ -35,14 +35,14 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
       <div className="text-center">
         {title && (
           <h3 
-            className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-foreground`}
+            className={`type-h2 text-foreground`}
           >
             {title}
           </h3>
         )}
         {subtitle && (
           <p 
-            className="text-sm text-muted-foreground mt-1.5 font-medium"
+            className="type-label text-muted-foreground mt-1"
           >
             {subtitle}
           </p>

@@ -60,12 +60,12 @@ export const AuthOptions = ({
           className="space-y-2"
         >
           <h2 
-            className={`${isMobile ? 'text-2xl' : 'text-[28px]'} font-bold text-foreground`}
+            className={`type-h2 text-foreground`}
           >
             Welcome! 👋
           </h2>
           <p 
-            className="text-base text-muted-foreground font-medium max-w-[280px] mx-auto"
+            className="type-body text-muted-foreground max-w-[280px] mx-auto"
           >
             Sign in to your account or create a new one to get started
           </p>
@@ -74,7 +74,7 @@ export const AuthOptions = ({
         {/* Divider */}
         <div className="relative flex items-center w-full py-1">
           <div className="flex-grow border-t border-gray-200"></div>
-          <span className="flex-shrink mx-4 text-xs text-muted-foreground font-medium">or</span>
+          <span className="flex-shrink mx-4 type-caption text-muted-foreground">or</span>
           <div className="flex-grow border-t border-gray-200"></div>
         </div>
 
@@ -89,7 +89,7 @@ export const AuthOptions = ({
             onClick={handleGoogleSignIn}
             disabled={isGoogleLoading}
             variant="outline"
-            className="w-full h-13 text-base border-2 border-gray-200 text-foreground bg-white hover:bg-gray-50 
+            className="w-full h-12 type-label font-semibold border-2 border-gray-200 text-foreground bg-white hover:bg-gray-50 
               rounded-card font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
           >
@@ -115,7 +115,7 @@ export const AuthOptions = ({
         >
           <Button 
             onClick={() => onSelectOption('signin')}
-            className="w-full h-13 text-base bg-primary hover:brightness-90 text-white rounded-card font-semibold
+            className="w-full h-12 type-label font-semibold bg-primary hover:brightness-90 text-white rounded-card font-semibold
               transition-all duration-200 shadow-md hover:shadow-lg
               flex items-center justify-center gap-2.5 py-4"
           >
@@ -134,7 +134,7 @@ export const AuthOptions = ({
           <Button 
             onClick={() => onSelectOption('signup')}
             variant="outline"
-            className="w-full h-13 text-base border-2 border-brand text-foreground hover:text-primary-foreground bg-card hover:bg-primary 
+            className="w-full h-12 type-label font-semibold border-2 border-brand text-foreground hover:text-primary-foreground bg-card hover:bg-primary 
               rounded-card font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
           >
@@ -146,7 +146,7 @@ export const AuthOptions = ({
       
       {/* Footer */}
       <div className="px-8 pb-6">
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="type-footer text-muted-foreground text-center">
           Join our friendly community today!
         </p>
       </div>
