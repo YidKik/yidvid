@@ -17,7 +17,7 @@ export const PageLayout = ({ children, className }: PageLayoutProps) => {
     <div 
       className={cn(
         "min-h-screen pt-14 transition-all duration-300 flex flex-col",
-        !isHomePage && "pl-[200px]",
+        "lg:pl-[var(--sidebar-w)]",
         className
       )}
     >

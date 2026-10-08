@@ -70,7 +70,7 @@ const VideoDetails = () => {
   // never changes size between load and playback.
   if (isLoadingVideo) {
     return (
-      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[200px] pb-20 lg:pb-0">
+      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-0">
         <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           <div className="mx-auto w-full max-w-[1600px] mt-4 flex gap-6">
             <div className="flex-1 min-w-0">
@@ -88,7 +88,7 @@ const VideoDetails = () => {
   if (!video || error) {
     console.error("Video not found or error:", error, "for videoId:", videoId);
     return (
-      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[var(--sidebar-w)] transition-all duration-300">
         <div className="p-4">
           <div className="p-8 text-center bg-muted dark:bg-card rounded-card mt-6">
             <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-white dark:bg-background rounded-card">
@@ -126,7 +126,7 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-0 transition-all duration-300">
         <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           
         {/* Desktop Layout - two column */}

@@ -166,7 +166,7 @@ const ChannelDetails = () => {
   // Show hidden channel message if user has hidden this channel
   if (isHidden && isAuthenticated) {
     return (
-      <div className="w-full min-h-screen bg-white text-black pt-12 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="w-full min-h-screen bg-white text-black pt-12 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-0 transition-all duration-300">
         <div className="p-4 lg:p-6">
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-card flex items-center justify-center mb-6">
@@ -210,7 +210,7 @@ const ChannelDetails = () => {
   const hasVideosError = !!videosError;
 
   return (
-    <div className="w-full min-h-screen bg-white text-black pt-12 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+    <div className="w-full min-h-screen bg-white text-black pt-12 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-0 transition-all duration-300">
       <div className="p-4 lg:p-6">
         
         <ChannelHeader

@@ -143,7 +143,7 @@ const Search = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-background pt-16 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-16 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-0 transition-all duration-300">
         <main className="max-w-5xl mx-auto px-4 lg:px-6 py-8">
           <TypingSearchLoader query={query} />
         </main>
@@ -154,7 +154,7 @@ const Search = () => {
   const totalResults = filteredChannels.length + filteredVideos.length + filteredShorts.length;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-background pt-16 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+    <div className="min-h-screen bg-white dark:bg-background pt-16 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-0 transition-all duration-300">
       <main className="max-w-5xl mx-auto px-4 lg:px-6 py-5 lg:py-8">
         {/* Search Header - clean and minimal */}
         <div className="mb-6">

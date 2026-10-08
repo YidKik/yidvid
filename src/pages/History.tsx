@@ -19,7 +19,7 @@ export default function History() {
         <Helmet>
           <title>Watch History | YidVid</title>
         </Helmet>
-        <div className="min-h-screen pt-12 pl-0 lg:pl-[200px] bg-white dark:bg-background flex flex-col pb-20 lg:pb-0">
+        <div className="min-h-screen pt-12 pl-0 lg:pl-[var(--sidebar-w)] bg-white dark:bg-background flex flex-col pb-nav lg:pb-0">
           <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-12">
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-card bg-muted dark:bg-secondary flex items-center justify-center mb-6 shadow-sm">
@@ -52,7 +52,7 @@ export default function History() {
 
       <div className="min-h-screen flex flex-col bg-white dark:bg-background">
         <div
-          className="flex-1 pt-12 transition-all duration-300 pb-20 lg:pb-0"
+          className="flex-1 pt-12 transition-all duration-300 pb-nav lg:pb-0"
           style={{ paddingLeft: `${sidebarWidth ? sidebarWidth + 16 : 0}px` }}
         >
           <main className="max-w-5xl mx-auto px-4 lg:px-8 py-8 lg:py-12 flex flex-col flex-1">

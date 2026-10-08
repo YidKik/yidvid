@@ -1,455 +1,248 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Home, 
-  PlayCircle, 
-  Settings, 
-  Info, 
-  Heart, 
-  Clock, 
-  History, 
-  Sparkles,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-  LayoutGrid,
-  Bell,
-  ArrowLeft,
-  LogIn,
-  ListMusic,
-  type LucideIcon
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  ChevronDown, PanelLeftClose, PanelLeftOpen, HelpCircle, LogIn, Library, Mail, FileText, Shield,
+  type LucideIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import yidvidLogoIcon from "@/assets/yidvid-logo-icon.png";
 import { useCategories } from "@/hooks/useCategories";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { 
-  getPreviousPath, 
-  getScrollPosition, 
-  removeCurrentPathFromHistory,
-  saveScrollPosition,
-  recordNavigation
-} from "@/utils/scrollRestoration";
-import { toast } from "sonner";
 import { useSidebarContext } from "@/contexts/SidebarContext";
-
-interface NavItem {
-  name: string;
-  path: string;
-  icon: LucideIcon;
-}
-
-interface NavSection {
-  title?: string;
-  items: NavItem[];
-  requiresAuth?: boolean;
-}
-
-const navSections: NavSection[] = [
-  {
-    items: [
-      { name: "Home", path: "/", icon: Home },
-      { name: "Videos", path: "/videos", icon: PlayCircle },
-      { name: "New Videos", path: "/videos?sort=newest", icon: Sparkles },
-    ]
-  },
-  {
-    items: [
-      { name: "Settings", path: "/settings", icon: Settings },
-      { name: "About", path: "/about", icon: Info },
-    ]
-  }
-];
-
-const librarySection: NavSection = {
-  title: "Library",
-  requiresAuth: true,
-  items: [
-    { name: "History", path: "/history", icon: History },
-    { name: "Favorites", path: "/favorites", icon: Heart },
-    { name: "Watch Later", path: "/watch-later", icon: Clock },
-    { name: "Playlists", path: "/playlists", icon: ListMusic },
-  ]
-};
+import { useAuthDialog } from "@/contexts/AuthDialogContext";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  DISCOVER_ITEMS, LIBRARY_ITEMS, ACCOUNT_ITEMS, CATEGORIES_ICON, isNavPathActive, isCategoryRouteActive, isLibraryRoute,
+  type NavLinkItem,
+} from "./navConfig";
+import { useNavDialogs } from "./NavDialogs";
 
 interface SidebarProps {
   isAuthenticated?: boolean;
   userId?: string;
 }
 
-// Shared nav item styles
-const getNavItemClass = (isExpanded: boolean, active: boolean, disabled = false) =>
-  cn(
-    "flex items-center text-sm font-medium transition-all duration-200",
-    isExpanded
-      ? "gap-3 px-3 py-2.5 rounded-control"
-      : "justify-center p-2 rounded-control mx-auto w-10 h-10",
-    disabled
-      ? "opacity-40 cursor-default border border-transparent"
-      : active
-        ? "bg-muted dark:bg-secondary border-l-[3px] border-brand text-brand"
-        : "border border-transparent hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
-  );
+const rowBase =
+  "flex items-center min-h-11 rounded-control text-sm leading-5 font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring";
+const rowState = (active: boolean) =>
+  active
+    ? "bg-brand/10 text-brand"
+    : "text-foreground hover:bg-surface-hover";
 
-const getIconClass = (active: boolean, disabled = false) =>
-  cn("w-5 h-5 shrink-0 transition-colors", disabled ? "text-muted-foreground" : active ? "text-brand" : "text-foreground dark:text-foreground");
-
-const getLabelClass = (active: boolean, disabled = false) =>
-  cn("truncate transition-colors", disabled ? "text-muted-foreground" : active ? "text-brand" : "text-foreground dark:text-foreground");
-
-export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
+export const Sidebar = ({ isAuthenticated = false }: SidebarProps) => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const isHomePage = location.pathname === "/";
   const { isExpanded, setIsExpanded } = useSidebarContext();
-  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
-  const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
-  
+  const auth = useAuthDialog();
   const { allCategories } = useCategories();
+  const { openDialog, element: dialogs } = useNavDialogs();
+  const categoryActive = isCategoryRouteActive(location.pathname, location.search);
+  const [catOpen, setCatOpen] = useState(categoryActive);
+  useEffect(() => { if (categoryActive) setCatOpen(true); }, [categoryActive]);
 
-  const searchParams = new URLSearchParams(location.search);
-  const categoryFromUrl = searchParams.get('category');
-  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "all");
+  const categories = allCategories.filter((c) => !(c.icon?.startsWith("http") || c.icon?.startsWith("/")));
+  const expanded = isExpanded;
 
-  useEffect(() => {
-    if (categoryFromUrl) {
-      setSelectedCategory(categoryFromUrl);
-      setIsCategoriesOpen(true);
-    } else if (location.pathname === "/videos" && !location.search.includes("category=")) {
-      setSelectedCategory("all");
-    }
-  }, [categoryFromUrl, location.pathname, location.search]);
+  const withTip = (label: string, node: JSX.Element) =>
+    expanded ? node : (
+      <Tooltip>
+        <TooltipTrigger asChild>{node}</TooltipTrigger>
+        <TooltipContent side="right">{label}</TooltipContent>
+      </Tooltip>
+    );
 
-  const { data: subscriptions } = useQuery({
-    queryKey: ["sidebar-subscriptions", userId],
-    queryFn: async () => {
-      if (!userId) return [];
-      const { data, error } = await supabase
-        .from("channel_subscriptions")
-        .select(`
-          channel:youtube_channels!inner (
-            channel_id,
-            title,
-            thumbnail_url
-          )
-        `)
-        .eq("user_id", userId);
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!userId && isAuthenticated,
-  });
-
-  useEffect(() => {
-    const currentPath = location.pathname + location.search;
-    recordNavigation(currentPath);
-  }, [location.pathname, location.search]);
-
-  const effectiveIsExpanded = isHomePage ? false : isExpanded;
-
-  const isViewingCategory = location.pathname === "/videos" && categoryFromUrl && categoryFromUrl !== "all";
-
-  const isActive = (path: string) => {
-    const [basePath, query] = path.split("?");
-    if (isViewingCategory && path === "/videos") return false;
-    if (query) {
-      const currentParams = new URLSearchParams(location.search);
-      const targetParams = new URLSearchParams(query);
-      if (location.pathname !== basePath) return false;
-      for (const [key, value] of targetParams.entries()) {
-        if (currentParams.get(key) !== value) return false;
-      }
-      return true;
-    }
-    if (basePath === "/videos" && location.pathname === "/videos") {
-      return !location.search.includes("sort=") && !location.search.includes("category=");
-    }
-    return location.pathname === basePath;
-  };
-
-  const isCategoryActive = (categoryId: string) => {
-    return location.pathname === "/videos" && categoryFromUrl === categoryId;
-  };
-
-  const canGoBack = () => !!getPreviousPath();
-
-  const handleGoBack = () => {
-    saveScrollPosition(location.pathname + location.search);
-    const previousPath = getPreviousPath();
-    if (previousPath) {
-      removeCurrentPathFromHistory();
-      const scrollPosition = getScrollPosition(previousPath);
-      navigate(previousPath);
-      setTimeout(() => {
-        window.scrollTo({ top: scrollPosition, behavior: 'auto' });
-      }, 50);
-    } else {
-      navigate("/?skipWelcome=true");
-    }
-  };
-
-  const handleCategorySelect = (categoryId: string) => {
-    setSelectedCategory(categoryId);
-    navigate(`/videos?category=${categoryId}`);
-    setIsCategoriesOpen(false);
-  };
-
-  const sidebarWidth = effectiveIsExpanded ? 200 : 64;
-
-  return (
-    <motion.aside
-      initial={false}
-      animate={{ width: sidebarWidth }}
-      transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className="fixed top-0 left-0 bottom-0 z-40 bg-white dark:bg-background flex flex-col overflow-hidden border-r border-border dark:border-border"
-    >
-      {/* Logo */}
-      <div className={cn(
-        "flex items-center border-b border-border dark:border-border h-14",
-        effectiveIsExpanded ? "px-4 justify-between" : "px-2 justify-center"
-      )}>
-        <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={yidvidLogoIcon} alt="YidVid" className="w-12 h-12 rounded-full object-contain" />
-          {effectiveIsExpanded && (
-            <span className="text-base font-bold text-foreground dark:text-foreground">
-              YidVid
-            </span>
-          )}
-        </Link>
-        
-        {!isHomePage && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="h-8 w-8 rounded-control hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground"
+  const renderLink = (item: NavLinkItem) => {
+    const active = isNavPathActive(item.path, location.pathname, location.search);
+    const Icon = item.icon;
+    return (
+      <li key={item.id}>
+        {withTip(item.label,
+          <Link
+            to={item.path}
+            aria-current={active ? "page" : undefined}
+            aria-label={expanded ? undefined : item.label}
+            className={cn(rowBase, rowState(active), expanded ? "gap-3 px-3" : "justify-center w-12 mx-auto")}
           >
-            {effectiveIsExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          </Button>
+            <Icon className="w-5 h-5 shrink-0" strokeWidth={1.75} aria-hidden />
+            {expanded && <span className="truncate">{item.label}</span>}
+          </Link>
         )}
-      </div>
+      </li>
+    );
+  };
 
-      {/* Back Button */}
-      {canGoBack() && location.pathname !== "/" && location.pathname !== "/videos" && (
-        <div className={cn("px-2 py-2 border-b border-border dark:border-border", effectiveIsExpanded ? "px-3" : "")}>
-          <button
-            onClick={handleGoBack}
-            title="Go back"
-            className={cn(
-              "flex items-center rounded-control text-sm font-medium transition-all duration-200",
-              "text-muted-foreground dark:text-muted-foreground hover:bg-surface-hover dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground",
-              effectiveIsExpanded ? "gap-2 px-3 py-2.5 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
-            )}
+  /** Collapsed rail: named anchored menu panel instead of tiny nested icons. */
+  const railMenu = (label: string, Icon: LucideIcon, active: boolean, items: { id: string; label: string; path: string }[]) => (
+    <li>
+      <DropdownMenu>
+        {withTip(label,
+          <DropdownMenuTrigger
+            aria-label={label}
+            className={cn(rowBase, rowState(active), "justify-center w-12 mx-auto")}
           >
-            <ArrowLeft className="w-4 h-4 shrink-0" />
-            {effectiveIsExpanded && <span>Back</span>}
-          </button>
-        </div>
-      )}
-
-      {/* Scrollable Nav */}
-      <nav className="flex-1 overflow-y-auto py-2 px-2">
-        {/* Main Nav */}
-        <div className="space-y-1">
-          {navSections[0].items.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.path);
+            <Icon className="w-5 h-5" strokeWidth={1.75} aria-hidden />
+          </DropdownMenuTrigger>
+        )}
+        <DropdownMenuContent side="right" align="start" className="w-56 max-h-[70vh] overflow-y-auto">
+          <DropdownMenuLabel>{label}</DropdownMenuLabel>
+          {items.map((i) => {
+            const a = i.path.includes("category=")
+              ? isCategoryRouteActive(location.pathname, location.search, i.id)
+              : isNavPathActive(i.path, location.pathname, location.search);
             return (
-              <Link
-                key={item.path + item.name}
-                to={item.path}
-                title={!effectiveIsExpanded ? item.name : undefined}
-                className={getNavItemClass(effectiveIsExpanded, active)}
-                onClick={(e) => {
-                  // If clicking "Videos" while already on /videos with params, force reset
-                  if (item.path === "/videos" && location.pathname === "/videos" && location.search) {
-                    e.preventDefault();
-                    setSelectedCategory("");
-                    setIsCategoriesOpen(false);
-                    navigate("/videos", { replace: true });
-                  }
-                }}
-              >
-                <Icon className={getIconClass(active)} />
-                {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
-              </Link>
+              <DropdownMenuItem key={i.id} asChild className={cn("min-h-11", a && "text-brand")}>
+                <Link to={i.path} aria-current={a ? "page" : undefined}>{i.label}</Link>
+              </DropdownMenuItem>
             );
           })}
-        </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </li>
+  );
 
-        {/* Categories - only visible when expanded */}
-        {effectiveIsExpanded && (
-          <div className="mt-2 pt-2 border-t border-border dark:border-border">
+  const groupHeading = (text: string, id: string) =>
+    expanded ? <h2 id={id} className="px-3 pt-2 pb-1 type-label text-muted-foreground">{text}</h2> : <h2 id={id} className="sr-only">{text}</h2>;
+
+  const CatIcon = CATEGORIES_ICON;
+  const AboutIcon = ACCOUNT_ITEMS[1].icon;
+
+  return (
+    <TooltipProvider delayDuration={200}>
+      <aside
+        className="fixed top-0 left-0 bottom-0 z-40 flex flex-col bg-background border-r border-border transition-[width] duration-200"
+        style={{ width: "var(--sidebar-w)" }}
+      >
+        {/* Brand + collapse */}
+        <div className={cn("flex shrink-0 px-3", expanded ? "items-center justify-between h-14" : "flex-col items-center gap-1 py-2")}>
+          <Link to="/" className="flex items-center gap-2 min-h-11 min-w-11 justify-center rounded-control focus-visible:ring-2 focus-visible:ring-ring outline-none" aria-label="YidVid home">
+            <img src={yidvidLogoIcon} alt="" className="w-8 h-8 object-contain" />
+            {expanded && <span className="type-h3 text-foreground">YidVid</span>}
+          </Link>
+          {withTip(expanded ? "Collapse sidebar" : "Expand sidebar",
             <button
-              onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-              className={cn(
-                "flex items-center text-sm font-medium transition-all duration-200 w-full",
-                "gap-3 px-3 py-2.5 rounded-control justify-between",
-                "border border-transparent hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
-              )}
+              type="button"
+              onClick={() => setIsExpanded(!expanded)}
+              aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+              aria-expanded={expanded}
+              className="w-11 h-11 flex items-center justify-center rounded-control text-muted-foreground hover:bg-surface-hover hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring outline-none"
             >
-              <div className="flex items-center gap-3">
-                <LayoutGrid className="w-5 h-5 shrink-0" />
-                <span className="text-foreground dark:text-foreground">Categories</span>
-              </div>
-              {isCategoriesOpen
-                ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                : <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              }
+              {expanded ? <PanelLeftClose className="w-5 h-5" strokeWidth={1.75} /> : <PanelLeftOpen className="w-5 h-5" strokeWidth={1.75} />}
             </button>
-
-            <AnimatePresence>
-              {isCategoriesOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden ml-2 mr-1 py-1"
-                >
-                  {allCategories
-                    .filter((category) => {
-                      const isUrl = category.icon?.startsWith('http') || category.icon?.startsWith('/');
-                      return !isUrl;
-                    })
-                    .map((category) => (
-                      <button
-                        key={category.id}
-                        onClick={() => handleCategorySelect(category.id)}
-                        className={cn(
-                          "w-full text-left px-3 py-2 text-sm font-medium rounded-control transition-all duration-200 my-0.5",
-                          isCategoryActive(category.id)
-                            ? "bg-muted dark:bg-secondary border-l-[3px] border-brand text-brand"
-                            : "text-foreground dark:text-foreground hover:bg-surface-hover dark:hover:bg-secondary border border-transparent"
-                        )}
-                      >
-                        {category.label}
-                      </button>
-                    ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
-
-        {/* Library */}
-        <div className="mt-3 pt-3 border-t border-border dark:border-border">
-          {effectiveIsExpanded && (
-            <div className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase">
-              {librarySection.title}
-            </div>
           )}
-          
-          <div className="space-y-1">
-            {librarySection.items.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.path);
-              
-              return (
-                <Link
-                  key={item.path + item.name}
-                  to={item.path}
-                  title={!effectiveIsExpanded ? item.name : undefined}
-                  className={getNavItemClass(effectiveIsExpanded, active)}
-                >
-                  <Icon className={getIconClass(active)} />
-                  {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
-                </Link>
-              );
-            })}
-          </div>
         </div>
 
-        {/* Settings & About */}
-        {navSections.slice(1).map((section, sectionIdx) => (
-          <div key={sectionIdx} className="mt-3 pt-3 border-t border-border dark:border-border">
-            <div className="space-y-1">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.path);
-                return (
-                  <Link
-                    key={item.path + item.name}
-                    to={item.path}
-                    title={!effectiveIsExpanded ? item.name : undefined}
-                    className={getNavItemClass(effectiveIsExpanded, active)}
+        {/* Scrollable middle */}
+        <nav aria-label="Main" className="flex-1 min-h-0 overflow-y-auto px-3 py-2">
+          <section aria-labelledby="nav-discover">
+            {groupHeading("Discover", "nav-discover")}
+            <ul className="space-y-1">
+              {DISCOVER_ITEMS.map(renderLink)}
+              {expanded ? (
+                <li>
+                  <button
+                    type="button"
+                    aria-expanded={catOpen}
+                    aria-controls="nav-categories"
+                    onClick={() => setCatOpen(!catOpen)}
+                    className={cn(rowBase, "w-full gap-3 px-3", categoryActive && !catOpen ? rowState(true) : rowState(false))}
                   >
-                    <Icon className={getIconClass(active)} />
-                    {effectiveIsExpanded && <span className={getLabelClass(active)}>{item.name}</span>}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-
-        {/* Subscriptions - only visible when expanded */}
-        {effectiveIsExpanded && (
-          <div className="mt-3 pt-3 border-t border-border dark:border-border">
-            <button
-              onClick={() => {
-              if (!isAuthenticated) {
-                window.dispatchEvent(new Event('openAuthDialog'));
-                return;
-              }
-                setIsSubscriptionsOpen(!isSubscriptionsOpen);
-              }}
-              className={cn(
-                "flex items-center text-sm font-medium transition-all duration-200 w-full",
-                "gap-3 px-3 py-2.5 rounded-control justify-between",
-                "border border-transparent hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5 shrink-0" />
-                <span className="text-foreground dark:text-foreground">Subscriptions</span>
-              </div>
-              {isSubscriptionsOpen
-                ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                : <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              }
-            </button>
-
-            <AnimatePresence>
-              {isSubscriptionsOpen && isAuthenticated && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden ml-2 mr-1 py-1"
-                >
-                  {subscriptions && subscriptions.length > 0 ? (
-                    subscriptions.map((sub: any) => (
-                      <Link
-                        key={sub.channel.channel_id}
-                        to={`/channel/${sub.channel.channel_id}`}
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-control text-muted-foreground dark:text-muted-foreground hover:bg-surface-hover dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground border border-transparent transition-all duration-200 my-0.5"
-                      >
-                        <img
-                          src={sub.channel.thumbnail_url || '/placeholder.svg'}
-                          alt={sub.channel.title}
-                          className="w-6 h-6 rounded-full object-cover"
-                        />
-                        <span className="truncate text-xs font-medium">{sub.channel.title}</span>
-                      </Link>
-                    ))
-                  ) : (
-                    <div className="px-3 py-2 text-xs text-muted-foreground">
-                      No subscriptions yet
-                    </div>
+                    <CatIcon className="w-5 h-5 shrink-0" strokeWidth={1.75} aria-hidden />
+                    <span className="flex-1 text-left">Categories</span>
+                    <ChevronDown className={cn("w-4 h-4 transition-transform", catOpen && "rotate-180")} aria-hidden />
+                  </button>
+                  {catOpen && (
+                    <ul id="nav-categories" className="mt-1 space-y-1">
+                      {categories.map((c) => {
+                        const a = isCategoryRouteActive(location.pathname, location.search, c.id);
+                        return (
+                          <li key={c.id}>
+                            <Link
+                              to={`/videos?category=${c.id}`}
+                              aria-current={a ? "page" : undefined}
+                              className={cn(rowBase, rowState(a), "pl-11 pr-3")}
+                            >
+                              <span className="truncate">{c.label}</span>
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   )}
-                </motion.div>
+                </li>
+              ) : (
+                railMenu("Categories", CatIcon, categoryActive,
+                  categories.map((c) => ({ id: c.id, label: c.label, path: `/videos?category=${c.id}` })))
               )}
-            </AnimatePresence>
-          </div>
-        )}
-      </nav>
-    </motion.aside>
+            </ul>
+          </section>
+
+          <div className="my-3 border-t border-border" role="presentation" />
+
+          <section aria-labelledby="nav-library">
+            {groupHeading("Library", "nav-library")}
+            <ul className="space-y-1">
+              {expanded
+                ? LIBRARY_ITEMS.map(renderLink)
+                : railMenu("Library", Library, isLibraryRoute(location.pathname), LIBRARY_ITEMS)}
+            </ul>
+          </section>
+        </nav>
+
+        {/* Footer / account */}
+        <div className="shrink-0 border-t border-border px-3 py-2">
+          <ul className="space-y-1" aria-label="Account and help">
+            {renderLink(ACCOUNT_ITEMS[0])}
+            <li>
+              <DropdownMenu>
+                {withTip("Help & info",
+                  <DropdownMenuTrigger
+                    aria-label="Help and info"
+                    className={cn(rowBase, rowState(location.pathname === "/about"), expanded ? "w-full gap-3 px-3" : "justify-center w-12 mx-auto")}
+                  >
+                    <HelpCircle className="w-5 h-5 shrink-0" strokeWidth={1.75} aria-hidden />
+                    {expanded && <span className="flex-1 text-left">Help & info</span>}
+                  </DropdownMenuTrigger>
+                )}
+                <DropdownMenuContent side={expanded ? "top" : "right"} align="start" className="w-56">
+                  <DropdownMenuItem asChild className="min-h-11">
+                    <Link to="/about" aria-current={location.pathname === "/about" ? "page" : undefined}>
+                      <AboutIcon className="w-4 h-4 mr-2" /> About YidVid
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="min-h-11" onSelect={() => openDialog("contact")}>
+                    <Mail className="w-4 h-4 mr-2" /> Contact us
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="min-h-11" onSelect={() => openDialog("terms")}>
+                    <FileText className="w-4 h-4 mr-2" /> Terms of Service
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="min-h-11" onSelect={() => openDialog("privacy")}>
+                    <Shield className="w-4 h-4 mr-2" /> Privacy Policy
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </li>
+            {!isAuthenticated && (
+              <li>
+                {withTip("Sign in",
+                  <button
+                    type="button"
+                    onClick={() => auth?.setIsAuthOpen(true)}
+                    aria-label={expanded ? undefined : "Sign in"}
+                    className={cn(rowBase, rowState(false), expanded ? "w-full gap-3 px-3" : "justify-center w-12 mx-auto")}
+                  >
+                    <LogIn className="w-5 h-5 shrink-0" strokeWidth={1.75} aria-hidden />
+                    {expanded && <span>Sign in</span>}
+                  </button>
+                )}
+              </li>
+            )}
+          </ul>
+        </div>
+        {dialogs}
+      </aside>
+    </TooltipProvider>
   );
 };
 

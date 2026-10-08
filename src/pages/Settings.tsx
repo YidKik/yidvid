@@ -23,7 +23,7 @@ const Settings = () => {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-white dark:bg-background pt-16 px-4 pl-0 lg:pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-16 px-4 pl-0 lg:pl-[var(--sidebar-w)] transition-all duration-300">
         <div className="max-w-4xl mx-auto">
           <ProfileSectionSkeleton />
         </div>
@@ -32,7 +32,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted dark:bg-background pt-12 pl-0 lg:pl-[200px] pb-24 lg:pb-8 transition-all duration-300">
+    <div className="min-h-screen bg-muted dark:bg-background pt-12 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-8 transition-all duration-300">
       <div className={cn(
         "max-w-5xl mx-auto",
         isMobile ? "px-4 pt-4" : "px-8 pt-6"
