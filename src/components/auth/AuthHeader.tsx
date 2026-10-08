@@ -24,12 +24,13 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
             variant="ghost"
             size="icon"
             onClick={onBack}
-            className="h-9 w-9 rounded-card transition-all duration-200 hover:bg-surface-active border border-border"
+            aria-label="Back"
+            className="h-11 w-11 rounded-control transition-all duration-200 hover:bg-surface-active border border-border"
           >
             <ArrowLeft className="h-4 w-4 text-foreground" />
           </Button>
         )}
-        {!onBack && <div className="h-9" />}
+        {!onBack && <div className="h-11" />}
       </div>
       
       <div className="text-center">
