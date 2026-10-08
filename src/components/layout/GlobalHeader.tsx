@@ -98,6 +98,7 @@ export const GlobalHeader = () => {
               className="flex items-center justify-center w-10 h-10 rounded-control text-white font-semibold text-sm transition-transform hover:scale-105 bg-primary"
               style={{ fontFamily: "'Quicksand', sans-serif" }}
               title="Profile"
+                  aria-label="Profile and settings"
             >
               {getUserInitial()}
             </Link>
@@ -170,7 +171,8 @@ export const GlobalHeader = () => {
                   </div>
                   <button
                     type="submit"
-                    className={`${isMobile ? 'h-7 px-2.5' : 'h-10 px-4'} rounded-r-control border-l border-border dark:border-border hover:bg-surface-active dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
+                    aria-label="Search"
+                    className={`touch-hit ${isMobile ? "h-7 px-2.5" : "h-10 px-4"} rounded-r-control border-l border-border dark:border-border hover:bg-surface-active dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
                   >
                     <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-muted-foreground dark:text-muted-foreground`} />
                   </button>
@@ -279,11 +281,12 @@ export const GlobalHeader = () => {
               {isAuthenticated ? (
                 <Link
                   to="/settings"
-                  className={`flex items-center justify-center rounded-control font-semibold transition-all duration-200 hover:bg-surface-hover dark:hover:bg-secondary border-2 border-border dark:border-border bg-transparent text-muted-foreground dark:text-muted-foreground ${
+                  className={`touch-hit flex items-center justify-center rounded-control font-semibold transition-all duration-200 hover:bg-surface-hover dark:hover:bg-secondary border-2 border-border dark:border-border bg-transparent text-muted-foreground dark:text-muted-foreground ${
                     isMobile ? 'w-7 h-7 text-xs' : 'w-9 h-9 text-sm'
                   }`}
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
                   title="Profile"
+                  aria-label="Profile and settings"
                 >
                   {getUserInitial()}
                 </Link>
@@ -291,6 +294,7 @@ export const GlobalHeader = () => {
                 <Button
                   onClick={() => setIsAuthOpen(true)}
                   size={isMobile ? "sm" : "default"}
+                  aria-label="Sign In"
                   className={`touch-hit rounded-control gap-1.5 font-medium hover:brightness-90 transition-all bg-primary text-white ${
                     isMobile ? 'h-7 px-2.5 text-[11px]' : ''
                   }`}
