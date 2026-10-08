@@ -52,7 +52,7 @@ export const AuthOptions = ({
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand via-brand to-brand" />
       
       {/* Hero section */}
-      <div className="w-full bg-muted px-8 pt-10 pb-8 text-center">
+      <div className="w-full bg-muted px-4 sm:px-6 pt-12 pb-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -90,7 +90,7 @@ export const AuthOptions = ({
             disabled={isGoogleLoading}
             variant="outline"
             className="w-full h-12 type-label font-semibold border-2 border-gray-200 text-foreground bg-white hover:bg-gray-50 
-              rounded-card font-semibold transition-all duration-200
+              rounded-control font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -105,7 +105,7 @@ export const AuthOptions = ({
       </div>
       
       {/* Buttons section */}
-      <div className="flex flex-col w-full space-y-3 px-8 py-8">
+      <div className="flex flex-col w-full space-y-3 px-4 sm:px-6 py-6">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -115,7 +115,7 @@ export const AuthOptions = ({
         >
           <Button 
             onClick={() => onSelectOption('signin')}
-            className="w-full h-12 type-label font-semibold bg-primary hover:brightness-90 text-white rounded-card font-semibold
+            className="w-full h-12 type-label font-semibold bg-primary hover:brightness-90 text-white rounded-control font-semibold
               transition-all duration-200 shadow-md hover:shadow-lg
               flex items-center justify-center gap-2.5 py-4"
           >
@@ -135,7 +135,7 @@ export const AuthOptions = ({
             onClick={() => onSelectOption('signup')}
             variant="outline"
             className="w-full h-12 type-label font-semibold border-2 border-brand text-foreground hover:text-primary-foreground bg-card hover:bg-primary 
-              rounded-card font-semibold transition-all duration-200
+              rounded-control font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
           >
             <UserPlus size={20} />
@@ -145,7 +145,7 @@ export const AuthOptions = ({
       </div>
       
       {/* Footer */}
-      <div className="px-8 pb-6">
+      <div className="px-4 sm:px-6 pb-6">
         <p className="type-footer text-muted-foreground text-center">
           Join our friendly community today!
         </p>

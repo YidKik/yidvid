@@ -13,12 +13,12 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
   
   return (
     <div 
-      className="flex flex-col px-8 pt-6 pb-5 bg-muted border-b border-border relative"
+      className="flex flex-col px-4 sm:px-6 pt-6 pb-4 bg-muted border-b border-border relative"
     >
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand via-brand to-brand" />
       
-      <div className="flex items-center mb-3">
+      <div className="flex items-center mb-4">
         {onBack && (
           <Button
             variant="ghost"
