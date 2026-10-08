@@ -184,7 +184,7 @@ export const FriendlyVideoActionBar = ({
   ];
 
   const pillBtn = compact
-    ? "touch-target h-7 px-2.5 rounded-control text-xs font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
+    ? "touch-target h-7 px-3 rounded-control text-xs font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
     : "touch-target h-9 px-4 rounded-control text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground";
 
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
@@ -192,7 +192,7 @@ export const FriendlyVideoActionBar = ({
   return (
     <div className="space-y-3">
       {/* Views & date - small meta line */}
-      <div className={`flex items-center gap-1.5 ${compact ? 'text-xs' : 'text-xs'} text-muted-foreground dark:text-muted-foreground`}>
+      <div className={`flex items-center gap-2 ${compact ? 'text-xs' : 'text-xs'} text-muted-foreground dark:text-muted-foreground`}>
         <span>{formatViewCount(views)} views</span>
         {uploadedAt && (
           <>
@@ -205,7 +205,7 @@ export const FriendlyVideoActionBar = ({
       {/* YouTube-style combined row: Channel left, actions right */}
       <div className={`flex items-center ${compact ? 'gap-2' : 'gap-3'} flex-wrap`}>
         {/* Channel avatar + name + subscribe */}
-        <div className={`flex items-center ${compact ? 'gap-2' : 'gap-2.5'} mr-auto min-w-0`}>
+        <div className={`flex items-center ${compact ? 'gap-2' : 'gap-3'} mr-auto min-w-0`}>
           {channelId ? (
             <Link to={`/channel/${channelId}`} className="flex-shrink-0">
               <Avatar className={compact ? "h-6 w-6" : "h-9 w-9"}>
@@ -243,7 +243,7 @@ export const FriendlyVideoActionBar = ({
               onClick={handleSubscribeClick}
               disabled={isSubLoading}
               data-subscribed={isSubscribed ? "true" : "false"}
-              className={`${compact ? 'h-7 px-2.5 text-xs' : 'h-9 px-4 text-sm'} video-subscribe-button touch-target rounded-control font-semibold transition-all ml-0.5`}
+              className={`${compact ? 'h-7 px-3 text-xs' : 'h-9 px-4 text-sm'} video-subscribe-button touch-target rounded-control font-semibold transition-all ml-0.5`}
             >
               {isSubLoading ? (
                 <span className="opacity-70">...</span>
@@ -260,14 +260,14 @@ export const FriendlyVideoActionBar = ({
         </div>
 
         {/* Action buttons - right side */}
-        <div className={`flex items-center ${compact ? 'gap-1.5' : 'gap-2'}`}>
+        <div className={`flex items-center ${compact ? 'gap-2' : 'gap-2'}`}>
           {/* Like pill */}
           <Button
             variant="ghost"
             onClick={handleLike}
             className={cn(pillBtn, isLiked && "bg-[#1A1A1A] text-white hover:bg-[#333] hover:text-white")}
           >
-            <ThumbsUp className={cn(iconSize, "mr-1.5", isLiked && "fill-current")} />
+            <ThumbsUp className={cn(iconSize, "mr-2", isLiked && "fill-current")} />
             {isLiked ? "Liked" : "Like"}
           </Button>
 
@@ -275,22 +275,22 @@ export const FriendlyVideoActionBar = ({
           <Dialog open={shareOpen} onOpenChange={setShareOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" className={pillBtn}>
-                <Share2 className={cn(iconSize, "mr-1.5")} />
+                <Share2 className={cn(iconSize, "mr-2")} />
                 Share
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-card border border-border rounded-dialog overflow-hidden shadow-overlay [&>button]:hidden">
-              <div className="flex items-center justify-between pl-5 pr-2 py-1 max-[768px]:pl-4 border-b border-border">
+              <div className="flex items-center justify-between pl-4 pr-2 py-1 max-[768px]:pl-4 border-b border-border">
                 <h3 className="text-sm font-bold text-foreground">Share</h3>
                 <button type="button" onClick={() => setShareOpen(false)} aria-label="Close share dialog" className="w-11 h-11 rounded-control flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-hover transition-colors">
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              <div className="px-5 py-4 space-y-1">
+              <div className="px-4 py-4 space-y-1">
                 {shareOptions.map((option) => (
                   <button key={option.name}
                     onClick={() => { option.action(); setShareOpen(false); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-control hover:bg-surface-hover transition-colors duration-150 group">
+                    className="w-full flex items-center gap-3 px-3 py-3 rounded-control hover:bg-surface-hover transition-colors duration-150 group">
                     <div className="h-9 w-9 rounded-control bg-muted group-hover:bg-white border border-border flex items-center justify-center flex-shrink-0">
                       <option.icon className={`h-4 w-4 ${option.color}`} />
                     </div>
@@ -298,9 +298,9 @@ export const FriendlyVideoActionBar = ({
                   </button>
                 ))}
               </div>
-              <div className="px-5 pb-4">
+              <div className="px-4 pb-4">
                 <button onClick={() => setShareOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-control bg-primary hover:brightness-90 text-white text-sm font-semibold transition-all duration-200">
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-control bg-primary hover:brightness-90 text-white text-sm font-semibold transition-all duration-200">
                   <X className="h-4 w-4" /> Close
                 </button>
               </div>
@@ -315,11 +315,11 @@ export const FriendlyVideoActionBar = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 rounded-card bg-white shadow-raised border border-border p-1">
-              <DropdownMenuItem onClick={handleToggleFavorite} className="rounded-control cursor-pointer gap-3 py-2.5 px-3">
+              <DropdownMenuItem onClick={handleToggleFavorite} className="rounded-control cursor-pointer gap-3 py-3 px-3">
                 <Heart className={cn("h-4 w-4", isFavorite && "fill-brand text-brand")} />
                 <span className="text-sm">{isFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleToggleWatchLater} className="rounded-control cursor-pointer gap-3 py-2.5 px-3">
+              <DropdownMenuItem onClick={handleToggleWatchLater} className="rounded-control cursor-pointer gap-3 py-3 px-3">
                 <Clock className={cn("h-4 w-4", isWatchLaterSaved && "fill-current")} />
                 <span className="text-sm">{isWatchLaterSaved ? "Remove from Watch Later" : "Watch Later"}</span>
               </DropdownMenuItem>
@@ -331,7 +331,7 @@ export const FriendlyVideoActionBar = ({
                   }
                   setPlaylistDialogOpen(true);
                 }} 
-                className="rounded-control cursor-pointer gap-3 py-2.5 px-3"
+                className="rounded-control cursor-pointer gap-3 py-3 px-3"
               >
                 <ListPlus className="h-4 w-4" />
                 <span className="text-sm">Add to Playlist</span>
@@ -354,7 +354,7 @@ export const FriendlyVideoActionBar = ({
             {playlists && playlists.length > 0 ? (
               playlists.map((playlist) => (
                 <button key={playlist.id} onClick={() => handleAddToPlaylist(playlist.id)}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-control hover:bg-gray-100 transition-colors text-left">
+                  className="flex items-center gap-3 w-full px-3 py-3 rounded-control hover:bg-gray-100 transition-colors text-left">
                   <ListPlus className="w-4 h-4 text-muted-foreground" />
                   <span className="truncate">{playlist.title}</span>
                 </button>

@@ -27,9 +27,9 @@ export const CommentList = ({ comments }: CommentListProps) => {
       {comments?.map((comment) => (
         <div 
           key={comment.id} 
-          className={`group bg-white/50 hover:bg-surface-hover rounded-card ${isMobile ? 'p-2.5' : 'p-3.5'} transition-all duration-200 border border-border`}
+          className={`group bg-white/50 hover:bg-surface-hover rounded-card ${isMobile ? 'p-3' : 'p-4'} transition-all duration-200 border border-border`}
         >
-          <div className={`flex items-start ${isMobile ? 'gap-2' : 'gap-2.5'}`}>
+          <div className={`flex items-start ${isMobile ? 'gap-2' : 'gap-3'}`}>
             {/* Small Avatar */}
             <div className={`${isMobile ? 'w-5 h-5' : 'w-7 h-7'} bg-brand-soft text-brand rounded-control flex items-center justify-center flex-shrink-0`}>
               <span className={`${isMobile ? 'text-xs' : 'text-xs'} font-medium text-warning`}>
@@ -39,7 +39,7 @@ export const CommentList = ({ comments }: CommentListProps) => {
             
             <div className="flex-1 min-w-0">
               {/* Header */}
-              <div className={`flex items-center ${isMobile ? 'gap-1.5 mb-0.5' : 'gap-2 mb-1'}`}>
+              <div className={`flex items-center ${isMobile ? 'gap-2 mb-0.5' : 'gap-2 mb-1'}`}>
                 <span className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground font-medium`}>
                   {getDisplayName(comment.profiles)}
                 </span>

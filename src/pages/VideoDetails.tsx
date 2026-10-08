@@ -70,7 +70,7 @@ const VideoDetails = () => {
   // never changes size between load and playback.
   if (isLoadingVideo) {
     return (
-      <div className="min-h-screen bg-white dark:bg-background pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0">
+      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[200px] pb-20 lg:pb-0">
         <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           <div className="mx-auto w-full max-w-[1600px] mt-4 flex gap-6">
             <div className="flex-1 min-w-0">
@@ -88,7 +88,7 @@ const VideoDetails = () => {
   if (!video || error) {
     console.error("Video not found or error:", error, "for videoId:", videoId);
     return (
-      <div className="min-h-screen bg-white dark:bg-background pt-14 pl-0 lg:pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[200px] transition-all duration-300">
         <div className="p-4">
           <div className="p-8 text-center bg-muted dark:bg-card rounded-card mt-6">
             <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-white dark:bg-background rounded-card">
@@ -126,7 +126,7 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-white dark:bg-background pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-12 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           
         {/* Desktop Layout - two column */}
@@ -138,7 +138,7 @@ const VideoDetails = () => {
                 <div className="rounded-card overflow-hidden bg-black relative">
                   <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={handleVideoEnd} />
                   {isPlaylistMode && (
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-control backdrop-blur-sm">
+                    <div className="absolute top-3 left-3 flex items-center gap-2 bg-black/70 text-white text-xs font-medium px-3 py-2 rounded-control backdrop-blur-sm">
                       <ListMusic className="w-3.5 h-3.5" />
                       <Shuffle className="w-3 h-3 opacity-70" />
                       <span>{currentPosition}/{totalVideos}</span>
@@ -183,7 +183,7 @@ const VideoDetails = () => {
               <div className="w-[380px] flex-shrink-0">
                 <div className="bg-muted rounded-t-card sticky top-20 overflow-hidden flex flex-col" style={{ height: 'calc(100vh - 6rem)' }}>
                   {/* Simple header */}
-                  <div className="px-5 py-4 border-b border-border bg-white flex-shrink-0">
+                  <div className="px-4 py-4 border-b border-border bg-white flex-shrink-0">
                     <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                       <MessageCircle className="h-4 w-4 text-muted-foreground" />
                       Comments
@@ -195,14 +195,14 @@ const VideoDetails = () => {
                     {isAuthenticated ? (
                       <VideoComments videoId={video?.id || ""} />
                     ) : (
-                      <div className="text-center py-10">
+                      <div className="text-center py-12">
                         <MessageCircle className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
                         <p className="text-muted-foreground text-sm mb-4">
                           Sign in to view and post comments.
                         </p>
                         <button 
                           onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                          className="touch-target inline-flex items-center justify-center h-11 px-5 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
+                          className="touch-target inline-flex items-center justify-center h-11 px-4 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
                         >
                           Sign In
                         </button>
@@ -221,7 +221,7 @@ const VideoDetails = () => {
               <div className={`rounded-card overflow-hidden bg-black ${isMobile ? '-mx-3' : ''} relative`}>
                 <VideoPlayer videoId={video?.video_id || ""} onVideoEnd={handleVideoEnd} />
                 {isPlaylistMode && (
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/70 text-white text-xs font-medium px-2.5 py-1.5 rounded-control backdrop-blur-sm">
+                  <div className="absolute top-3 left-3 flex items-center gap-2 bg-black/70 text-white text-xs font-medium px-3 py-2 rounded-control backdrop-blur-sm">
                     <ListMusic className="w-3.5 h-3.5" />
                     <Shuffle className="w-3 h-3 opacity-70" />
                     <span>{currentPosition}/{totalVideos}</span>
@@ -267,7 +267,7 @@ const VideoDetails = () => {
               {/* Comments - Mobile (before more videos) */}
               <div className="bg-muted rounded-card overflow-hidden">
                 <div className="px-3 py-2 border-b border-border bg-white">
-                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
                     <MessageCircle className="h-3 w-3 text-muted-foreground" />
                     Comments
                   </h3>
@@ -284,7 +284,7 @@ const VideoDetails = () => {
                       </p>
                       <button 
                         onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                        className="inline-flex items-center justify-center h-11 px-5 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
+                        className="inline-flex items-center justify-center h-11 px-4 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
                       >
                         Sign In
                       </button>

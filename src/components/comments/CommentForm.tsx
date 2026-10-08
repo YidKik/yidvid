@@ -52,14 +52,14 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
           type="submit" 
           disabled={isSubmitting || !comment.trim()}
           className={`rounded-control font-semibold bg-primary hover:bg-primary-hover text-yellow-900 transition-all duration-300 shadow-sm disabled:opacity-50 ${
-            isMobile ? 'px-4 py-1.5 text-xs' : 'px-5 py-2 text-sm'
+            isMobile ? 'px-4 py-2 text-xs' : 'px-4 py-2 text-sm'
           }`}
         >
           {isSubmitting ? (
             "Posting..."
           ) : (
             <>
-              <Send className={isMobile ? "h-3.5 w-3.5 mr-1.5" : "h-4 w-4 mr-2"} />
+              <Send className={isMobile ? "h-3.5 w-3.5 mr-2" : "h-4 w-4 mr-2"} />
               Post Comment
             </>
           )}

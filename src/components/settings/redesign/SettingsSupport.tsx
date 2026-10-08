@@ -83,7 +83,7 @@ export const SettingsSupport = () => {
         <HelpCircle className="h-5 w-5 text-brand" />
         <h3 className="text-base font-bold text-foreground dark:text-foreground">Help & Support</h3>
       </div>
-      <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-5">
+      <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4">
         Need help or have suggestions? Send us a message and we'll get back to you.
       </p>
       <ContactForm form={form} onSubmit={onSubmit} />

@@ -136,7 +136,7 @@ export const FriendlyChannelSection = ({
                 <span className="opacity-70">...</span>
               ) : isSubscribed ? (
                 <>
-                  <Bell className="w-3.5 h-3.5 mr-1.5 fill-current" />
+                  <Bell className="w-3.5 h-3.5 mr-2 fill-current" />
                   Subscribed
                 </>
               ) : (
@@ -149,7 +149,7 @@ export const FriendlyChannelSection = ({
       
       {/* Description - collapsible, minimal */}
       {description && (
-        <div className={`bg-muted rounded-card ${compact ? 'p-2.5' : 'p-4'}`}>
+        <div className={`bg-muted rounded-card ${compact ? 'p-3' : 'p-4'}`}>
           <p 
             ref={descriptionRef}
             className={`${compact ? 'text-xs' : 'text-sm'} text-muted-foreground leading-relaxed whitespace-pre-wrap ${
@@ -162,7 +162,7 @@ export const FriendlyChannelSection = ({
           {needsExpand && (
             <button
               onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-              className={`touch-target inline-flex items-center mt-1.5 ${compact ? 'text-xs' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
+              className={`touch-target inline-flex items-center mt-2 ${compact ? 'text-xs' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
             >
               {isDescriptionExpanded ? "Show less" : "Show more"}
             </button>
@@ -193,7 +193,7 @@ export const FriendlyChannelSection = ({
           </div>
           
           {/* YouTube-style stacked list */}
-          <div className={compact ? "space-y-1.5" : "space-y-2.5"}>
+          <div className={compact ? "space-y-2" : "space-y-3"}>
             {displayedVideos.map((video) => (
               <Link
                 key={video.id}
@@ -230,7 +230,7 @@ export const FriendlyChannelSection = ({
           {channelVideos.length > initialCount && (
             <button
               onClick={() => setShowAllVideos(!showAllVideos)}
-              className="touch-target mt-3 w-full flex items-center justify-center gap-1.5 h-9 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-surface-hover rounded-control transition-colors"
+              className="touch-target mt-3 w-full flex items-center justify-center gap-2 h-9 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-surface-hover rounded-control transition-colors"
             >
               {showAllVideos ? (
                 <>Show less <ChevronUp className="w-3.5 h-3.5" /></>

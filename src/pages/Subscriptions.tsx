@@ -77,7 +77,7 @@ const Subscriptions = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted dark:bg-background pt-14 pl-0 lg:pl-[200px] pb-24 lg:pb-8 transition-all duration-300">
+    <div className="min-h-screen bg-muted dark:bg-background pt-12 pl-0 lg:pl-[200px] pb-24 lg:pb-8 transition-all duration-300">
       <div className={cn("max-w-5xl mx-auto", isMobile ? "px-4 pt-4" : "px-8 pt-6")}>
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">

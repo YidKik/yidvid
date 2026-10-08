@@ -85,7 +85,7 @@ const Playlists = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+      <div className="min-h-screen pt-12 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
         <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-12">
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-card bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
@@ -112,7 +112,7 @@ const Playlists = () => {
   // Playlist detail view
   if (selectedPlaylistId && selectedPlaylist) {
     return (
-      <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+      <div className="min-h-screen pt-12 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
         <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
           {/* Back button */}
           <button
@@ -225,7 +225,7 @@ const Playlists = () => {
                     <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-brand transition-colors">
                       {cleanVideoTitle(item.video?.title)}
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1.5">{item.video?.channel_name}</p>
+                    <p className="text-sm text-muted-foreground mt-2">{item.video?.channel_name}</p>
                   </div>
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Button
@@ -285,7 +285,7 @@ const Playlists = () => {
 
   // Playlists list view
   return (
-    <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+    <div className="min-h-screen pt-12 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
       <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         {/* Header */}
           <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
@@ -342,7 +342,7 @@ const Playlists = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03 }}
-                className="group cursor-pointer bg-white rounded-card p-5 hover:shadow-raised transition-all border border-gray-100 hover:border-gray-200"
+                className="group cursor-pointer bg-white rounded-card p-4 hover:shadow-raised transition-all border border-gray-100 hover:border-gray-200"
                 onClick={() => setSearchParams({ id: playlist.id })}
               >
                 <div className="relative aspect-video rounded-card overflow-hidden bg-brand-soft mb-4 flex items-center justify-center shadow-sm">

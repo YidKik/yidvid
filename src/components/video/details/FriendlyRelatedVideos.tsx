@@ -35,7 +35,7 @@ export const FriendlyRelatedVideos = ({
         
         <div className="relative p-6 ">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-brand-soft rounded-card">
+            <div className="p-3 bg-brand-soft rounded-card">
               <Play className="h-5 w-5 text-brand fill-current" />
             </div>
             <div>
@@ -71,7 +71,7 @@ export const FriendlyRelatedVideos = ({
         
         <div className="relative p-6 ">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-brand-soft rounded-card">
+            <div className="p-3 bg-brand-soft rounded-card">
               <Tv className="h-5 w-5 text-brand" />
             </div>
             <h2 className="text-lg font-bold text-foreground">More from {channelName}</h2>
@@ -100,7 +100,7 @@ export const FriendlyRelatedVideos = ({
       <div className="relative p-6 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-brand-soft rounded-card">
+            <div className="p-3 bg-brand-soft rounded-card">
               <Play className="h-5 w-5 text-brand fill-current" />
             </div>
             <div>
@@ -117,7 +117,7 @@ export const FriendlyRelatedVideos = ({
           {videos[0]?.channel_id && (
             <Link 
               to={`/channel/${videos[0].channel_id}`}
-              className="text-sm font-medium text-brand hover:text-primary-hover transition-colors px-5 py-2.5 bg-muted rounded-control hover:bg-surface-hover"
+              className="text-sm font-medium text-brand hover:text-primary-hover transition-colors px-4 py-3 bg-muted rounded-control hover:bg-surface-hover"
             >
               View Channel
             </Link>
@@ -158,7 +158,7 @@ export const FriendlyRelatedVideos = ({
           <div className="mt-8 text-center">
             <Link 
               to={`/channel/${videos[0].channel_id}`}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-card hover:bg-surface-hover rounded-control text-sm font-semibold text-foreground transition-all border border-border"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-card hover:bg-surface-hover rounded-control text-sm font-semibold text-foreground transition-all border border-border"
             >
               <Play className="h-4 w-4 text-brand fill-current" />
               See all {videos.length} videos
