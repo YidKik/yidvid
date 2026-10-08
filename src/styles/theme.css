@@ -80,6 +80,16 @@
   --ring: 352 69% 47%;
 
   --radius: 0.5rem;
+  /* Shape roles */
+  --radius-badge: 4px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-dialog: 16px;
+  --radius-circle: 9999px;
+  /* Elevation (theme-aware via --shadow-color) */
+  --shadow-color: 215 28% 13%;
+  --shadow-raised: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 4px 12px -2px hsl(var(--shadow-color) / 0.10);
+  --shadow-overlay: 0 12px 32px -8px hsl(var(--shadow-color) / 0.22), 0 2px 6px hsl(var(--shadow-color) / 0.08);
 
   /* Surface colors for components */
   --surface: 0 0% 100%;
@@ -94,6 +104,7 @@
 
 /* ===== YouTube-style Dark Mode ===== */
 .dark {
+  --shadow-color: 0 0% 0%;
   --brand: 352 83% 65%;
   --brand-soft: 336 26% 15%;
   --brand-soft-foreground: 352 83% 65%;
