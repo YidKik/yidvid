@@ -132,7 +132,7 @@ export const GlobalHeader = () => {
             {/* Center - Search Bar */}
             <div 
               ref={searchContainerRef}
-              className="flex-1 max-w-xl relative"
+              className="flex-1 min-w-0 max-w-xl relative"
             >
               <form onSubmit={handleSearchSubmit}>
                 <div 
