@@ -68,7 +68,7 @@ export const ShareDialog = ({ open, onOpenChange, url, title }: ShareDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[280px] bg-white dark:bg-card border border-border dark:border-border rounded-dialog p-5 gap-0 shadow-xl [&>button]:hidden">
+      <DialogContent className="sm:max-w-[280px] bg-white dark:bg-card border border-border dark:border-border rounded-dialog p-5 gap-0 shadow-overlay [&>button]:hidden">
         <p className="text-sm font-bold text-foreground dark:text-foreground text-center mb-4">
           Share
         </p>

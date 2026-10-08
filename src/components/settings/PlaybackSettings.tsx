@@ -54,7 +54,7 @@ export const PlaybackSettings = ({
             <SelectTrigger className={`${isMobile ? 'w-[120px] h-8 text-sm' : 'w-[140px]'} bg-background border-input rounded-card`}>
               <SelectValue placeholder="Select speed" />
             </SelectTrigger>
-            <SelectContent className="bg-background border-2 border-input shadow-lg min-w-[120px] rounded-card">
+            <SelectContent className="bg-background border-2 border-input shadow-raised min-w-[120px] rounded-card">
               <SelectItem value="0.25">0.25x</SelectItem>
               <SelectItem value="0.5">0.5x</SelectItem>
               <SelectItem value="0.75">0.75x</SelectItem>

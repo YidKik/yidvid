@@ -100,7 +100,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
               className={`flex-none group ${isMobile ? 'w-[85%]' : isTablet ? 'w-[calc(50%-10px)]' : 'w-[calc(33.333%-14px)]'}`}
             >
               {/* Featured Card - Solid yellow border always */}
-              <div className="relative aspect-video rounded-card overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-border">
+              <div className="relative aspect-video rounded-card overflow-hidden shadow-raised hover:shadow-raised transition-all duration-300 border border-border">
                 <img
                   src={video.thumbnail}
                   alt={cleanVideoTitle(video.title)}
@@ -113,7 +113,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 
                 {/* Play Button on Hover - YidVid Logo */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className={`${isMobile ? 'w-14 h-14' : 'w-[68px] h-[68px]'} rounded-control bg-primary flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform`}>
+                  <div className={`${isMobile ? 'w-14 h-14' : 'w-[68px] h-[68px]'} rounded-control bg-primary flex items-center justify-center transform group-hover:scale-110 transition-transform`}>
                     <img 
                       src={yidvidLogoIcon} 
                       alt="Play" 

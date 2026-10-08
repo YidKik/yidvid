@@ -219,7 +219,7 @@ const ResetPassword = () => {
 
             <Button
               type="submit"
-              className="w-full h-12 text-base py-0 mt-6 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-card font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg"
+              className="w-full h-12 text-base py-0 mt-6 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-card font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-raised"
               disabled={isLoading}
             >
               {isLoading ? "Resetting..." : "Reset Password"}

@@ -31,7 +31,7 @@ export default function History() {
               </p>
               <Button
                 onClick={() => setIsAuthOpen(true)}
-                className="rounded-control gap-2 bg-primary hover:brightness-90 text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
+                className="rounded-control gap-2 bg-primary hover:brightness-90 text-white px-8 py-3 font-semibold transition-all"
               >
                 <LogIn className="w-4 h-4" />
                 Sign In

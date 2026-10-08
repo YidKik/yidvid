@@ -85,7 +85,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
             className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile 
               ? 'w-[92%] max-w-[420px]' 
               : 'w-[460px] max-w-[460px]'
-            } rounded-dialog overflow-hidden p-0 border-none bg-white shadow-2xl`}
+            } rounded-dialog overflow-hidden p-0 border-none bg-white shadow-overlay`}
             style={{
               boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.25)',
               animation: isOpen ? 'authScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)' : undefined,

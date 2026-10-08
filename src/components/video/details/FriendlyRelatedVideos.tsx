@@ -29,7 +29,7 @@ export const FriendlyRelatedVideos = ({
 
   if (isLoading) {
     return (
-      <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-2xl overflow-hidden border border-border">
+      <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-raised overflow-hidden border border-border">
         {/* Warm gradient glow */}
         <div className="absolute inset-0 hidden pointer-events-none" />
         
@@ -65,7 +65,7 @@ export const FriendlyRelatedVideos = ({
 
   if (!videos || videos.length === 0) {
     return (
-      <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-2xl overflow-hidden border border-border">
+      <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-raised overflow-hidden border border-border">
         {/* Warm gradient glow */}
         <div className="absolute inset-0 hidden pointer-events-none" />
         
@@ -92,7 +92,7 @@ export const FriendlyRelatedVideos = ({
   }
 
   return (
-    <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-2xl overflow-hidden border border-border">
+    <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-raised overflow-hidden border border-border">
       {/* Warm gradient glow background */}
       <div className="absolute inset-0 hidden pointer-events-none" />
       
@@ -136,7 +136,7 @@ export const FriendlyRelatedVideos = ({
               key={video.id}
               className="group transition-all duration-300 hover:scale-[1.02]"
             >
-              <div className="bg-card/60 backdrop-blur-sm rounded-card overflow-hidden shadow-lg hover:shadow-xl transition-all border border-border">
+              <div className="bg-card/60 backdrop-blur-sm rounded-card overflow-hidden shadow-raised hover:shadow-raised transition-all border border-border">
                 <VideoCard
                   id={video.id}
                   video_id={video.video_id}
@@ -158,7 +158,7 @@ export const FriendlyRelatedVideos = ({
           <div className="mt-8 text-center">
             <Link 
               to={`/channel/${videos[0].channel_id}`}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-card hover:bg-surface-hover rounded-control text-sm font-semibold text-foreground transition-all hover:shadow-lg border border-border"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-card hover:bg-surface-hover rounded-control text-sm font-semibold text-foreground transition-all border border-border"
             >
               <Play className="h-4 w-4 text-brand fill-current" />
               See all {videos.length} videos

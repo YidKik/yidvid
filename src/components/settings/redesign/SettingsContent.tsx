@@ -138,7 +138,7 @@ export const SettingsContent = () => {
 
       {/* Unlock Dialog */}
       <Dialog open={showLockDialog} onOpenChange={setShowLockDialog}>
-        <DialogContent className="rounded-dialog max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-xl">
+        <DialogContent className="rounded-dialog max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-overlay">
           <DialogHeader className="text-center sm:text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-control bg-brand-soft">
               <KeyRound className="h-6 w-6 text-brand" />
@@ -172,7 +172,7 @@ export const SettingsContent = () => {
 
       {/* Set PIN Dialog */}
       <Dialog open={showSetPinDialog} onOpenChange={setShowSetPinDialog}>
-        <DialogContent className="rounded-dialog max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-xl">
+        <DialogContent className="rounded-dialog max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-overlay">
           <DialogHeader className="text-center sm:text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-control bg-brand-soft">
               <ShieldCheck className="h-6 w-6 text-brand" />

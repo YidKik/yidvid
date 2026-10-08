@@ -114,7 +114,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
             className="fixed inset-0 z-[101] flex items-center justify-center p-4"
           >
             <div 
-              className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-dialog shadow-2xl overflow-hidden border border-red-100 dark:border-red-900/30"
+              className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-dialog shadow-overlay overflow-hidden border border-red-100 dark:border-red-900/30"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header accent bar */}
@@ -184,7 +184,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                   {/* Search Button */}
                   <motion.button
                     type="submit"
-                    className="w-full mt-6 py-4 rounded-card font-bold text-lg transition-all duration-200 bg-gradient-to-r from-brand to-brand hover:from-brand hover:to-red-700 text-white shadow-lg shadow-red-200/50 dark:shadow-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full mt-6 py-4 rounded-card font-bold text-lg transition-all duration-200 bg-gradient-to-r from-brand to-brand hover:from-brand hover:to-red-700 text-white shadow-raised shadow-red-200/50 dark:shadow-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ fontFamily: "'Quicksand', sans-serif" }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}

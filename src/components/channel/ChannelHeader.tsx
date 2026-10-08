@@ -176,7 +176,7 @@ export const ChannelHeader = ({
                   Description
                 </button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-lg bg-white dark:bg-card border border-gray-200 dark:border-border rounded-dialog shadow-xl [&>button]:opacity-100 [&>button]:text-black [&>button]:dark:text-white [&>button]:rounded-control [&>button]:w-8 [&>button]:h-8 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button]:hover:bg-gray-100 [&>button]:dark:hover:bg-secondary [&>button]:transition-colors">
+              <DialogContent className="sm:max-w-lg bg-white dark:bg-card border border-gray-200 dark:border-border rounded-dialog shadow-overlay [&>button]:opacity-100 [&>button]:text-black [&>button]:dark:text-white [&>button]:rounded-control [&>button]:w-8 [&>button]:h-8 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button]:hover:bg-gray-100 [&>button]:dark:hover:bg-secondary [&>button]:transition-colors">
                 <DialogHeader>
                   <DialogTitle className="text-foreground dark:!text-foreground">About {channel.title}</DialogTitle>
                 </DialogHeader>

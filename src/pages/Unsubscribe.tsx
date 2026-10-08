@@ -81,7 +81,7 @@ export const Unsubscribe = () => {
   if (alreadyUnsubscribed) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-card rounded-card shadow-lg p-8 text-center">
+        <div className="max-w-md w-full bg-card rounded-card shadow-raised p-8 text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-2">Already Unsubscribed</h1>
           <p className="text-muted-foreground mb-6">
@@ -98,7 +98,7 @@ export const Unsubscribe = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-card rounded-card shadow-lg p-8 text-center">
+        <div className="max-w-md w-full bg-card rounded-card shadow-raised p-8 text-center">
           <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-2">Error</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
@@ -113,7 +113,7 @@ export const Unsubscribe = () => {
   if (success) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-card rounded-card shadow-lg p-8 text-center">
+        <div className="max-w-md w-full bg-card rounded-card shadow-raised p-8 text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-2">Successfully Unsubscribed</h1>
           <p className="text-muted-foreground mb-6">

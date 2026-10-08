@@ -97,7 +97,7 @@ const Playlists = () => {
             </p>
             <Button
               onClick={() => setIsAuthOpen(true)}
-              className="rounded-control gap-2 bg-primary hover:bg-primary-hover text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
+              className="rounded-control gap-2 bg-primary hover:bg-primary-hover text-white px-8 py-3 font-semibold transition-all"
             >
               <LogIn className="w-4 h-4" />
               Sign In
@@ -126,7 +126,7 @@ const Playlists = () => {
           {/* Header */}
           <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-card bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-lg`}>
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-card bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-raised`}>
                 <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
@@ -145,7 +145,7 @@ const Playlists = () => {
                   <MoreVertical className="w-5 h-5 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-card shadow-lg">
+              <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-card shadow-raised">
                 <DropdownMenuItem
                   onClick={() => {
                     setEditingPlaylist({
@@ -193,7 +193,7 @@ const Playlists = () => {
               <p className="text-muted-foreground">Add videos from any video page using the menu.</p>
               <Button
                 onClick={() => navigate('/videos')}
-                className="mt-6 rounded-control bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+                className="mt-6 rounded-control bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 transition-all"
               >
                 Browse Videos
               </Button>
@@ -246,7 +246,7 @@ const Playlists = () => {
 
         {/* Edit Playlist Dialog */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-xl">
+          <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-overlay">
             <DialogHeader>
               <DialogTitle className="text-xl font-bold font-friendly">Edit Playlist</DialogTitle>
             </DialogHeader>
@@ -290,7 +290,7 @@ const Playlists = () => {
         {/* Header */}
           <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-card bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-lg`}>
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-card bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-raised`}>
                 <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
@@ -300,7 +300,7 @@ const Playlists = () => {
           </div>
           <Button
             onClick={() => setShowCreateDialog(true)}
-            className={`rounded-control gap-2 bg-primary hover:bg-primary-hover text-white font-semibold ${isMobile ? 'px-4 text-xs' : 'px-6'} shadow-md hover:shadow-lg transition-all`}
+            className={`rounded-control gap-2 bg-primary hover:bg-primary-hover text-white font-semibold ${isMobile ? 'px-4 text-xs' : 'px-6'} transition-all`}
           >
             <Plus className="w-4 h-4" />
             New Playlist
@@ -328,7 +328,7 @@ const Playlists = () => {
             </p>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="rounded-control gap-2 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+              className="rounded-control gap-2 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 transition-all"
             >
               <Plus className="w-4 h-4" />
               Create Playlist
@@ -342,7 +342,7 @@ const Playlists = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03 }}
-                className="group cursor-pointer bg-white rounded-card p-5 hover:shadow-lg transition-all border border-gray-100 hover:border-gray-200"
+                className="group cursor-pointer bg-white rounded-card p-5 hover:shadow-raised transition-all border border-gray-100 hover:border-gray-200"
                 onClick={() => setSearchParams({ id: playlist.id })}
               >
                 <div className="relative aspect-video rounded-card overflow-hidden bg-brand-soft mb-4 flex items-center justify-center shadow-sm">
@@ -370,7 +370,7 @@ const Playlists = () => {
                         <MoreVertical className="w-4 h-4 text-muted-foreground" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-card shadow-lg">
+                    <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-card shadow-raised">
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
@@ -408,7 +408,7 @@ const Playlists = () => {
 
       {/* Create Playlist Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-xl">
+        <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-overlay">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-friendly">Create New Playlist</DialogTitle>
           </DialogHeader>
@@ -444,7 +444,7 @@ const Playlists = () => {
 
       {/* Edit Playlist Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-xl">
+        <DialogContent className="sm:max-w-md bg-white rounded-dialog border-0 shadow-overlay">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-friendly">Edit Playlist</DialogTitle>
           </DialogHeader>

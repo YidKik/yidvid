@@ -51,7 +51,7 @@ export const CommentForm = ({ onSubmit }: CommentFormProps) => {
         <Button 
           type="submit" 
           disabled={isSubmitting || !comment.trim()}
-          className={`rounded-control font-semibold bg-primary hover:bg-primary-hover text-yellow-900 transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50 ${
+          className={`rounded-control font-semibold bg-primary hover:bg-primary-hover text-yellow-900 transition-all duration-300 shadow-sm disabled:opacity-50 ${
             isMobile ? 'px-4 py-1.5 text-xs' : 'px-5 py-2 text-sm'
           }`}
         >

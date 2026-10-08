@@ -67,7 +67,7 @@ export default function NotFound() {
         >
           <Button
             asChild
-            className="flex-1 h-12 text-base bg-primary hover:brightness-90 text-white rounded-card font-semibold shadow-md hover:shadow-lg gap-2"
+            className="flex-1 h-12 text-base bg-primary hover:brightness-90 text-white rounded-card font-semibold shadow-md hover:shadow-raised gap-2"
           >
             <Link to="/">
               <Home size={18} />

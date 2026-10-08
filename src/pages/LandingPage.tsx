@@ -130,7 +130,7 @@ const LandingPage = () => {
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className={`group relative rounded-card ${isMobile ? 'p-3 text-center flex flex-col items-center' : isTablet ? 'p-4 text-center flex flex-col items-center' : 'p-6'} border-2 transition-all duration-300 hover:shadow-lg cursor-pointer bg-white`}
+                className={`group relative rounded-card ${isMobile ? 'p-3 text-center flex flex-col items-center' : isTablet ? 'p-4 text-center flex flex-col items-center' : 'p-6'} border-2 transition-all duration-300 hover:shadow-raised cursor-pointer bg-white`}
                 style={{
                   borderColor: 'hsl(var(--border))'
                 }}

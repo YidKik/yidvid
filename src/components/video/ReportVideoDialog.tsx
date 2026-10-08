@@ -113,7 +113,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
           {!compact && <span className="ml-2 font-medium">Report</span>}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[75vh] max-[768px]:overflow-y-auto bg-white border-2 border-border shadow-xl rounded-dialog p-0 overflow-hidden [&>button]:hidden">
+      <DialogContent className="sm:max-w-[450px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[75vh] max-[768px]:overflow-y-auto bg-white border-2 border-border shadow-overlay rounded-dialog p-0 overflow-hidden [&>button]:hidden">
         {/* Header - solid red */}
         <div className="bg-primary px-6 py-5 max-[768px]:px-4 max-[768px]:py-3.5 text-white">
           <button 

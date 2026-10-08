@@ -41,7 +41,7 @@ export const NotificationBell = () => {
           variant="outline"
           size="icon"
           onClick={toggleNotifications}
-          className="h-10 w-10 rounded-control relative border-2 border-brand bg-white hover:bg-surface-hover shadow-md"
+          className="h-10 w-10 rounded-control relative border-2 border-brand bg-white hover:bg-surface-hover"
         >
           <Bell className="h-5 w-5 text-brand" />
           {isLoggedIn && unreadCount > 0 && (

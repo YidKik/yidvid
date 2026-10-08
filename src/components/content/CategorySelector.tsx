@@ -110,7 +110,7 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
             <span className="relative z-10 font-medium">{category.label}</span>
             {selectedCategory === category.id && (
               <motion.div
-                className="absolute inset-0 bg-primary rounded-card shadow-lg"
+                className="absolute inset-0 bg-primary rounded-card shadow-raised"
                 layoutId="activeCategory"
                 initial={false}
                 transition={{

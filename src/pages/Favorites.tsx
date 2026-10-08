@@ -28,7 +28,7 @@ const Favorites = () => {
             </p>
             <Button
               onClick={() => setIsAuthOpen(true)}
-              className="rounded-control gap-2 bg-primary hover:brightness-90 text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
+              className="rounded-control gap-2 bg-primary hover:brightness-90 text-white px-8 py-3 font-semibold transition-all"
             >
               <LogIn className="w-4 h-4" />
               Sign In
@@ -44,7 +44,7 @@ const Favorites = () => {
     <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
       <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         <div className="flex items-center gap-3 lg:gap-4 mb-6 lg:mb-8 pb-4 lg:pb-6 border-b border-border">
-          <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-card bg-primary flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-card bg-primary flex items-center justify-center shadow-raised">
             <Heart className="w-6 h-6 lg:w-8 lg:h-8 text-white fill-white" />
           </div>
           <div>
@@ -74,7 +74,7 @@ const Favorites = () => {
             </p>
             <Button
               onClick={() => navigate('/videos')}
-              className="mt-6 rounded-control bg-primary hover:brightness-90 text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+              className="mt-6 rounded-control bg-primary hover:brightness-90 text-primary-foreground font-semibold px-6 transition-all"
             >
               Browse Videos
             </Button>

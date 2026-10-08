@@ -116,7 +116,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-white dark:bg-card border border-border dark:border-border shadow-xl rounded-dialog p-0 overflow-hidden [&>button]:hidden">
+      <DialogContent className="sm:max-w-[480px] bg-white dark:bg-card border border-border dark:border-border shadow-overlay rounded-dialog p-0 overflow-hidden [&>button]:hidden">
         {/* Header — solid color, no gradient */}
         <div className="bg-primary p-5 relative">
           <button 

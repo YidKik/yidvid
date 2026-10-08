@@ -154,7 +154,7 @@ export function ChannelCategoryManagement({ channels, onUpdate }: ChannelCategor
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
-            <SelectContent className="bg-popover text-popover-foreground shadow-lg border border-border rounded-control z-50">
+            <SelectContent className="bg-popover text-popover-foreground border border-border rounded-control z-50">
               {defaultCategories.map((category) => (
                 <SelectItem key={category.value} value={category.value}>
                   {category.label}

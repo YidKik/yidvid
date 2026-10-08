@@ -265,7 +265,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
 
           <div
             ref={popupRef}
-            className="fixed z-[9999] w-[96vw] max-w-[1800px] bg-[#0d0e14] border border-[#2a2d3a] rounded-dialog shadow-2xl flex flex-col overflow-hidden"
+            className="fixed z-[9999] w-[96vw] max-w-[1800px] bg-[#0d0e14] border border-[#2a2d3a] rounded-dialog shadow-overlay flex flex-col overflow-hidden"
             style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", maxHeight: "92vh" }}
           >
             {/* Header */}

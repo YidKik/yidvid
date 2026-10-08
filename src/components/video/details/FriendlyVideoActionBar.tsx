@@ -279,7 +279,7 @@ export const FriendlyVideoActionBar = ({
                 Share
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-white border border-border rounded-dialog overflow-hidden shadow-xl [&>button]:hidden">
+            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-white border border-border rounded-dialog overflow-hidden shadow-overlay [&>button]:hidden">
               <div className="flex items-center justify-between px-5 py-3.5 max-[768px]:px-4 max-[768px]:py-2.5 border-b border-border">
                 <h3 className="text-sm font-bold text-foreground tracking-tight">Share</h3>
                 <button onClick={() => setShareOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
@@ -314,7 +314,7 @@ export const FriendlyVideoActionBar = ({
                 <MoreVertical className={iconSize} />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 rounded-card bg-white shadow-lg border border-border p-1">
+            <DropdownMenuContent align="end" className="w-52 rounded-card bg-white shadow-raised border border-border p-1">
               <DropdownMenuItem onClick={handleToggleFavorite} className="rounded-control cursor-pointer gap-3 py-2.5 px-3">
                 <Heart className={cn("h-4 w-4", isFavorite && "fill-brand text-brand")} />
                 <span className="text-sm">{isFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>

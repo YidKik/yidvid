@@ -218,7 +218,7 @@ export const ChannelSubscriptions = () => {
   }
 
   return (
-    <Card className="w-full border-2 border-primary/20 shadow-lg rounded-card bg-gradient-to-br from-white to-primary/5">
+    <Card className="w-full border-2 border-primary/20 shadow-raised rounded-card bg-gradient-to-br from-white to-primary/5">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -268,7 +268,7 @@ export const ChannelSubscriptions = () => {
                 {subscriptions.map((subscription) => (
                   <div
                     key={subscription.channel.channel_id}
-                    className="flex-shrink-0 w-[200px] bg-card rounded-card shadow-md border-2 border-primary/10 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group"
+                    className="flex-shrink-0 w-[200px] bg-card rounded-card shadow-md border-2 border-primary/10 hover:shadow-raised hover:border-primary/30 transition-all duration-300 group"
                   >
                     <div className="p-4 flex flex-col h-[220px]">
 ...

@@ -135,7 +135,7 @@ const HeroSearchSection = () => {
           transition={{ delay: 0.6 }}
         >
           <div 
-            className={`relative flex items-center rounded-control shadow-xl overflow-hidden border-2 transition-all duration-300 focus-within:shadow-2xl border-border focus-within:border-brand bg-white`}
+            className={`relative flex items-center rounded-control overflow-hidden border-2 transition-all duration-300 focus-within:shadow-2xl border-border focus-within:border-brand bg-white`}
           >
             <Search 
               className={`absolute ${isMobile ? 'left-3 w-4 h-4' : 'left-5 w-6 h-6'} z-10`}

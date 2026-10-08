@@ -95,7 +95,7 @@ export const GlobalHeader = () => {
           {isAuthenticated ? (
             <Link
               to="/settings"
-              className="flex items-center justify-center w-10 h-10 rounded-control text-white font-semibold text-sm transition-transform hover:scale-105 shadow-lg bg-primary"
+              className="flex items-center justify-center w-10 h-10 rounded-control text-white font-semibold text-sm transition-transform hover:scale-105 bg-primary"
               style={{ fontFamily: "'Quicksand', sans-serif" }}
               title="Profile"
             >
@@ -105,7 +105,7 @@ export const GlobalHeader = () => {
             <Button
               onClick={() => setIsAuthOpen(true)}
               size="icon"
-              className="rounded-control w-10 h-10 shadow-lg hover:opacity-90 transition-all bg-primary text-white"
+              className="rounded-control w-10 h-10 hover:opacity-90 transition-all bg-primary text-white"
               title="Sign In"
             >
               <LogIn className="w-5 h-5" />
@@ -185,7 +185,7 @@ export const GlobalHeader = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-card rounded-card shadow-xl border border-border dark:border-border overflow-hidden z-[100]"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-card rounded-card shadow-raised border border-border dark:border-border overflow-hidden z-[100]"
                     style={{ maxHeight: '70vh' }}
                   >
                     {isSearching && (

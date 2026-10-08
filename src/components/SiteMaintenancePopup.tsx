@@ -36,7 +36,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
         onClick={handleClose}
       >
         <motion.div
-          className="bg-gradient-to-br from-background via-background to-muted/30 border-2 border-primary/20 rounded-card shadow-2xl w-full max-w-sm md:max-w-lg mx-auto relative overflow-hidden"
+          className="bg-gradient-to-br from-background via-background to-muted/30 border-2 border-primary/20 rounded-card shadow-raised w-full max-w-sm md:max-w-lg mx-auto relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -59,7 +59,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
           <div className="relative p-5 md:p-8">
             <div className="text-center space-y-4 md:space-y-5">
               {/* Icon */}
-              <div className="mx-auto w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-primary/70 rounded-card flex items-center justify-center shadow-lg">
+              <div className="mx-auto w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-primary/70 rounded-card flex items-center justify-center shadow-raised">
                 <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-white" />
               </div>
 
@@ -89,7 +89,7 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
               {/* Continue Button */}
               <motion.button
                 onClick={handleClose}
-                className="w-full mt-4 md:mt-6 px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-primary to-primary/90 text-white rounded-control font-semibold hover:from-primary/90 hover:to-primary transition-all duration-300 shadow-lg hover:shadow-xl border border-primary/20 text-sm md:text-base"
+                className="w-full mt-4 md:mt-6 px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-primary to-primary/90 text-white rounded-control font-semibold hover:from-primary/90 hover:to-primary transition-all duration-300 border border-primary/20 text-sm md:text-base"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

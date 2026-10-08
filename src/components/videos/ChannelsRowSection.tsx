@@ -293,7 +293,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
             <div className="flex justify-center mt-8">
               <button 
                 onClick={handleViewAllClick}
-                className={`${isMobile ? 'px-6 py-2 text-sm' : 'px-8 py-3 text-base'} font-friendly font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-control transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105`}
+                className={`${isMobile ? 'px-6 py-2 text-sm' : 'px-8 py-3 text-base'} font-friendly font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-control transition-all duration-300 hover:scale-105`}
               >
                 View All Channels
               </button>
