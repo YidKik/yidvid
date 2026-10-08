@@ -34,11 +34,11 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
       
       <div className="text-center">
         {title && (
-          <h3 
-            className={`type-h2 text-foreground`}
+          <h2
+            className="type-h2 text-foreground"
           >
             {title}
-          </h3>
+          </h2>
         )}
         {subtitle && (
           <p 
