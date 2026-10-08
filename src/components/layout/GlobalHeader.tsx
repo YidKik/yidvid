@@ -269,7 +269,7 @@ export const GlobalHeader = () => {
             </div>
 
             {/* Right Side - Notifications + Sign In / Profile */}
-            <div className={`flex items-center ${isMobile ? 'gap-1' : 'gap-2'} shrink-0`}>
+            <div className={`flex items-center ${isMobile ? 'gap-4' : 'gap-2'} shrink-0`}>
               {/* Theme Toggle */}
               <ThemeToggle />
               {/* Notification Bell */}

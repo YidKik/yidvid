@@ -12,10 +12,11 @@ export const ThemeToggle = () => {
 
   return (
     <button
+      aria-label={`Theme: ${label}. Change theme`}
       onClick={cycleTheme}
       title={`Theme: ${label} — Click to change`}
       className={cn(
-        "flex items-center justify-center rounded-control transition-all duration-200",
+        "touch-hit flex items-center justify-center rounded-control transition-all duration-200",
         "border-2 hover:scale-105",
         "border-border hover:bg-surface-hover text-muted-foreground",
         "dark:border-border dark:hover:bg-secondary dark:text-muted-foreground",
