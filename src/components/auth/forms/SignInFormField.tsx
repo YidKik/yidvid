@@ -42,8 +42,8 @@ export const SignInFormField: React.FC<SignInFormFieldProps> = ({
         className={`${isMobile 
           ? 'h-11 text-sm' 
           : 'h-12 text-base'} 
-          px-4 border-2 border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 
-          rounded-xl focus:ring-2 focus:ring-yellow-300 focus:border-brand text-foreground
+          px-4 border-2 border-input bg-muted focus:bg-background transition-all duration-200 
+          rounded-xl focus:ring-2 focus:ring-ring focus:border-brand text-foreground
           placeholder:text-muted-foreground`}
         style={{ fontFamily: "'Quicksand', sans-serif" }}
         required={required}
