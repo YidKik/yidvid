@@ -310,7 +310,7 @@ export const FriendlyVideoActionBar = ({
           {/* 3-dot menu: Report, Favorite, Watch Later, Playlist */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className={`touch-target ${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
+              <Button variant="ghost" size="icon" className={`touch-target ${compact ? 'h-11 w-11' : 'h-9 w-9'} rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
                 <MoreVertical className={iconSize} />
               </Button>
             </DropdownMenuTrigger>
