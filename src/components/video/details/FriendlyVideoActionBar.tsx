@@ -180,19 +180,19 @@ export const FriendlyVideoActionBar = ({
     { name: "WhatsApp", icon: MessageCircle, action: () => window.open(`https://wa.me/?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`, '_blank'), color: "text-green-600" },
     { name: "Facebook", icon: Facebook, action: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank'), color: "text-blue-600" },
     { name: "Twitter", icon: Twitter, action: () => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank'), color: "text-sky-500" },
-    { name: "Email", icon: Mail, action: () => window.open(`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(shareUrl)}`, '_blank'), color: "text-red-500" },
+    { name: "Email", icon: Mail, action: () => window.open(`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(shareUrl)}`, '_blank'), color: "text-brand" },
   ];
 
   const pillBtn = compact
-    ? "h-7 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 bg-[#F2F2F2] dark:bg-[#272727] hover:bg-[#E5E5E5] dark:hover:bg-[#333] text-[#1A1A1A] dark:text-[#e8e8e8]"
-    : "h-9 px-4 rounded-full text-sm font-medium transition-all duration-150 bg-[#F2F2F2] dark:bg-[#272727] hover:bg-[#E5E5E5] dark:hover:bg-[#333] text-[#1A1A1A] dark:text-[#e8e8e8]";
+    ? "h-7 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-[#E5E5E5] dark:hover:bg-secondary text-foreground dark:text-foreground"
+    : "h-9 px-4 rounded-full text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-[#E5E5E5] dark:hover:bg-secondary text-foreground dark:text-foreground";
 
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
 
   return (
     <div className="space-y-3">
       {/* Views & date - small meta line */}
-      <div className={`flex items-center gap-1.5 ${compact ? 'text-[10px]' : 'text-xs'} text-[#606060] dark:text-[#aaa]`}>
+      <div className={`flex items-center gap-1.5 ${compact ? 'text-[10px]' : 'text-xs'} text-muted-foreground dark:text-muted-foreground`}>
         <span>{formatViewCount(views)} views</span>
         {uploadedAt && (
           <>
@@ -210,7 +210,7 @@ export const FriendlyVideoActionBar = ({
             <Link to={`/channel/${channelId}`} className="flex-shrink-0">
               <Avatar className={compact ? "h-6 w-6" : "h-9 w-9"}>
                 <AvatarImage src={channelThumbnail} alt={channelName} />
-                <AvatarFallback className={`bg-[#EF4444] text-white ${compact ? 'text-[9px]' : 'text-xs'} font-bold`}>
+                <AvatarFallback className={`bg-primary text-white ${compact ? 'text-[9px]' : 'text-xs'} font-bold`}>
                   {channelName?.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -218,7 +218,7 @@ export const FriendlyVideoActionBar = ({
           ) : (
             <Avatar className={compact ? "h-6 w-6" : "h-9 w-9"}>
               <AvatarImage src={channelThumbnail} alt={channelName} />
-              <AvatarFallback className={`bg-[#EF4444] text-white ${compact ? 'text-[9px]' : 'text-xs'} font-bold`}>
+              <AvatarFallback className={`bg-primary text-white ${compact ? 'text-[9px]' : 'text-xs'} font-bold`}>
                 {channelName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -228,12 +228,12 @@ export const FriendlyVideoActionBar = ({
             {channelId ? (
               <Link 
                 to={`/channel/${channelId}`}
-                className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-[#1A1A1A] dark:text-[#e8e8e8] hover:text-[#1A1A1A] dark:hover:text-white transition-colors block truncate leading-tight`}
+                className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-foreground dark:text-foreground hover:text-foreground dark:hover:text-white transition-colors block truncate leading-tight`}
               >
                 {channelName}
               </Link>
             ) : (
-              <span className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-[#1A1A1A] dark:text-[#e8e8e8] truncate block leading-tight`}>{channelName}</span>
+              <span className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-foreground dark:text-foreground truncate block leading-tight`}>{channelName}</span>
             )}
           </div>
 
@@ -279,10 +279,10 @@ export const FriendlyVideoActionBar = ({
                 Share
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden shadow-xl [&>button]:hidden">
-              <div className="flex items-center justify-between px-5 py-3.5 max-[768px]:px-4 max-[768px]:py-2.5 border-b border-[#E5E5E5]">
-                <h3 className="text-sm font-bold text-[#1A1A1A] tracking-tight">Share</h3>
-                <button onClick={() => setShareOpen(false)} className="text-[#999999] hover:text-[#1A1A1A] transition-colors">
+            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-white border border-border rounded-2xl overflow-hidden shadow-xl [&>button]:hidden">
+              <div className="flex items-center justify-between px-5 py-3.5 max-[768px]:px-4 max-[768px]:py-2.5 border-b border-border">
+                <h3 className="text-sm font-bold text-foreground tracking-tight">Share</h3>
+                <button onClick={() => setShareOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
                   <X className="h-4 w-4" />
                 </button>
               </div>
@@ -290,17 +290,17 @@ export const FriendlyVideoActionBar = ({
                 {shareOptions.map((option) => (
                   <button key={option.name}
                     onClick={() => { option.action(); setShareOpen(false); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#F5F5F5] transition-colors duration-150 group">
-                    <div className="h-9 w-9 rounded-full bg-[#F5F5F5] group-hover:bg-white border border-[#E5E5E5] flex items-center justify-center flex-shrink-0">
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-hover transition-colors duration-150 group">
+                    <div className="h-9 w-9 rounded-full bg-muted group-hover:bg-white border border-border flex items-center justify-center flex-shrink-0">
                       <option.icon className={`h-4 w-4 ${option.color}`} />
                     </div>
-                    <span className="text-sm font-medium text-[#1A1A1A]">{option.name}</span>
+                    <span className="text-sm font-medium text-foreground">{option.name}</span>
                   </button>
                 ))}
               </div>
               <div className="px-5 pb-4">
                 <button onClick={() => setShareOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF0000] hover:brightness-90 text-white text-sm font-semibold transition-all duration-200">
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary hover:brightness-90 text-white text-sm font-semibold transition-all duration-200">
                   <X className="h-4 w-4" /> Close
                 </button>
               </div>
@@ -310,13 +310,13 @@ export const FriendlyVideoActionBar = ({
           {/* 3-dot menu: Report, Favorite, Watch Later, Playlist */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className={`${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-full bg-[#F2F2F2] dark:bg-[#272727] hover:bg-[#E5E5E5] dark:hover:bg-[#333] text-[#606060] dark:text-[#aaa]`}>
+              <Button variant="ghost" size="icon" className={`${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-full bg-muted dark:bg-secondary hover:bg-[#E5E5E5] dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
                 <MoreVertical className={iconSize} />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 rounded-xl bg-white shadow-lg border border-[#E5E5E5] p-1">
+            <DropdownMenuContent align="end" className="w-52 rounded-xl bg-white shadow-lg border border-border p-1">
               <DropdownMenuItem onClick={handleToggleFavorite} className="rounded-lg cursor-pointer gap-3 py-2.5 px-3">
-                <Heart className={cn("h-4 w-4", isFavorite && "fill-red-500 text-red-500")} />
+                <Heart className={cn("h-4 w-4", isFavorite && "fill-brand text-brand")} />
                 <span className="text-sm">{isFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleToggleWatchLater} className="rounded-lg cursor-pointer gap-3 py-2.5 px-3">
@@ -371,7 +371,7 @@ export const FriendlyVideoActionBar = ({
                 onKeyDown={(e) => e.key === "Enter" && handleCreateAndAddToPlaylist()} />
               <Button size="icon" onClick={handleCreateAndAddToPlaylist}
                 disabled={!newPlaylistName.trim()}
-                className="shrink-0 rounded-lg bg-[#FF0000] hover:brightness-90">
+                className="shrink-0 rounded-lg bg-primary hover:brightness-90">
                 <Plus className="w-4 h-4" />
               </Button>
             </div>

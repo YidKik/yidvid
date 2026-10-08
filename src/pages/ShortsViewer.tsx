@@ -157,7 +157,7 @@ const ShortsViewer = () => {
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-[#0b0b0b] flex items-center justify-center z-[60]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#FFCC00]" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand" />
       </div>
     );
   }
@@ -169,7 +169,7 @@ const ShortsViewer = () => {
           <p className="text-lg mb-4">No shorts available</p>
           <button
             onClick={() => navigate("/videos")}
-            className="px-6 py-2 bg-[#FFCC00] text-black rounded-full text-sm font-semibold hover:brightness-95 transition"
+            className="px-6 py-2 bg-primary text-primary-foreground rounded-full text-sm font-semibold hover:brightness-95 transition"
           >
             Back to Videos
           </button>
@@ -325,7 +325,7 @@ const ShortsViewer = () => {
             {isPaused && (
               <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
                 <div className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
-                  <Play className="w-8 h-8 text-[#FFCC00] fill-[#FFCC00] ml-1" />
+                  <Play className="w-8 h-8 text-brand fill-brand ml-1" />
                 </div>
               </div>
             )}
@@ -357,12 +357,12 @@ const ShortsViewer = () => {
               <button
                 onClick={() => navigate(`/channel/${currentShort.channel_id}`)}
                 aria-label={currentShort.channel_name}
-                className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-[#FFCC00] shadow-lg"
+                className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-brand shadow-lg"
               >
                 {currentShort.channelThumbnail ? (
                   <img src={currentShort.channelThumbnail} alt={currentShort.channel_name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-[#FFCC00] flex items-center justify-center text-black font-bold text-sm">
+                  <div className="w-full h-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
                     {currentShort.channel_name?.[0]}
                   </div>
                 )}
@@ -370,7 +370,7 @@ const ShortsViewer = () => {
               <SideButton
                 icon={
                   <ThumbsUp
-                    className={`w-5 h-5 ${isLiked ? "text-[#FFCC00] fill-[#FFCC00]" : ""} ${likePop ? "short-like-pop" : ""}`}
+                    className={`w-5 h-5 ${isLiked ? "text-brand fill-brand" : ""} ${likePop ? "short-like-pop" : ""}`}
                   />
                 }
                 label={isLiked ? "Liked" : "Like"}
@@ -383,7 +383,7 @@ const ShortsViewer = () => {
             {/* Progress rail */}
             <div className="absolute left-0 top-0 bottom-0 w-[3px] z-30 bg-white/10">
               <div
-                className="w-full bg-[#FFCC00] transition-all duration-300"
+                className="w-full bg-primary transition-all duration-300"
                 style={{ height: `${((activeIndex + 1) / shorts.length) * 100}%` }}
               />
             </div>
@@ -426,7 +426,7 @@ const NavArrow = ({
     className={`w-11 h-11 rounded-full flex items-center justify-center transition-all backdrop-blur-md ${
       disabled
         ? "bg-white/5 text-white/20 cursor-not-allowed"
-        : "bg-white/10 text-white hover:bg-[#FFCC00] hover:text-black active:scale-95"
+        : "bg-white/10 text-white hover:bg-primary hover:text-black active:scale-95"
     }`}
   >
     {icon}
@@ -446,7 +446,7 @@ const SideButton = ({
 }) => (
   <button
     onClick={onClick}
-    className={`flex flex-col items-center gap-1 transition-colors ${active ? "text-[#FFCC00]" : "text-white/85 hover:text-white"}`}
+    className={`flex flex-col items-center gap-1 transition-colors ${active ? "text-brand" : "text-white/85 hover:text-white"}`}
   >
     <div className="w-11 h-11 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/20 transition-colors active:scale-95">
       {icon}

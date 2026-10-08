@@ -67,7 +67,7 @@ const SheetContent = React.forwardRef<
     >
       {children}
       {!hideCloseButton && (
-        <SheetPrimitive.Close className="absolute right-4 top-4 text-[#ea384c] focus:outline-none">
+        <SheetPrimitive.Close className="absolute right-4 top-4 text-brand focus:outline-none">
           <X className="h-5 w-5" />
           <span className="sr-only">Close</span>
         </SheetPrimitive.Close>

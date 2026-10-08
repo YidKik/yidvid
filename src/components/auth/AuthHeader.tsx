@@ -13,11 +13,11 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
   
   return (
     <div 
-      className="flex flex-col px-8 pt-6 pb-5 bg-[#FAFAFA] border-b border-[#EEEEEE] relative"
+      className="flex flex-col px-8 pt-6 pb-5 bg-muted border-b border-[#EEEEEE] relative"
       style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
     >
       {/* Top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#FF0000] via-[#FFCC00] to-[#FF0000]" />
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand via-brand to-brand" />
       
       <div className="flex items-center mb-3">
         {onBack && (
@@ -25,9 +25,9 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
             variant="ghost"
             size="icon"
             onClick={onBack}
-            className="h-9 w-9 rounded-xl transition-all duration-200 hover:bg-[#EEEEEE] border border-[#E5E5E5]"
+            className="h-9 w-9 rounded-xl transition-all duration-200 hover:bg-[#EEEEEE] border border-border"
           >
-            <ArrowLeft className="h-4 w-4 text-[#1A1A1A]" />
+            <ArrowLeft className="h-4 w-4 text-foreground" />
           </Button>
         )}
         {!onBack && <div className="h-9" />}
@@ -36,7 +36,7 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
       <div className="text-center">
         {title && (
           <h3 
-            className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-[#1A1A1A]`}
+            className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-foreground`}
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             {title}
@@ -44,7 +44,7 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
         )}
         {subtitle && (
           <p 
-            className="text-sm text-[#888888] mt-1.5 font-medium"
+            className="text-sm text-muted-foreground mt-1.5 font-medium"
             style={{ fontFamily: "'Quicksand', sans-serif" }}
           >
             {subtitle}

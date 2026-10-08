@@ -15,7 +15,7 @@ export const Footer = () => {
   return (
     <>
       <footer 
-        className="mt-auto border-t hidden md:block bg-[#FAFAFA] dark:bg-[#0f0f0f] border-[#EFEFEF] dark:border-[#333] transition-all duration-300"
+        className="mt-auto border-t hidden md:block bg-muted dark:bg-background border-border dark:border-border transition-all duration-300"
         style={{ marginLeft: `${sidebarWidth}px` }}
       >
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12 py-2.5">
@@ -42,7 +42,7 @@ export const Footer = () => {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setTosDialogOpen(true)}
-                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: '#999999'
@@ -53,7 +53,7 @@ export const Footer = () => {
               <span style={{ color: '#E5E5E5' }}>|</span>
               <button 
                 onClick={() => setPrivacyDialogOpen(true)}
-                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: '#999999'
@@ -64,7 +64,7 @@ export const Footer = () => {
               <span style={{ color: '#E5E5E5' }}>|</span>
               <button 
                 onClick={() => setContactDialogOpen(true)}
-                className="text-xs font-medium transition-colors hover:text-[#FF0000]"
+                className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: '#999999'

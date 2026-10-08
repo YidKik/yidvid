@@ -67,7 +67,7 @@ export const BroadcastEmailSection = () => {
       case "sent":
         return <Badge className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />Sent</Badge>;
       case "sending":
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="w-3 h-3 mr-1" />Sending</Badge>;
+        return <Badge className="bg-warning-bg text-warning"><Clock className="w-3 h-3 mr-1" />Sending</Badge>;
       case "partial":
         return <Badge className="bg-orange-100 text-orange-800"><AlertTriangle className="w-3 h-3 mr-1" />Partial</Badge>;
       default:
@@ -185,7 +185,7 @@ export const BroadcastEmailSection = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-yellow-500" />
+              <AlertTriangle className="w-5 h-5 text-brand" />
               Confirm Broadcast
             </DialogTitle>
           </DialogHeader>

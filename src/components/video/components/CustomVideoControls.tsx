@@ -47,7 +47,7 @@ const formatTime = (seconds: number) => {
 
 const SPEEDS = ["0.5", "0.75", "1", "1.25", "1.5", "2"];
 const CONTROLS_HIDE_DELAY = 2600;
-const ACCENT = "#FFCC00";
+const ACCENT = "#C9253A";
 
 export const CustomVideoControls = ({
   isPlaying,
@@ -236,7 +236,7 @@ export const CustomVideoControls = ({
 
   const showControls = controlsVisible || !isPlaying || isDragging || speedOpen;
   const iconBtn =
-    "flex items-center justify-center rounded-full text-white/90 hover:text-[#FFCC00] hover:bg-white/10 transition-colors";
+    "flex items-center justify-center rounded-full text-white/90 hover:text-brand hover:bg-white/10 transition-colors";
   const btnSize = isMobile ? "w-8 h-8" : "w-9 h-9";
   const iconSize = isMobile ? "w-4 h-4" : "w-[18px] h-[18px]";
 
@@ -283,7 +283,7 @@ export const CustomVideoControls = ({
           }}
         >
           <Play
-            className={`${isMobile ? "w-6 h-6" : "w-8 h-8"} text-[#1A1A1A] ml-1`}
+            className={`${isMobile ? "w-6 h-6" : "w-8 h-8"} text-foreground ml-1`}
             fill="#1A1A1A"
           />
         </div>
@@ -329,7 +329,7 @@ export const CustomVideoControls = ({
               onSeek(Math.max(0, Math.min(max, next)));
               resetHideTimer();
             }}
-            className="relative w-full cursor-pointer group py-2 touch-none select-none rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFCC00]"
+            className="relative w-full cursor-pointer group py-2 touch-none select-none rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={endScrub}

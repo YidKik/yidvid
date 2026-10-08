@@ -95,7 +95,7 @@ export const Sidebar = () => {
                     {menuGroups.map((group, groupIndex) => (
                       <div key={groupIndex} className="mb-2">
                         <motion.button
-                          className="w-full p-2 rounded-lg hover:bg-muted flex items-center justify-center"
+                          className="w-full p-2 rounded-lg hover:bg-surface-hover flex items-center justify-center"
                           onClick={() => setExpandedGroup(expandedGroup === groupIndex ? null : groupIndex)}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -129,7 +129,7 @@ export const Sidebar = () => {
                                 >
                                   <SidebarMenuItem>
                                     <SidebarMenuButton 
-                                      className="hover:bg-muted py-2 md:py-3 mt-2"
+                                      className="hover:bg-surface-hover py-2 md:py-3 mt-2"
                                       onClick={() => isMobile && setIsMenuOpen(false)}
                                     >
                                       <item.icon className="h-4 w-4 md:h-5 md:w-5 text-secondary" />

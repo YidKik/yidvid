@@ -81,7 +81,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                       onClick={() => setIsOpen(false)}
                       className="h-7 w-7 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
                     >
-                      <span className="text-lg text-red-500">×</span>
+                      <span className="text-lg text-brand">×</span>
                     </Button>
                   </div>
 
@@ -95,9 +95,9 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                         }}
                         className={cn(
                           "w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-friendly font-medium transition-all duration-200",
-                          "hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20",
+                          "hover:bg-red-50 hover:text-brand dark:hover:bg-red-900/20",
                           selectedCategory === category.id
-                            ? "bg-red-500 text-white shadow-md"
+                            ? "bg-primary text-white shadow-md"
                             : "text-gray-700 dark:text-gray-300 hover:shadow-sm"
                         )}
                         whileHover={{ x: 4 }}

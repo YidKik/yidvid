@@ -136,13 +136,13 @@ const ResetPassword = () => {
                 className="h-12 text-base px-4 text-gray-800"
                 disabled={recoveryLoading}
               />
-              {recoveryError && <p role="alert" className="text-sm text-red-600">{recoveryError}</p>}
-              <Button type="submit" disabled={recoveryLoading} className="w-full h-12 bg-[#FF0000] hover:bg-[#FF0000] text-white">
+              {recoveryError && <p role="alert" className="text-sm text-brand">{recoveryError}</p>}
+              <Button type="submit" disabled={recoveryLoading} className="w-full h-12 bg-primary hover:bg-primary text-white">
                 {recoveryLoading ? "Sending..." : "Send new reset link"}
               </Button>
             </form>
           )}
-          <button type="button" onClick={() => navigate("/videos")} className="mt-4 w-full text-sm font-semibold text-[#FF0000] hover:underline">
+          <button type="button" onClick={() => navigate("/videos")} className="mt-4 w-full text-sm font-semibold text-brand hover:underline">
             Back to YidVid
           </button>
         </div>
@@ -212,7 +212,7 @@ const ResetPassword = () => {
             </div>
 
             {error && (
-              <div className="text-sm text-red-600 font-medium p-2 bg-red-50 rounded-lg border border-red-100">
+              <div className="text-sm text-brand font-medium p-2 bg-red-50 rounded-lg border border-red-100">
                 {error}
               </div>
             )}

@@ -319,7 +319,7 @@ export const ChannelVideosFetcher = () => {
                 <li>Use both primary and fallback API keys as needed</li>
                 <li>Update view counts in the database</li>
               </ul>
-              <div className="mt-2 text-yellow-600 font-medium">
+              <div className="mt-2 text-brand font-medium">
                 This operation consumes YouTube API quota. It normally runs automatically twice daily.
               </div>
             </AlertDialogDescription>

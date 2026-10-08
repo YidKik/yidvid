@@ -90,7 +90,7 @@ export default function CategoriesPage() {
   if (error) {
     return (
       <div className="container mx-auto py-8">
-        <div className="text-center text-red-500">
+        <div className="text-center text-brand">
           {error}
         </div>
       </div>

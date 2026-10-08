@@ -21,7 +21,7 @@ interface ColorContextType {
 const DEFAULT_COLORS = {
   backgroundColor: '#ffffff',
   textColor: '#000000',
-  buttonColor: '#ea384c',
+  buttonColor: '#C9253A',
   logoColor: '#000000',
 };
 

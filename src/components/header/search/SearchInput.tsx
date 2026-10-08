@@ -42,12 +42,12 @@ export const SearchInput = ({
   return (
     <div className={`
       relative flex items-center bg-transparent backdrop-blur-sm rounded-full
-      border-2 border-[#E5E5E5] transition-all duration-200
-      ${shouldShowDropdown ? 'border-[#FFCC00] shadow-lg' : 'hover:border-[#FFCC00]'}
+      border-2 border-border transition-all duration-200
+      ${shouldShowDropdown ? 'border-brand shadow-lg' : 'hover:border-brand'}
       ${isMobile ? 'h-9' : 'h-11'}
     `}>
       <Search className={`
-        absolute left-3 text-[#999999]
+        absolute left-3 text-muted-foreground
         ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}
       `} />
       
@@ -60,7 +60,7 @@ export const SearchInput = ({
         onKeyDown={onKeyDown}
         placeholder="Search videos..."
         className={`
-          w-full bg-transparent outline-none text-[#1A1A1A] placeholder-[#999999]
+          w-full bg-transparent outline-none text-foreground placeholder-[#999999]
           ${isMobile ? 'pl-10 pr-8 text-base' : 'pl-12 pr-10 text-base'}
           ${isMobile ? 'py-2' : 'py-3'}
         `}
@@ -71,7 +71,7 @@ export const SearchInput = ({
         <button
           onClick={handleClear}
           className={`
-            absolute right-3 text-[#999999] hover:text-[#1A1A1A] transition-colors
+            absolute right-3 text-muted-foreground hover:text-foreground transition-colors
             ${isMobile ? 'p-1' : 'p-1.5'}
           `}
         >

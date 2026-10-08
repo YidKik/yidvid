@@ -29,7 +29,7 @@ export const ChannelsGrid = ({ onError, selectedCategory = "all" }: ChannelsGrid
         <Button 
           variant="outline" 
           onClick={() => setIsRequestChannelOpen(true)}
-          className="rounded-full px-5 border-2 border-[#FFCC00] text-[#1A1A1A] hover:bg-[#FFCC00] hover:text-[#1A1A1A] hover:border-[#FFCC00] hover:shadow-md hover:scale-105 transition-all duration-200 font-medium"
+          className="rounded-full px-5 border-2 border-brand text-primary-foreground hover:bg-primary hover:text-foreground hover:border-brand hover:shadow-md hover:scale-105 transition-all duration-200 font-medium"
         >
           Request a Channel
         </Button>

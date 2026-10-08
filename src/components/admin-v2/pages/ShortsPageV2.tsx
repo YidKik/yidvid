@@ -104,7 +104,7 @@ export const ShortsPageV2 = () => {
         <div className="p-4 border-b border-[#1e2028] space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-red-500 rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
                 <Play className="w-3.5 h-3.5 text-white fill-white" />
               </div>
               <h2 className="text-lg font-semibold text-white">Shorts</h2>
@@ -130,7 +130,7 @@ export const ShortsPageV2 = () => {
               onClick={() => { setActiveTab("deleted"); setSelectedShort(null); }}
               className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${
                 activeTab === "deleted"
-                  ? "bg-red-500/20 text-red-400"
+                  ? "bg-primary/20 text-red-400"
                   : "text-[#8b8fa3] hover:text-white"
               }`}
             >
@@ -193,7 +193,7 @@ export const ShortsPageV2 = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                          className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-primary/10"
                           onClick={(e) => { e.stopPropagation(); handleDelete(short); }}
                           disabled={isProcessing}
                         >
@@ -227,7 +227,7 @@ export const ShortsPageV2 = () => {
               {/* Thumbnail */}
               <div className="relative rounded-xl overflow-hidden" style={{ aspectRatio: '9/16' }}>
                 <img src={selectedShort.thumbnail} alt="" className="w-full h-full object-cover" />
-                <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                <span className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded">
                   SHORT
                 </span>
               </div>
@@ -268,7 +268,7 @@ export const ShortsPageV2 = () => {
                 {activeTab === "active" ? (
                   <Button
                     size="sm"
-                    className="flex-1 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 border-0"
+                    className="flex-1 text-xs bg-primary/10 text-red-400 hover:bg-primary/20 border-0"
                     onClick={() => handleDelete(selectedShort)}
                     disabled={isProcessing}
                   >

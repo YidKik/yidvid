@@ -74,7 +74,7 @@ export default function EmailUnsubscribe() {
 
         {status === "valid" && (
           <>
-            <MailX className="h-14 w-14 text-[#FF0000] mx-auto" />
+            <MailX className="h-14 w-14 text-brand mx-auto" />
             <h1 className="text-2xl font-bold text-foreground">Unsubscribe from emails</h1>
             <p className="text-muted-foreground">
               Are you sure you want to unsubscribe from YidVid emails? You can always re-subscribe later in your settings.
@@ -82,7 +82,7 @@ export default function EmailUnsubscribe() {
             <Button
               onClick={handleUnsubscribe}
               disabled={isProcessing}
-              className="bg-[#FF0000] hover:bg-[#CC0000] text-white px-8 py-3"
+              className="bg-primary hover:bg-primary-hover text-white px-8 py-3"
             >
               {isProcessing ? (
                 <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing...</>
@@ -100,7 +100,7 @@ export default function EmailUnsubscribe() {
             <p className="text-muted-foreground">
               You will no longer receive emails from YidVid. If you change your mind, you can update your preferences in settings.
             </p>
-            <a href="https://yidvid.com" className="text-[#FF0000] hover:underline text-sm">
+            <a href="https://yidvid.com" className="text-brand hover:underline text-sm">
               Return to YidVid →
             </a>
           </>

@@ -26,7 +26,7 @@ export const ContentPreferencesSection = ({
     <div style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}>
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
-        <Video size={18} className="text-yellow-600" />
+        <Video size={18} className="text-brand" />
         <h2 className="text-lg font-bold text-gray-900">Content Preferences</h2>
       </div>
       
@@ -34,7 +34,7 @@ export const ContentPreferencesSection = ({
         {/* Channel Subscriptions */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+            <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
             <h3 className="text-sm font-semibold text-gray-800">Channel Subscriptions</h3>
           </div>
           <ChannelSubscriptions />

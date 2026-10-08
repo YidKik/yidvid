@@ -62,7 +62,7 @@ export const VideoCardThumbnail = ({
         "border-2 border-gray-200/50 bg-gray-50"
       )}
       style={{
-        borderColor: isHovering ? '#FFCC00' : undefined
+        borderColor: isHovering ? '#C9253A' : undefined
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

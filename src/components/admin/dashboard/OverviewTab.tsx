@@ -66,7 +66,7 @@ export const OverviewTab = () => {
       <CardContent>
         <div className="text-3xl font-bold">{value?.toLocaleString() || 0}</div>
         {trendValue && (
-          <p className={`text-xs ${trend === 'up' ? 'text-green-600' : 'text-red-600'} flex items-center gap-1 mt-2`}>
+          <p className={`text-xs ${trend === 'up' ? 'text-green-600' : 'text-brand'} flex items-center gap-1 mt-2`}>
             <TrendingUp className={`h-3 w-3 ${trend === 'down' ? 'rotate-180' : ''}`} />
             {trendValue} from last month
           </p>
@@ -173,18 +173,18 @@ export const OverviewTab = () => {
               
               <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <XCircle className="h-4 w-4 text-red-600" />
+                  <XCircle className="h-4 w-4 text-brand" />
                   <span className="text-sm font-medium">Rejected</span>
                 </div>
-                <span className="text-2xl font-bold text-red-600">{videoStats?.rejected || 0}</span>
+                <span className="text-2xl font-bold text-brand">{videoStats?.rejected || 0}</span>
               </div>
               
-              <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-warning-bg rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-yellow-600" />
+                  <Clock className="h-4 w-4 text-brand" />
                   <span className="text-sm font-medium">Pending</span>
                 </div>
-                <span className="text-2xl font-bold text-yellow-600">{videoStats?.pending || 0}</span>
+                <span className="text-2xl font-bold text-brand">{videoStats?.pending || 0}</span>
               </div>
               
               <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
@@ -226,8 +226,8 @@ export const OverviewTab = () => {
                   </p>
                   <span className={`text-xs px-2 py-0.5 rounded-full inline-block mt-1 ${
                     video.content_analysis_status === 'approved' ? 'bg-green-100 text-green-700' :
-                    video.content_analysis_status === 'rejected' ? 'bg-red-100 text-red-700' :
-                    'bg-yellow-100 text-yellow-700'
+                    video.content_analysis_status === 'rejected' ? 'bg-red-100 text-error' :
+                    'bg-warning-bg text-warning'
                   }`}>
                     {video.content_analysis_status || 'pending'}
                   </span>
@@ -263,7 +263,7 @@ export const OverviewTab = () => {
               Manage AI-powered content moderation with detailed analysis, rejection reasons, and frame inspection
             </p>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-yellow-600 font-medium">{videoStats?.pending || 0} Pending</span>
+              <span className="text-brand font-medium">{videoStats?.pending || 0} Pending</span>
               <span className="text-orange-600 font-medium">{videoStats?.manualReview || 0} Need Review</span>
             </div>
           </CardContent>

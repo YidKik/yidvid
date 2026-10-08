@@ -73,7 +73,7 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
   return (
     <div className="space-y-4">
       {/* Comment Form Section */}
-      <div className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-4'} border border-[#E5E5E5]`}>
+      <div className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-4'} border border-border`}>
         <CommentForm onSubmit={handleSubmitComment} />
       </div>
       
@@ -89,8 +89,8 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
           </>
         ) : (
           <div className="text-center py-6">
-            <div className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} mx-auto mb-3 bg-[#F5F5F5] rounded-full flex items-center justify-center`}>
-              <MessageSquare className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-[#999999]`} />
+            <div className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} mx-auto mb-3 bg-muted rounded-full flex items-center justify-center`}>
+              <MessageSquare className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-muted-foreground`} />
             </div>
             <p className="text-muted-foreground text-sm">
               Be the first to comment! ✨

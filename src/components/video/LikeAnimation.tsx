@@ -61,7 +61,7 @@ export const LikeAnimation = ({ isVisible, onComplete }: LikeAnimationProps) => 
                 }}
                 className="absolute"
               >
-                <ThumbsUp className="text-red-500 fill-red-500 stroke-black stroke-2 w-8 h-8 md:w-12 md:h-12 drop-shadow-lg" />
+                <ThumbsUp className="text-brand fill-brand stroke-black stroke-2 w-8 h-8 md:w-12 md:h-12 drop-shadow-lg" />
               </motion.div>
             ))}
           </div>

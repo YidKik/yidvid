@@ -37,7 +37,7 @@ export const ChannelCard = ({
     >
       <div className="flex flex-col items-center justify-center">
         <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center overflow-hidden mb-4 mx-auto 
-                      border-2 border-yellow-400 group-hover:border-red-500 transition-all duration-300
+                      border-2 border-brand group-hover:border-brand transition-all duration-300
                       group-hover:shadow-lg shadow-yellow-200/40">
           {thumbnail_url ? (
             <img
@@ -55,11 +55,11 @@ export const ChannelCard = ({
           )}
         </div>
         
-        <h3 className="text-sm md:text-base font-medium text-center mb-1 !text-black group-hover:!text-[#ea384c] transition-colors">
+        <h3 className="text-sm md:text-base font-medium text-center mb-1 !text-black group-hover:!text-brand transition-colors">
           {title}
         </h3>
         
-        <p className="text-xs !text-black/70 group-hover:!text-[#ea384c] transition-colors">
+        <p className="text-xs !text-black/70 group-hover:!text-brand transition-colors">
           View Channel
         </p>
       </div>

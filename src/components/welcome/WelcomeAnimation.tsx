@@ -191,7 +191,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-                  className="flex justify-center text-[#ea384c] drop-shadow-sm"
+                  className="flex justify-center text-brand drop-shadow-sm"
                 >
                   {steps[currentStep].icon}
                 </motion.div>
@@ -211,7 +211,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.7 }}
-                  className="text-2xl md:text-3xl text-[#ea384c] font-medium drop-shadow-sm"
+                  className="text-2xl md:text-3xl text-brand font-medium drop-shadow-sm"
                 >
                   {currentStep === 1 ? (
                     <span className="flex items-center justify-center gap-2">
@@ -243,7 +243,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                     <div
                       key={index}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                        index === currentStep ? 'bg-[#ea384c] scale-125 shadow-md' : 'bg-gray-300'
+                        index === currentStep ? 'bg-primary scale-125 shadow-md' : 'bg-gray-300'
                       }`}
                     />
                   ))}
@@ -270,7 +270,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                     initial={{ width: '0%' }}
                     animate={{ width: preloadComplete ? '100%' : '60%' }}
                     transition={{ duration: preloadComplete ? 0.5 : 2, ease: "linear" }}
-                    className="h-full bg-[#ea384c] rounded-full"
+                    className="h-full bg-primary rounded-full"
                   />
                 </div>
               </motion.div>

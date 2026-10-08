@@ -36,12 +36,12 @@ export const ChannelListView = ({
     switch (category) {
       case 'music': return 'bg-purple-100 text-purple-800 border-purple-200';
       case 'torah': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'inspiration': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'inspiration': return 'bg-warning-bg text-warning border-warning/40';
       case 'podcast': return 'bg-green-100 text-green-800 border-green-200';
       case 'education': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
       case 'entertainment': return 'bg-pink-100 text-pink-800 border-pink-200';
       case 'other': return 'bg-muted text-muted-foreground border-border';
-      default: return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-red-100 text-error border-red-200';
     }
   };
 

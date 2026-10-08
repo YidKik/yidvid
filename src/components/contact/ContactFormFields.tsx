@@ -10,7 +10,7 @@ interface ContactFormFieldsProps {
 }
 
 export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
-  const inputStyle = "h-10 rounded-full border border-border bg-transparent hover:border-[#FFCC00] focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 placeholder:text-gray-400";
+  const inputStyle = "h-10 rounded-full border border-border bg-transparent hover:border-brand focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 placeholder:text-gray-400";
 
   return (
     <div className="space-y-4">
@@ -79,7 +79,7 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
             <FormControl>
               <Textarea 
                 placeholder="Tell us what's on your mind..." 
-                className="min-h-[100px] resize-none rounded-xl border border-border bg-transparent hover:border-[#FFCC00] focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 placeholder:text-gray-400"
+                className="min-h-[100px] resize-none rounded-xl border border-border bg-transparent hover:border-brand focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 placeholder:text-gray-400"
                 style={{ color: '#222' }}
                 {...field} 
               />

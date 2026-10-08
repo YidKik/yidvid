@@ -82,7 +82,7 @@ export const AdminSection = ({ userId }: AdminSectionProps) => {
     <div style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}>
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
-        <Shield size={18} className="text-yellow-600" />
+        <Shield size={18} className="text-brand" />
         <h2 className="text-lg font-bold text-gray-900">Admin Settings</h2>
       </div>
       

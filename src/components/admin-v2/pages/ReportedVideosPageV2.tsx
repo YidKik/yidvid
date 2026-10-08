@@ -182,7 +182,7 @@ export const ReportedVideosPageV2 = () => {
   const severityBadge = (count: number) => {
     if (count >= 3) {
       return (
-        <Badge className="bg-red-500/15 text-red-400 border-red-500/20 hover:bg-red-500/20">
+        <Badge className="bg-primary/15 text-red-400 border-brand/20 hover:bg-primary/20">
           <AlertTriangle className="w-3 h-3 mr-1" />{count} reports
         </Badge>
       );
@@ -216,7 +216,7 @@ export const ReportedVideosPageV2 = () => {
             <span className="text-xs font-medium text-[#c4c7d4]">{grouped.length} videos reported</span>
           </div>
           {grouped.filter(g => g.reportCount >= 3).length > 0 && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-brand/20">
               <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
               <span className="text-xs font-medium text-red-400">
                 {grouped.filter(g => g.reportCount >= 3).length} high priority
@@ -478,7 +478,7 @@ export const ReportedVideosPageV2 = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="flex-1 h-9 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20"
+                          className="flex-1 h-9 text-xs text-red-400 hover:text-red-300 hover:bg-primary/10 border border-brand/20"
                           disabled={deleteMutation.isPending}
                         >
                           <Trash2 className="w-3.5 h-3.5 mr-1.5" />
@@ -498,7 +498,7 @@ export const ReportedVideosPageV2 = () => {
                           </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => deleteMutation.mutate(selected.videoDbId)}
-                            className="bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25"
+                            className="bg-primary/15 text-red-400 border border-brand/20 hover:bg-primary/25"
                           >
                             Delete Video
                           </AlertDialogAction>

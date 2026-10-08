@@ -45,7 +45,7 @@ export const DelayedLoadingAnimation: React.FC<DelayedLoadingAnimationProps> = (
       case "secondary":
         return ["#8B5CF6", "#7c3aed", "#6d28d9"];
       case "accent":
-        return ["#ea384c", "#f87171", "#fca5a5"];
+        return ["#C9253A", "#f87171", "#fca5a5"];
       case "muted":
         return ["#94a3b8", "#64748b", "#475569"];
       default:

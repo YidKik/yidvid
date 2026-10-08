@@ -80,7 +80,7 @@ export function AnimatedVideoHero({ videos }: AnimatedVideoHeroProps) {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#030303]">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#ea384c]/[0.15] via-transparent to-rose-500/[0.05] blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-brand/[0.15] via-transparent to-rose-500/[0.05] blur-3xl" />
 
       <div className="absolute inset-0 overflow-hidden">
         {videos.slice(0, 5).map((video, index) => {
@@ -111,7 +111,7 @@ export function AnimatedVideoHero({ videos }: AnimatedVideoHeroProps) {
             animate="visible"
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] mb-8 md:mb-12"
           >
-            <Circle className="h-2 w-2 fill-[#ea384c]" />
+            <Circle className="h-2 w-2 fill-brand" />
             <span className="text-sm text-white/60 tracking-wide">
               Welcome to YidVid
             </span>
@@ -128,7 +128,7 @@ export function AnimatedVideoHero({ videos }: AnimatedVideoHeroProps) {
                 Your Gateway to
               </span>
               <br className="hidden xs:block" />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#ea384c] via-white/90 to-rose-300 whitespace-nowrap">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand via-white/90 to-rose-300 whitespace-nowrap">
                 Jewish Content
               </span>
             </h1>

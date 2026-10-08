@@ -61,7 +61,7 @@ const SECTION_CONFIG: Record<string, {
   new_comment:         { icon: MessageSquare,   color: "text-emerald-400",bg: "bg-emerald-500/10",border: "border-emerald-500/20",tab: "comments",  sectionLabel: "Comments" },
   new_contact_request: { icon: Mail,            color: "text-amber-400",  bg: "bg-amber-500/10",  border: "border-amber-500/20",  tab: "contacts",  sectionLabel: "Contact Requests" },
   new_user:            { icon: UserPlus,        color: "text-blue-400",   bg: "bg-blue-500/10",   border: "border-blue-500/20",   tab: "users",     sectionLabel: "New Users" },
-  reported_video:      { icon: Flag,            color: "text-red-400",    bg: "bg-red-500/10",    border: "border-red-500/20",    tab: "reports",   sectionLabel: "Reported Videos" },
+  reported_video:      { icon: Flag,            color: "text-red-400",    bg: "bg-primary/10",    border: "border-brand/20",    tab: "reports",   sectionLabel: "Reported Videos" },
 };
 
 const DEFAULT_CFG = { icon: Bell, color: "text-slate-400", bg: "bg-slate-500/10", border: "border-slate-500/20", tab: undefined as string | undefined, sectionLabel: "Other" };
@@ -235,7 +235,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
         >
           <Bell className="w-[18px] h-[18px] text-[#8b8fa3]" />
           {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#ef4444] text-white text-[10px] font-bold ring-2 ring-[#0f1117] animate-pulse px-1">
+            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold ring-2 ring-[#0f1117] animate-pulse px-1">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}

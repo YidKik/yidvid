@@ -56,7 +56,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
   }
 
   // Outline-only style to match profile icon - smaller on tiny screens
-  const buttonClass = `h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full border-2 border-[#E5E5E5] bg-transparent hover:bg-[#F5F5F5] text-[#666666] transition-all duration-200`;
+  const buttonClass = `h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full border-2 border-border bg-transparent hover:bg-surface-hover text-muted-foreground transition-all duration-200`;
 
   return (
     <Sheet>
@@ -70,7 +70,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
           {notifications && notifications.length > 0 && (
             <Badge 
               variant="destructive" 
-              className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-medium bg-red-500 text-white rounded-full"
+              className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-medium bg-primary text-white rounded-full"
             >
               {notifications.length > 9 ? '9+' : notifications.length}
             </Badge>

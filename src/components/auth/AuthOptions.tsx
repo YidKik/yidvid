@@ -50,10 +50,10 @@ export const AuthOptions = ({
       style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
     >
       {/* Top accent bar */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#FF0000] via-[#FFCC00] to-[#FF0000]" />
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand via-brand to-brand" />
       
       {/* Hero section */}
-      <div className="w-full bg-[#FAFAFA] px-8 pt-10 pb-8 text-center">
+      <div className="w-full bg-muted px-8 pt-10 pb-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -61,13 +61,13 @@ export const AuthOptions = ({
           className="space-y-2"
         >
           <h2 
-            className={`${isMobile ? 'text-2xl' : 'text-[28px]'} font-bold text-[#1A1A1A]`}
+            className={`${isMobile ? 'text-2xl' : 'text-[28px]'} font-bold text-foreground`}
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             Welcome! 👋
           </h2>
           <p 
-            className="text-base text-[#666666] font-medium max-w-[280px] mx-auto"
+            className="text-base text-muted-foreground font-medium max-w-[280px] mx-auto"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             Sign in to your account or create a new one to get started
@@ -77,7 +77,7 @@ export const AuthOptions = ({
         {/* Divider */}
         <div className="relative flex items-center w-full py-1">
           <div className="flex-grow border-t border-gray-200"></div>
-          <span className="flex-shrink mx-4 text-xs text-[#AAAAAA] font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>or</span>
+          <span className="flex-shrink mx-4 text-xs text-muted-foreground font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>or</span>
           <div className="flex-grow border-t border-gray-200"></div>
         </div>
 
@@ -92,7 +92,7 @@ export const AuthOptions = ({
             onClick={handleGoogleSignIn}
             disabled={isGoogleLoading}
             variant="outline"
-            className="w-full h-13 text-base border-2 border-gray-200 text-[#1A1A1A] bg-white hover:bg-gray-50 
+            className="w-full h-13 text-base border-2 border-gray-200 text-foreground bg-white hover:bg-gray-50 
               rounded-2xl font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
@@ -119,7 +119,7 @@ export const AuthOptions = ({
         >
           <Button 
             onClick={() => onSelectOption('signin')}
-            className="w-full h-13 text-base bg-[#FF0000] hover:brightness-90 text-white rounded-2xl font-semibold
+            className="w-full h-13 text-base bg-primary hover:brightness-90 text-white rounded-2xl font-semibold
               transition-all duration-200 shadow-md hover:shadow-lg
               flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
@@ -139,7 +139,7 @@ export const AuthOptions = ({
           <Button 
             onClick={() => onSelectOption('signup')}
             variant="outline"
-            className="w-full h-13 text-base border-2 border-[#FFCC00] text-[#1A1A1A] bg-white hover:bg-[#FFCC00] 
+            className="w-full h-13 text-base border-2 border-brand text-primary-foreground bg-white hover:bg-primary 
               rounded-2xl font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
@@ -152,7 +152,7 @@ export const AuthOptions = ({
       
       {/* Footer */}
       <div className="px-8 pb-6">
-        <p className="text-xs text-[#AAAAAA] text-center" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+        <p className="text-xs text-muted-foreground text-center" style={{ fontFamily: "'Quicksand', sans-serif" }}>
           Join our friendly community today!
         </p>
       </div>

@@ -146,7 +146,7 @@ export const ContentAnalysisPanel = () => {
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-muted rounded-full h-2">
                     <div 
-                      className={`h-2 rounded-full ${score >= 7 ? 'bg-green-500' : score >= 4 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                      className={`h-2 rounded-full ${score >= 7 ? 'bg-green-500' : score >= 4 ? 'bg-primary' : 'bg-primary'}`}
                       style={{ width: `${Math.min(score * 10, 100)}%` }}
                     />
                   </div>
@@ -379,7 +379,7 @@ export const ContentAnalysisPanel = () => {
               <div className="text-sm text-muted-foreground">Total Videos</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+              <div className="text-2xl font-bold text-brand">{stats.pending}</div>
               <div className="text-sm text-muted-foreground">Pending Analysis</div>
             </div>
             <div className="text-center">
@@ -387,7 +387,7 @@ export const ContentAnalysisPanel = () => {
               <div className="text-sm text-muted-foreground">Approved</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+              <div className="text-2xl font-bold text-brand">{stats.rejected}</div>
               <div className="text-sm text-muted-foreground">Rejected</div>
             </div>
             <div className="text-center">
@@ -413,11 +413,11 @@ export const ContentAnalysisPanel = () => {
               <p>⚠️ <strong>Ambiguous content requires manual review</strong></p>
               
               {stats.pending > 100 && (
-                <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                  <p className="text-yellow-800 dark:text-yellow-200 font-medium">
+                <div className="mt-3 p-3 bg-warning-bg dark:bg-yellow-900/20 rounded-lg border border-warning/40 dark:border-yellow-800">
+                  <p className="text-warning dark:text-yellow-200 font-medium">
                     ⚠️ <strong>{stats.pending.toLocaleString()} videos are stuck in pending status</strong>
                   </p>
-                  <p className="text-yellow-700 dark:text-yellow-300 text-xs mt-1">
+                  <p className="text-warning dark:text-yellow-300 text-xs mt-1">
                     These videos were analyzed but not properly categorized. Click "Fix Pending Videos" to resolve this automatically.
                     This is a one-time fix needed due to a previous system update.
                   </p>

@@ -62,7 +62,7 @@ export const MobileVideoCarouselSection = ({
               {/* Video Info */}
               <div className="mt-2 flex gap-2">
                 {/* Channel Avatar */}
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-brand flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
                   {video.channel_name.charAt(0).toUpperCase()}
                 </div>
                 

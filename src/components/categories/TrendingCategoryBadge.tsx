@@ -14,7 +14,7 @@ export const TrendingCategoryBadge = ({ count }: TrendingCategoryBadgeProps) => 
       animate={{ scale: 1 }}
       className="absolute -top-2 -right-2 z-10"
     >
-      <Badge className="bg-red-500 text-white flex items-center gap-1 px-2">
+      <Badge className="bg-primary text-white flex items-center gap-1 px-2">
         <TrendingUp className="w-3 h-3" />
         <span className="text-xs">{count}</span>
       </Badge>

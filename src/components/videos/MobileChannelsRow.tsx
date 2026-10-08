@@ -99,7 +99,7 @@ export const MobileChannelsRow = () => {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary to-red-500 flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-br from-primary to-brand flex items-center justify-center">
                       <span className="text-lg font-bold text-white">
                         {channel.title.charAt(0).toUpperCase()}
                       </span>

@@ -129,7 +129,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
 
             <div className={`${isMobile ? 'px-4 pt-4 pb-3' : 'px-6 pt-6 pb-4'}`} style={{ borderBottom: '1px solid #E5E5E5' }}>
               <div className="flex items-center gap-3 pr-10">
-                <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center`} style={{ backgroundColor: '#FFCC00' }}>
+                <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center`} style={{ backgroundColor: 'hsl(var(--primary))' }}>
                   <Send className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'}`} style={{ color: '#222' }} />
                 </div>
                 <div>
@@ -147,7 +147,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
                   <button
                     type="submit"
                     className={`w-full ${isMobile ? 'h-9 text-xs' : 'h-11 text-sm'} font-bold rounded-full flex items-center justify-center gap-2 transition-opacity hover:opacity-90`}
-                    style={{ backgroundColor: '#FF0000', color: 'white' }}
+                    style={{ backgroundColor: 'hsl(var(--primary))', color: 'white' }}
                   >
                     <Send className="w-4 h-4" />
                     Send Message

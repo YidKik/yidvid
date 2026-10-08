@@ -296,7 +296,7 @@ export const CommentsPageV2 = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="w-full border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 justify-start"
+                      className="w-full border-brand/20 text-red-400 hover:text-red-300 hover:bg-primary/10 justify-start"
                       onClick={() => setShowDeleteConfirm(true)}
                     >
                       <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete Comment
@@ -344,7 +344,7 @@ export const CommentsPageV2 = () => {
             <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)} className="text-gray-400 hover:text-gray-200" disabled={deletingComment}>
               Cancel
             </Button>
-            <Button onClick={handleDelete} disabled={deletingComment} className="bg-red-600 hover:bg-red-700 text-white">
+            <Button onClick={handleDelete} disabled={deletingComment} className="bg-primary hover:bg-primary-hover text-white">
               {deletingComment ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Permanently"}
             </Button>
           </DialogFooter>

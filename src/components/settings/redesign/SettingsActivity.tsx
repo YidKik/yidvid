@@ -77,31 +77,31 @@ export const SettingsActivity = () => {
   });
 
   const statItems = [
-    { icon: Eye, label: "Videos Watched", value: stats?.totalVideosWatched ?? 0, accent: "#FF0000" },
-    { icon: Clock, label: "Watch Time", value: stats?.watchTime ?? "0m", accent: "#FFCC00" },
-    { icon: Users, label: "Channels", value: stats?.uniqueChannels ?? 0, accent: "#FF0000" },
-    { icon: TrendingUp, label: "Today", value: stats?.todayWatched ?? 0, accent: "#FFCC00" },
-    { icon: Calendar, label: "This Week", value: stats?.weekWatched ?? 0, accent: "#FF0000" },
-    { icon: Flame, label: "Streak", value: `${stats?.currentStreak ?? 0}d`, accent: "#FFCC00" },
+    { icon: Eye, label: "Videos Watched", value: stats?.totalVideosWatched ?? 0, accent: "#C9253A" },
+    { icon: Clock, label: "Watch Time", value: stats?.watchTime ?? "0m", accent: "#C9253A" },
+    { icon: Users, label: "Channels", value: stats?.uniqueChannels ?? 0, accent: "#C9253A" },
+    { icon: TrendingUp, label: "Today", value: stats?.todayWatched ?? 0, accent: "#C9253A" },
+    { icon: Calendar, label: "This Week", value: stats?.weekWatched ?? 0, accent: "#C9253A" },
+    { icon: Flame, label: "Streak", value: `${stats?.currentStreak ?? 0}d`, accent: "#C9253A" },
   ];
 
   return (
     <div>
       {/* Stats Header */}
       <div className="flex items-center gap-2 mb-5">
-        <BarChart3 className="h-5 w-5 text-[#FF0000]" />
-        <h3 className="text-base font-bold text-[#1A1A1A] dark:text-[#e8e8e8]">Your Stats</h3>
+        <BarChart3 className="h-5 w-5 text-brand" />
+        <h3 className="text-base font-bold text-foreground dark:text-foreground">Your Stats</h3>
       </div>
 
       {/* Stats Grid */}
       {authLoading || isLoading ? (
         <div className="flex items-center justify-center py-10">
-          <Loader2 className="h-5 w-5 animate-spin text-[#999]" />
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : !isAuthenticated ? (
-        <div className="py-10 text-center rounded-xl border border-[#E5E5E5] dark:border-[#333] bg-[#F9F9F9] dark:bg-[#0f0f0f]">
+        <div className="py-10 text-center rounded-xl border border-border dark:border-border bg-muted dark:bg-background">
           <Play className="h-8 w-8 text-[#ccc] mx-auto mb-2" />
-          <p className="text-sm font-medium text-[#666] dark:text-[#aaa]">Sign in to see your stats</p>
+          <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Sign in to see your stats</p>
         </div>
       ) : (
         <div className={cn(
@@ -111,7 +111,7 @@ export const SettingsActivity = () => {
           {statItems.map((item) => (
             <div
               key={item.label}
-              className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E5E5E5] dark:border-[#333] bg-[#F9F9F9] dark:bg-[#0f0f0f]"
+              className="flex items-center gap-3 p-3.5 rounded-xl border border-border dark:border-border bg-muted dark:bg-background"
             >
               <div
                 className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0"
@@ -120,10 +120,10 @@ export const SettingsActivity = () => {
                 <item.icon className="h-4 w-4" style={{ color: item.accent }} />
               </div>
               <div className="min-w-0">
-                <p className="text-lg font-bold text-[#1A1A1A] dark:text-[#e8e8e8] leading-tight">
+                <p className="text-lg font-bold text-foreground dark:text-foreground leading-tight">
                   {item.value}
                 </p>
-                <p className="text-xs text-[#999] font-medium truncate">{item.label}</p>
+                <p className="text-xs text-muted-foreground font-medium truncate">{item.label}</p>
               </div>
             </div>
           ))}
@@ -131,10 +131,10 @@ export const SettingsActivity = () => {
       )}
 
       {/* Watch History */}
-      <div className="border-t border-[#E5E5E5] dark:border-[#333] pt-6">
+      <div className="border-t border-border dark:border-border pt-6">
         <div className="flex items-center gap-2 mb-4">
-          <History className="h-5 w-5 text-[#FF0000]" />
-          <h3 className="text-base font-bold text-[#1A1A1A] dark:text-[#e8e8e8]">Watch History</h3>
+          <History className="h-5 w-5 text-brand" />
+          <h3 className="text-base font-bold text-foreground dark:text-foreground">Watch History</h3>
         </div>
         <VideoHistorySection />
       </div>

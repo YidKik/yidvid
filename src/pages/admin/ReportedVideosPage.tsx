@@ -91,7 +91,7 @@ export default function ReportedVideosPage() {
       
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center gap-2">
-          <Flag className="h-6 w-6 text-red-500" />
+          <Flag className="h-6 w-6 text-brand" />
           <h1 className="text-3xl font-bold">Reported Videos</h1>
         </div>
 

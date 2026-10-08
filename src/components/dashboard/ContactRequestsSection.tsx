@@ -144,7 +144,7 @@ export const ContactRequestsSection = () => {
 
   const getStatusBadgeColor = (status: string) => {
     const colors: Record<string, string> = {
-      pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+      pending: "bg-warning-bg text-warning dark:bg-yellow-900/20 dark:text-brand",
       in_progress: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
       resolved: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
       closed: "bg-muted text-muted-foreground",

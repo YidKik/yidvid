@@ -48,7 +48,7 @@ export const VideoCardWithOptions = ({
         className="block"
       >
         {/* Thumbnail with hover effects */}
-        <div className={`relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-[#FFCC00] transition-all duration-300`}>
+        <div className={`relative aspect-video rounded-xl overflow-hidden border-2 border-transparent group-hover:border-brand transition-all duration-300`}>
           <img
             src={thumbnail}
             alt={title}
@@ -93,7 +93,7 @@ export const VideoCardWithOptions = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className={`w-full h-full bg-[#FF0000] flex items-center justify-center ${isMobile ? 'text-[7px]' : 'text-[6px] md:text-[7px] lg:text-[8px] xl:text-[10px]'} font-bold text-white`}>
+                  <div className={`w-full h-full bg-primary flex items-center justify-center ${isMobile ? 'text-[7px]' : 'text-[6px] md:text-[7px] lg:text-[8px] xl:text-[10px]'} font-bold text-white`}>
                     {channelName.charAt(0).toUpperCase()}
                   </div>
                 )}

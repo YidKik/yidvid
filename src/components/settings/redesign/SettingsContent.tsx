@@ -36,8 +36,8 @@ export const SettingsContent = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Tv2 className="h-5 w-5 text-[#FF0000]" />
-          <h3 className="text-base font-bold text-[#1A1A1A] dark:text-[#e8e8e8]">Channel Control</h3>
+          <Tv2 className="h-5 w-5 text-brand" />
+          <h3 className="text-base font-bold text-foreground dark:text-foreground">Channel Control</h3>
         </div>
         <div className="flex items-center gap-2">
           {storedPin ? (
@@ -45,9 +45,9 @@ export const SettingsContent = () => {
               variant="outline"
               size="sm"
               onClick={isLocked ? () => setShowLockDialog(true) : handleLock}
-              className="h-8 rounded-lg text-xs font-semibold gap-1.5 border-[#E5E5E5] dark:border-[#333]"
+              className="h-8 rounded-lg text-xs font-semibold gap-1.5 border-border dark:border-border"
             >
-              {isLocked ? <Lock className="h-3.5 w-3.5 text-[#FF0000]" /> : <Unlock className="h-3.5 w-3.5 text-green-600" />}
+              {isLocked ? <Lock className="h-3.5 w-3.5 text-brand" /> : <Unlock className="h-3.5 w-3.5 text-green-600" />}
               {isLocked ? "Locked" : "Lock"}
             </Button>
           ) : (
@@ -55,7 +55,7 @@ export const SettingsContent = () => {
               variant="outline"
               size="sm"
               onClick={() => setShowSetPinDialog(true)}
-              className="h-8 rounded-lg text-xs font-semibold gap-1.5 border-[#E5E5E5] dark:border-[#333]"
+              className="h-8 rounded-lg text-xs font-semibold gap-1.5 border-border dark:border-border"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
               Set PIN
@@ -64,11 +64,11 @@ export const SettingsContent = () => {
         </div>
       </div>
 
-      <div className="bg-[#F9F9F9] dark:bg-[#0f0f0f] border border-[#E5E5E5] dark:border-[#333] rounded-xl p-4 mb-4">
-        <p className="text-sm font-medium text-[#1A1A1A] dark:text-[#e8e8e8] mb-1">
+      <div className="bg-muted dark:bg-background border border-border dark:border-border rounded-xl p-4 mb-4">
+        <p className="text-sm font-medium text-foreground dark:text-foreground mb-1">
           Control your feed
         </p>
-        <p className="text-xs text-[#666] dark:text-[#aaa] leading-relaxed">
+        <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">
           This section lets you choose which channels appear in your feed, search results, and recommendations. 
           Toggle channels off to hide them completely from your experience. Use the parental PIN lock to prevent 
           changes from being made without your permission.
@@ -77,22 +77,22 @@ export const SettingsContent = () => {
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#999]" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search channels..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 h-10 rounded-xl border-[#E5E5E5] dark:border-[#333] bg-[#F9F9F9] dark:bg-[#0f0f0f] text-sm"
+          className="pl-9 h-10 rounded-xl border-border dark:border-border bg-muted dark:bg-background text-sm"
         />
       </div>
 
       {/* Channel List */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-5 w-5 animate-spin text-[#999]" />
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : filteredChannels.length === 0 ? (
-        <div className="text-center py-12 text-[#999]">
+        <div className="text-center py-12 text-muted-foreground">
           <Tv2 className="h-10 w-10 mx-auto mb-2 opacity-50" />
           <p className="text-sm font-medium">No channels found</p>
         </div>
@@ -106,20 +106,20 @@ export const SettingsContent = () => {
                 className={cn(
                   "flex items-center gap-3 py-2.5 px-3 rounded-xl transition-colors",
                   isHidden
-                    ? "bg-[#F9F9F9] dark:bg-[#0f0f0f] opacity-60"
-                    : "hover:bg-[#F9F9F9] dark:hover:bg-[#0f0f0f]"
+                    ? "bg-muted dark:bg-background opacity-60"
+                    : "hover:bg-surface-hover dark:hover:bg-background"
                 )}
               >
                 <Avatar className="h-9 w-9 shrink-0">
                   <AvatarImage src={channel.thumbnail_url || ""} alt={channel.title} />
-                  <AvatarFallback className="bg-[#E5E5E5] dark:bg-[#333] text-[#666] text-xs font-bold">
+                  <AvatarFallback className="bg-[#E5E5E5] dark:bg-secondary text-muted-foreground text-xs font-bold">
                     {channel.title[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className={cn(
                     "text-sm font-semibold truncate",
-                    isHidden ? "text-[#999]" : "text-[#1A1A1A] dark:text-[#e8e8e8]"
+                    isHidden ? "text-muted-foreground" : "text-foreground dark:text-foreground"
                   )}>
                     {channel.title}
                   </p>
@@ -128,7 +128,7 @@ export const SettingsContent = () => {
                   checked={!isHidden}
                   onCheckedChange={() => toggleChannel(channel.channel_id)}
                   disabled={isLocked}
-                  className="data-[state=checked]:bg-[#FF0000]"
+                  className="data-[state=checked]:bg-primary"
                 />
               </div>
             );
@@ -138,13 +138,13 @@ export const SettingsContent = () => {
 
       {/* Unlock Dialog */}
       <Dialog open={showLockDialog} onOpenChange={setShowLockDialog}>
-        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-[#1A1A1A] border border-[#E5E5E5] dark:border-[#333] shadow-xl">
+        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-xl">
           <DialogHeader className="text-center sm:text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#FFCC00]/20">
-              <KeyRound className="h-6 w-6 text-[#FFCC00]" />
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft">
+              <KeyRound className="h-6 w-6 text-brand" />
             </div>
-            <DialogTitle className="text-lg font-bold text-[#1A1A1A] dark:text-[#e8e8e8]">Enter PIN to Unlock</DialogTitle>
-            <DialogDescription className="text-sm text-[#666] dark:text-[#aaa]">
+            <DialogTitle className="text-lg font-bold text-foreground dark:text-foreground">Enter PIN to Unlock</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground dark:text-muted-foreground">
               Enter your 6-digit PIN to modify channel settings.
             </DialogDescription>
           </DialogHeader>
@@ -155,15 +155,15 @@ export const SettingsContent = () => {
               placeholder="••••••"
               value={unlockPin}
               onChange={(e) => { setUnlockPin(e.target.value.replace(/\D/g, "")); setUnlockError(false); }}
-              className={cn("text-center text-2xl tracking-widest h-12 rounded-xl", unlockError && "border-[#FF0000]")}
+              className={cn("text-center text-2xl tracking-widest h-12 rounded-xl", unlockError && "border-brand")}
             />
-            {unlockError && <p className="text-xs text-[#FF0000] text-center mt-2">Incorrect PIN</p>}
+            {unlockError && <p className="text-xs text-brand text-center mt-2">Incorrect PIN</p>}
           </div>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-            <Button onClick={handleUnlockSubmit} className="w-full bg-[#FF0000] hover:bg-[#CC0000] text-white rounded-xl h-10 font-semibold">
+            <Button onClick={handleUnlockSubmit} className="w-full bg-primary hover:bg-primary-hover text-white rounded-xl h-10 font-semibold">
               Unlock
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleDelete} className="text-[#999] hover:text-[#FF0000] text-xs">
+            <Button variant="ghost" size="sm" onClick={handleDelete} className="text-muted-foreground hover:text-brand text-xs">
               <Trash2 className="h-3 w-3 mr-1" /> Remove Parental Lock
             </Button>
           </DialogFooter>
@@ -172,13 +172,13 @@ export const SettingsContent = () => {
 
       {/* Set PIN Dialog */}
       <Dialog open={showSetPinDialog} onOpenChange={setShowSetPinDialog}>
-        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-[#1A1A1A] border border-[#E5E5E5] dark:border-[#333] shadow-xl">
+        <DialogContent className="rounded-2xl max-w-sm bg-white dark:bg-card border border-border dark:border-border shadow-xl">
           <DialogHeader className="text-center sm:text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#FFCC00]/20">
-              <ShieldCheck className="h-6 w-6 text-[#FFCC00]" />
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft">
+              <ShieldCheck className="h-6 w-6 text-brand" />
             </div>
-            <DialogTitle className="text-lg font-bold text-[#1A1A1A] dark:text-[#e8e8e8]">Set Parental PIN</DialogTitle>
-            <DialogDescription className="text-sm text-[#666] dark:text-[#aaa]">
+            <DialogTitle className="text-lg font-bold text-foreground dark:text-foreground">Set Parental PIN</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground dark:text-muted-foreground">
               Create a 6-digit PIN to lock channel settings and prevent changes.
             </DialogDescription>
           </DialogHeader>
@@ -189,9 +189,9 @@ export const SettingsContent = () => {
               placeholder="••••••"
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-              className="text-center text-2xl tracking-widest h-12 rounded-xl mb-4 bg-[#F9F9F9] dark:bg-[#0f0f0f] border-[#E5E5E5] dark:border-[#333]"
+              className="text-center text-2xl tracking-widest h-12 rounded-xl mb-4 bg-muted dark:bg-background border-border dark:border-border"
             />
-            <Button type="submit" className="w-full bg-[#FF0000] hover:bg-[#CC0000] text-white rounded-xl h-10 font-semibold">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white rounded-xl h-10 font-semibold">
               Set PIN & Lock
             </Button>
           </form>

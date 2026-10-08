@@ -31,7 +31,7 @@ export const SignInFormField: React.FC<SignInFormFieldProps> = ({
         className="text-sm font-semibold text-gray-700 flex items-center gap-1.5"
         style={{ fontFamily: "'Quicksand', sans-serif" }}
       >
-        <Icon size={14} className="text-yellow-600" />
+        <Icon size={14} className="text-brand" />
         {placeholder}
       </label>
       <Input
@@ -43,7 +43,7 @@ export const SignInFormField: React.FC<SignInFormFieldProps> = ({
           ? 'h-11 text-sm' 
           : 'h-12 text-base'} 
           px-4 border-2 border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 
-          rounded-xl focus:ring-2 focus:ring-yellow-300 focus:border-yellow-400 text-gray-800
+          rounded-xl focus:ring-2 focus:ring-yellow-300 focus:border-brand text-gray-800
           placeholder:text-gray-400`}
         style={{ fontFamily: "'Quicksand', sans-serif" }}
         required={required}

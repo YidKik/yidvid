@@ -23,7 +23,7 @@ export const WelcomeSection = () => {
         
         {/* Welcome text */}
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
-          Welcome to <span className="text-[#ea384c]">YidVid</span>
+          Welcome to <span className="text-brand">YidVid</span>
         </h1>
         
         <p className="text-xl text-gray-700 mb-6 text-center">
@@ -36,13 +36,13 @@ export const WelcomeSection = () => {
         <div className="flex justify-center gap-4 flex-wrap">
           <a 
             href="/videos" 
-            className="px-6 py-3 bg-[#ea384c] text-white font-medium rounded-lg hover:bg-red-600 transition-colors"
+            className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors"
           >
             Explore Videos
           </a>
           <a 
             href="/channel" 
-            className="px-6 py-3 border border-[#ea384c] text-[#ea384c] font-medium rounded-lg hover:bg-red-50 transition-colors"
+            className="px-6 py-3 border border-brand text-brand font-medium rounded-lg hover:bg-red-50 transition-colors"
           >
             Browse Channels
           </a>

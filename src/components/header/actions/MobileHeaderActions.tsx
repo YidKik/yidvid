@@ -28,7 +28,7 @@ export const MobileHeaderActions = ({
   const buttonClass = isHomePage 
     ? "bg-transparent hover:bg-[#135d66] text-primary"
     : isVideosPage 
-      ? 'bg-[#ea384c] hover:bg-[#c82d3f] text-primary-foreground' 
+      ? 'bg-primary hover:bg-[#c82d3f] text-primary-foreground' 
       : 'bg-[#222222] hover:bg-[#333333] text-primary';
 
   return (

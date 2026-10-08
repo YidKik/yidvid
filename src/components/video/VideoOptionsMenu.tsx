@@ -98,8 +98,8 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             className={cn(
               compact ? "h-6 w-6" : "h-8 w-8",
               "rounded-full transition-colors duration-200",
-              variant === "overlay" && "bg-[#1A1A1A] hover:bg-[#FFCC00] text-white hover:text-[#1A1A1A]",
-              variant === "icon" && "hover:bg-[#F0F0F0]",
+              variant === "overlay" && "bg-[#1A1A1A] hover:bg-primary text-white hover:text-foreground",
+              variant === "icon" && "hover:bg-surface-hover",
               className
             )}
             onClick={(e) => e.stopPropagation()}
@@ -110,7 +110,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
         <DropdownMenuContent 
           align="end" 
           className={cn(
-            "bg-white dark:bg-[#282828] border border-[#E5E5E5] dark:border-[#3a3a3a] shadow-xl z-50 p-1",
+            "bg-white dark:bg-[#282828] border border-border dark:border-[#3a3a3a] shadow-xl z-50 p-1",
             compact ? "w-36 rounded-lg" : "w-48 rounded-xl"
           )}
           onClick={(e) => e.stopPropagation()}
@@ -122,7 +122,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
               compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-md" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-lg"
             )}
           >
-            <Heart className={cn(compact ? "w-3 h-3" : "w-3.5 h-3.5", "shrink-0", isFavorite && "fill-[#FF0000] text-[#FF0000]")} />
+            <Heart className={cn(compact ? "w-3 h-3" : "w-3.5 h-3.5", "shrink-0", isFavorite && "fill-brand text-brand")} />
             <span>{isFavorite ? "Remove Favorite" : "Favorite"}</span>
           </DropdownMenuItem>
           
@@ -148,7 +148,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
               <span>Add to Playlist</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className={cn(
-              "bg-white dark:bg-[#282828] border border-[#E5E5E5] dark:border-[#3a3a3a] shadow-xl p-1",
+              "bg-white dark:bg-[#282828] border border-border dark:border-[#3a3a3a] shadow-xl p-1",
               compact ? "w-40 rounded-lg" : "w-44 rounded-xl"
             )}>
               {playlists && playlists.length > 0 ? (
@@ -201,7 +201,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
               placeholder="Playlist name"
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
-              className="rounded-xl border-[#E5E5E5]"
+              className="rounded-xl border-border"
               onKeyDown={(e) => e.key === "Enter" && handleCreatePlaylist()}
             />
           </div>
@@ -216,7 +216,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             <Button
               onClick={handleCreatePlaylist}
               disabled={!newPlaylistName.trim() || createPlaylist.isPending}
-              className="rounded-xl bg-[#FF0000] hover:brightness-90 text-white"
+              className="rounded-xl bg-primary hover:brightness-90 text-white"
             >
               Create & Add
             </Button>

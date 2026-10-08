@@ -17,8 +17,8 @@ export const ThemeToggle = () => {
       className={cn(
         "flex items-center justify-center rounded-full transition-all duration-200",
         "border-2 hover:scale-105",
-        "border-[#E5E5E5] hover:bg-[#F5F5F5] text-[#666666]",
-        "dark:border-[#3f3f3f] dark:hover:bg-[#3f3f3f] dark:text-[#aaaaaa]",
+        "border-border hover:bg-surface-hover text-muted-foreground",
+        "dark:border-border dark:hover:bg-secondary dark:text-muted-foreground",
         isMobile ? "w-7 h-7" : "w-9 h-9"
       )}
     >

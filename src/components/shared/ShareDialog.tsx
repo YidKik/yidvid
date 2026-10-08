@@ -18,9 +18,9 @@ const shareOptions = [
     id: "copy",
     label: "Copy link",
     icon: Link2,
-    bg: "bg-[#F5F5F5] dark:bg-[#2a2a2a]",
+    bg: "bg-muted dark:bg-secondary",
     hoverBg: "hover:bg-[#E8E8E8] dark:hover:bg-[#383838]",
-    iconColor: "text-[#1A1A1A] dark:text-[#e8e8e8]",
+    iconColor: "text-foreground dark:text-foreground",
   },
   {
     id: "whatsapp",
@@ -36,7 +36,7 @@ const shareOptions = [
     icon: Mail,
     bg: "bg-[#FEE2E2]",
     hoverBg: "hover:bg-[#FECACA]",
-    iconColor: "text-[#FF0000]",
+    iconColor: "text-brand",
   },
 ];
 
@@ -68,8 +68,8 @@ export const ShareDialog = ({ open, onOpenChange, url, title }: ShareDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[280px] bg-white dark:bg-[#1a1a1a] border border-[#E5E5E5] dark:border-[#333] rounded-3xl p-5 gap-0 shadow-xl [&>button]:hidden">
-        <p className="text-sm font-bold text-[#1A1A1A] dark:text-[#e8e8e8] text-center mb-4">
+      <DialogContent className="sm:max-w-[280px] bg-white dark:bg-card border border-border dark:border-border rounded-3xl p-5 gap-0 shadow-xl [&>button]:hidden">
+        <p className="text-sm font-bold text-foreground dark:text-foreground text-center mb-4">
           Share
         </p>
 
@@ -88,7 +88,7 @@ export const ShareDialog = ({ open, onOpenChange, url, title }: ShareDialogProps
                 >
                   <Icon className={`w-5 h-5 ${option.iconColor}`} />
                 </div>
-                <span className="text-[10px] font-medium text-[#666] dark:text-[#aaa] group-hover:text-[#1A1A1A] dark:group-hover:text-[#e8e8e8] transition-colors">
+                <span className="text-[10px] font-medium text-muted-foreground dark:text-muted-foreground group-hover:text-foreground dark:group-hover:text-foreground transition-colors">
                   {isCopy && copied ? "Copied!" : option.label}
                 </span>
               </button>

@@ -103,7 +103,7 @@ export const VideoActionBar = ({ videoId, youtubeVideoId, compact = false }: Vid
         size="sm"
         onClick={handleDislike}
         className={`${buttonClass} rounded-full transition-colors ${
-          isDisliked ? "text-foreground bg-muted" : "text-foreground hover:bg-muted"
+          isDisliked ? "text-foreground bg-muted" : "text-foreground hover:bg-surface-hover"
         }`}
       >
         <ThumbsDown className={`${iconClass} ${isDisliked ? "fill-current" : ""}`} />
@@ -114,7 +114,7 @@ export const VideoActionBar = ({ videoId, youtubeVideoId, compact = false }: Vid
         variant="ghost"
         size="sm"
         onClick={handleShare}
-        className={`${buttonClass} rounded-full hover:bg-muted text-foreground`}
+        className={`${buttonClass} rounded-full hover:bg-surface-hover text-foreground`}
       >
         <Share2 className={iconClass} />
         {!compact && <span>Share</span>}
