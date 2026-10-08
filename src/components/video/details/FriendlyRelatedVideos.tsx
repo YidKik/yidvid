@@ -53,7 +53,7 @@ export const FriendlyRelatedVideos = ({
                 <div className="aspect-video bg-muted rounded-2xl"></div>
                 <div className="mt-3 space-y-2">
                   <div className="h-3 bg-muted rounded-full w-full"></div>
-                  <div className="h-2.5 bg-rose-100/30 rounded-full w-3/4"></div>
+                  <div className="h-2.5 bg-muted rounded-full w-3/4"></div>
                 </div>
               </div>
             ))}
@@ -158,7 +158,7 @@ export const FriendlyRelatedVideos = ({
           <div className="mt-8 text-center">
             <Link 
               to={`/channel/${videos[0].channel_id}`}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-amber-100/50 via-rose-100/40 to-amber-100/50 hover:from-amber-200/60 hover:via-rose-200/50 hover:to-amber-200/60 rounded-full text-sm font-semibold text-foreground transition-all hover:shadow-lg border border-border"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-card hover:bg-surface-hover rounded-full text-sm font-semibold text-foreground transition-all hover:shadow-lg border border-border"
             >
               <Play className="h-4 w-4 text-brand fill-current" />
               See all {videos.length} videos
