@@ -125,7 +125,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   // Show skeleton while loading instead of hiding the section
   if (isLoading) {
     return (
-      <section className={`mb-8 md:mb-12 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-gray-50 dark:bg-gray-900/30 rounded-card shadow-sm border border-gray-100 dark:border-gray-800`}>
+      <section className={`mb-8 md:mb-12 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-muted/40 rounded-card shadow-sm border border-gray-100 dark:border-gray-800`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="type-h2 text-foreground">
             Most Viewed Channels
@@ -192,7 +192,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   return (
     <section 
       ref={sectionRef}
-      className={`mb-8 md:mb-12 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-8 md:mb-12 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-muted/40 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="sync">
         {showAllChannels ? (
