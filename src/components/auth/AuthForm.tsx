@@ -20,7 +20,7 @@ export const AuthForm = ({ onOpenChange, initialTab = 'signin', hideOptions = fa
   
   return (
     <div 
-      className="px-8 py-6 bg-white"
+      className="px-4 sm:px-6 py-6 bg-white"
     >
       {initialTab === 'signin' ? (
         <SignInForm 

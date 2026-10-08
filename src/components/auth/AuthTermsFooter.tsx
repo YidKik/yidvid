@@ -11,19 +11,19 @@ export const AuthTermsFooter: React.FC<AuthTermsFooterProps> = ({
 }) => {
   return (
     <div 
-      className="mt-6 pt-5 border-t border-border text-center"
+      className="mt-6 pt-4 border-t border-border text-center"
     >
-      <p className="text-xs text-muted-foreground leading-relaxed">
+      <p className="type-footer text-muted-foreground">
         By signing in, you agree to our{" "}
         <button 
           onClick={onOpenTos} 
-          className="text-brand bg-transparent p-0 border-none inline font-semibold text-xs hover:underline underline-offset-2 transition-colors"
+          className="text-brand bg-transparent p-0 border-none inline font-semibold hover:underline underline-offset-2 transition-colors"
         >
           Terms of Service
         </button>{" "}and{" "}
         <button 
           onClick={onOpenPrivacy} 
-          className="text-brand bg-transparent p-0 border-none inline font-semibold text-xs hover:underline underline-offset-2 transition-colors"
+          className="text-brand bg-transparent p-0 border-none inline font-semibold hover:underline underline-offset-2 transition-colors"
         >
           Privacy Policy
         </button>

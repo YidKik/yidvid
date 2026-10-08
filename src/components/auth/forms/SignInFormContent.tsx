@@ -63,8 +63,7 @@ export const SignInFormContent = ({
       <Button
         type="submit"
         className={`w-full ${isMobile 
-          ? 'h-12 text-sm' 
-          : 'h-13 text-base'} 
+          ? 'h-12 type-label font-semibold' : 'h-12 type-label font-semibold'} 
           mt-2 bg-primary hover:brightness-90 text-white rounded-card font-semibold
           transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed 
           hover:scale-[1.01] active:scale-[0.99] disabled:hover:scale-100 

@@ -13,36 +13,37 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
   
   return (
     <div 
-      className="flex flex-col px-8 pt-6 pb-5 bg-muted border-b border-border relative"
+      className="flex flex-col px-4 sm:px-6 pt-6 pb-4 bg-muted border-b border-border relative"
     >
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand via-brand to-brand" />
       
-      <div className="flex items-center mb-3">
+      <div className="flex items-center mb-4">
         {onBack && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onBack}
-            className="h-9 w-9 rounded-card transition-all duration-200 hover:bg-surface-active border border-border"
+            aria-label="Back"
+            className="h-11 w-11 rounded-control transition-all duration-200 hover:bg-surface-active border border-border"
           >
             <ArrowLeft className="h-4 w-4 text-foreground" />
           </Button>
         )}
-        {!onBack && <div className="h-9" />}
+        {!onBack && <div className="h-11" />}
       </div>
       
       <div className="text-center">
         {title && (
-          <h3 
-            className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-foreground`}
+          <h2
+            className="type-h2 text-foreground"
           >
             {title}
-          </h3>
+          </h2>
         )}
         {subtitle && (
           <p 
-            className="text-sm text-muted-foreground mt-1.5 font-medium"
+            className="type-label text-muted-foreground mt-1"
           >
             {subtitle}
           </p>
