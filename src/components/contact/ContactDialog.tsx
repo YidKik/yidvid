@@ -110,7 +110,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
           />
 
           <DialogPrimitive.Content
-            className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[75vh]' : 'w-[480px] max-h-[85vh]'} rounded-card overflow-hidden shadow-xl p-0`}
+            className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[75vh]' : 'w-[480px] max-h-[85vh]'} rounded-dialog overflow-hidden shadow-overlay p-0`}
             style={{
               border: '1px solid #E5E5E5',
               backgroundColor: 'rgba(255,255,255,0.95)',
