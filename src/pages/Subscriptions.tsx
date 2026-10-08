@@ -58,7 +58,7 @@ const Subscriptions = () => {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-muted dark:bg-background pt-16 pl-0 lg:pl-[200px] pb-24 lg:pb-8 flex items-center justify-center">
+      <div className="min-h-screen bg-muted dark:bg-background pt-16 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-8 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-brand" />
       </div>
     );
@@ -66,7 +66,7 @@ const Subscriptions = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-muted dark:bg-background pt-16 pl-0 lg:pl-[200px] pb-24 lg:pb-8 flex flex-col items-center justify-center gap-4 px-4">
+      <div className="min-h-screen bg-muted dark:bg-background pt-16 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-8 flex flex-col items-center justify-center gap-4 px-4">
         <Users className="w-12 h-12 text-muted-foreground" />
         <p className="text-muted-foreground dark:text-muted-foreground text-center">Please sign in to view your subscriptions.</p>
         <Button onClick={() => setIsAuthOpen(true)} className="bg-primary hover:bg-primary-hover text-white rounded-control px-6">
@@ -77,7 +77,7 @@ const Subscriptions = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted dark:bg-background pt-12 pl-0 lg:pl-[200px] pb-24 lg:pb-8 transition-all duration-300">
+    <div className="min-h-screen bg-muted dark:bg-background pt-12 pl-0 lg:pl-[var(--sidebar-w)] pb-nav lg:pb-8 transition-all duration-300">
       <div className={cn("max-w-5xl mx-auto", isMobile ? "px-4 pt-4" : "px-8 pt-6")}>
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">

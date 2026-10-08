@@ -16,7 +16,7 @@ const WatchLater = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen pt-12 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+      <div className="min-h-screen pt-12 pl-0 lg:pl-[var(--sidebar-w)] bg-white flex flex-col pb-nav lg:pb-0">
         <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-12">
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-card bg-muted flex items-center justify-center mb-6 shadow-sm">
@@ -41,7 +41,7 @@ const WatchLater = () => {
   }
 
   return (
-    <div className="min-h-screen pt-12 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
+    <div className="min-h-screen pt-12 pl-0 lg:pl-[var(--sidebar-w)] bg-white flex flex-col pb-nav lg:pb-0">
       <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
         <div className="flex items-center gap-3 lg:gap-4 mb-6 lg:mb-8 pb-4 lg:pb-6 border-b border-border">
           <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-card bg-primary flex items-center justify-center shadow-raised">

@@ -96,7 +96,7 @@ const LandingPage = () => {
     </Helmet>
     <div 
       className="min-h-screen bg-white overflow-x-hidden"
-      style={{ paddingLeft: isMobile ? '0px' : isTablet ? '0px' : '64px' }}
+      style={{ paddingLeft: 'var(--sidebar-w, 0px)' }}
     >
       {/* Hero Search Section */}
       <HeroSearchSection />
