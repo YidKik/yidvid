@@ -515,3 +515,13 @@ textarea:focus-visible,
   outline: 2px solid hsl(var(--ring)) !important;
   outline-offset: 2px !important;
 }
+
+/* Shared touch-target role: real hit box >=44px on touch/coarse pointers */
+@media (pointer: coarse) {
+  .touch-target { min-height: 44px; min-width: 44px; }
+}
+/* Expands only the invisible hit area (keeps compact header visuals) */
+@media (pointer: coarse) {
+  .touch-hit { position: relative; }
+  .touch-hit::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+}

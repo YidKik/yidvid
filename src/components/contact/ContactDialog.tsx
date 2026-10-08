@@ -110,7 +110,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
           />
 
           <DialogPrimitive.Content
-            className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[75vh]' : 'w-[480px] max-h-[85vh]'} rounded-card overflow-hidden shadow-xl p-0`}
+            className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile ? 'w-[calc(100%-2rem)] max-h-[75vh]' : 'w-[480px] max-h-[85vh]'} rounded-dialog overflow-hidden shadow-overlay p-0`}
             style={{
               border: '1px solid #E5E5E5',
               backgroundColor: 'rgba(255,255,255,0.95)',
@@ -120,11 +120,11 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
           >
             <button
               onClick={() => onOpenChange(false)}
-              className="absolute right-4 top-4 z-10 w-8 h-8 rounded-control flex items-center justify-center transition-colors hover:bg-gray-100"
+              className="absolute right-2 top-2 z-10 w-11 h-11 rounded-control flex items-center justify-center transition-colors hover:bg-surface-hover"
               style={{ color: 'hsl(var(--muted-foreground))' }}
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">Close dialog</span>
             </button>
 
             <div className={`${isMobile ? 'px-4 pt-4 pb-3' : 'px-6 pt-6 pb-4'}`} style={{ borderBottom: '1px solid #E5E5E5' }}>

@@ -202,7 +202,7 @@ const VideoDetails = () => {
                         </p>
                         <button 
                           onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                          className="inline-block px-5 py-2 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
+                          className="touch-target inline-flex items-center justify-center h-9 px-5 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
                         >
                           Sign In
                         </button>

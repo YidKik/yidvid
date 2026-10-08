@@ -184,8 +184,8 @@ export const FriendlyVideoActionBar = ({
   ];
 
   const pillBtn = compact
-    ? "h-7 px-2.5 rounded-control text-[11px] font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
-    : "h-9 px-4 rounded-control text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground";
+    ? "touch-target h-7 px-2.5 rounded-control text-[11px] font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
+    : "touch-target h-9 px-4 rounded-control text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground";
 
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
 
@@ -243,7 +243,7 @@ export const FriendlyVideoActionBar = ({
               onClick={handleSubscribeClick}
               disabled={isSubLoading}
               data-subscribed={isSubscribed ? "true" : "false"}
-              className={`${compact ? 'h-6 px-2.5 text-[10px]' : 'h-8 px-4 text-sm'} video-subscribe-button rounded-control font-semibold transition-all ml-0.5`}
+              className={`${compact ? 'h-7 px-2.5 text-[11px]' : 'h-9 px-4 text-sm'} video-subscribe-button touch-target rounded-control font-semibold transition-all ml-0.5`}
             >
               {isSubLoading ? (
                 <span className="opacity-70">...</span>
@@ -279,10 +279,10 @@ export const FriendlyVideoActionBar = ({
                 Share
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-white border border-border rounded-dialog overflow-hidden shadow-overlay [&>button]:hidden">
-              <div className="flex items-center justify-between px-5 py-3.5 max-[768px]:px-4 max-[768px]:py-2.5 border-b border-border">
+            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-card border border-border rounded-dialog overflow-hidden shadow-overlay [&>button]:hidden">
+              <div className="flex items-center justify-between pl-5 pr-2 py-1 max-[768px]:pl-4 border-b border-border">
                 <h3 className="text-sm font-bold text-foreground tracking-tight">Share</h3>
-                <button onClick={() => setShareOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
+                <button type="button" onClick={() => setShareOpen(false)} aria-label="Close share dialog" className="w-11 h-11 rounded-control flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-hover transition-colors">
                   <X className="h-4 w-4" />
                 </button>
               </div>
@@ -310,7 +310,7 @@ export const FriendlyVideoActionBar = ({
           {/* 3-dot menu: Report, Favorite, Watch Later, Playlist */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className={`${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
+              <Button variant="ghost" size="icon" className={`touch-target ${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
                 <MoreVertical className={iconSize} />
               </Button>
             </DropdownMenuTrigger>
