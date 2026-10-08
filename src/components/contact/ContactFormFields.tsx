@@ -10,7 +10,7 @@ interface ContactFormFieldsProps {
 }
 
 export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
-  const inputStyle = "h-10 rounded-control border border-border bg-transparent hover:border-brand focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 placeholder:text-muted-foreground";
+  const inputStyle = "h-11 rounded-control border border-border bg-transparent hover:border-brand focus:border-foreground focus:ring-0 focus:bg-transparent transition-colors px-4 placeholder:text-muted-foreground";
 
   return (
     <div className="space-y-4">
