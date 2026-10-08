@@ -290,7 +290,7 @@ const ShortsViewer = () => {
             } ${
               isMobile
                 ? "w-full h-full"
-                : "rounded-[28px] ring-1 ring-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]"
+                : "rounded-card ring-1 ring-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]"
             }`}
             style={
               isMobile
