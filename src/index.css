@@ -1,4 +1,4 @@
-
+@import './styles/theme.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -256,8 +256,6 @@ body {
   }
 }
 
-/* Import theme CSS - MUST be first for CSS variables */
-@import './styles/theme.css';
 
 /* Import components CSS */
 @import './styles/components/buttons.css';
