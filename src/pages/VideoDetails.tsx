@@ -70,13 +70,13 @@ const VideoDetails = () => {
   // never changes size between load and playback.
   if (isLoadingVideo) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0">
+      <div className="min-h-screen bg-white dark:bg-background pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0">
         <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           <div className="mx-auto w-full max-w-[1600px] mt-4 flex gap-6">
             <div className="flex-1 min-w-0">
               <div className={`aspect-video w-full bg-black rounded-xl ${isMobile ? '-mx-3 w-[calc(100%+1.5rem)] rounded-none' : ''}`} />
-              <div className="h-6 w-3/4 mt-4 rounded bg-[#EEE] dark:bg-[#1f1f1f] animate-pulse" />
-              <div className="h-4 w-1/3 mt-3 rounded bg-[#EEE] dark:bg-[#1f1f1f] animate-pulse" />
+              <div className="h-6 w-3/4 mt-4 rounded bg-[#EEE] dark:bg-card animate-pulse" />
+              <div className="h-4 w-1/3 mt-3 rounded bg-[#EEE] dark:bg-card animate-pulse" />
             </div>
             {!isMobile && !isTablet && <div className="w-[380px] flex-shrink-0" />}
           </div>
@@ -88,19 +88,19 @@ const VideoDetails = () => {
   if (!video || error) {
     console.error("Video not found or error:", error, "for videoId:", videoId);
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-14 pl-0 lg:pl-[200px] transition-all duration-300">
         <div className="p-4">
-          <div className="p-8 text-center bg-[#F5F5F5] dark:bg-[#1a1a1a] rounded-2xl mt-6">
-            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-white dark:bg-[#0f0f0f] rounded-xl">
+          <div className="p-8 text-center bg-muted dark:bg-card rounded-2xl mt-6">
+            <div className="mx-auto mb-6 w-full max-w-md aspect-video flex items-center justify-center bg-white dark:bg-background rounded-xl">
               <VideoPlaceholder size="large" />
             </div>
             <h2 className="text-xl font-semibold text-destructive">
               Video not found
             </h2>
-            <p className="mt-2 text-[#666666]">
+            <p className="mt-2 text-muted-foreground">
               {error ? `Error: ${error.message}` : "The video you're looking for doesn't exist or has been removed."}
             </p>
-            <Link to="/videos" className="mt-4 inline-block px-6 py-3 bg-[#FF0000] text-white rounded-full font-medium hover:brightness-90 transition-all">
+            <Link to="/videos" className="mt-4 inline-block px-6 py-3 bg-primary text-white rounded-full font-medium hover:brightness-90 transition-all">
               Return to videos
             </Link>
           </div>
@@ -126,7 +126,7 @@ const VideoDetails = () => {
       <VideoSEO video={videoForSEO} />
       {isAuthenticated && <VideoHistory videoId={video?.id || ""} />}
       
-      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className={`${isMobile ? 'px-3' : 'px-4'} lg:px-6 pt-4 pb-12`}>
           
         {/* Desktop Layout - two column */}
@@ -147,7 +147,7 @@ const VideoDetails = () => {
                 </div>
                 
                 {/* Title */}
-                <h1 className="text-xl font-bold text-[#1A1A1A] dark:text-[#e8e8e8] leading-tight mt-4">
+                <h1 className="text-xl font-bold text-foreground dark:text-foreground leading-tight mt-4">
                   {cleanVideoTitle(video?.title)}
                 </h1>
                 
@@ -165,7 +165,7 @@ const VideoDetails = () => {
                 </div>
                 
                 {/* Thin divider */}
-                <div className="h-px bg-[#E5E5E5] dark:bg-[#333] my-4" />
+                <div className="h-px bg-[#E5E5E5] dark:bg-secondary my-4" />
                 
                 {/* Description + More Videos (no channel header - it's in action bar now) */}
                 <FriendlyChannelSection
@@ -181,11 +181,11 @@ const VideoDetails = () => {
               
               {/* Right Column - Comments */}
               <div className="w-[380px] flex-shrink-0">
-                <div className="bg-[#F5F5F5] rounded-t-xl sticky top-20 overflow-hidden flex flex-col" style={{ height: 'calc(100vh - 6rem)' }}>
+                <div className="bg-muted rounded-t-xl sticky top-20 overflow-hidden flex flex-col" style={{ height: 'calc(100vh - 6rem)' }}>
                   {/* Simple header */}
-                  <div className="px-5 py-4 border-b border-[#E5E5E5] bg-white flex-shrink-0">
-                    <h3 className="text-base font-semibold text-[#1A1A1A] flex items-center gap-2">
-                      <MessageCircle className="h-4 w-4 text-[#999999]" />
+                  <div className="px-5 py-4 border-b border-border bg-white flex-shrink-0">
+                    <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                      <MessageCircle className="h-4 w-4 text-muted-foreground" />
                       Comments
                     </h3>
                   </div>
@@ -196,13 +196,13 @@ const VideoDetails = () => {
                       <VideoComments videoId={video?.id || ""} />
                     ) : (
                       <div className="text-center py-10">
-                        <MessageCircle className="h-8 w-8 text-[#999999] mx-auto mb-3" />
-                        <p className="text-[#666666] text-sm mb-4">
+                        <MessageCircle className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+                        <p className="text-muted-foreground text-sm mb-4">
                           Sign in to view and post comments.
                         </p>
                         <button 
                           onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                          className="inline-block px-5 py-2 bg-[#FF0000] text-white rounded-full text-sm font-medium hover:brightness-90 transition-all"
+                          className="inline-block px-5 py-2 bg-primary text-white rounded-full text-sm font-medium hover:brightness-90 transition-all"
                         >
                           Sign In
                         </button>
@@ -230,7 +230,7 @@ const VideoDetails = () => {
               </div>
               
               {/* Title */}
-              <h1 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-[#1A1A1A] dark:text-[#e8e8e8] leading-tight`}>
+              <h1 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-foreground dark:text-foreground leading-tight`}>
                 {cleanVideoTitle(video?.title)}
               </h1>
               
@@ -265,10 +265,10 @@ const VideoDetails = () => {
               <div className="h-px bg-[#E5E5E5]" />
               
               {/* Comments - Mobile (before more videos) */}
-              <div className="bg-[#F5F5F5] rounded-xl overflow-hidden">
-                <div className="px-3 py-2 border-b border-[#E5E5E5] bg-white">
-                  <h3 className="text-xs font-semibold text-[#1A1A1A] flex items-center gap-1.5">
-                    <MessageCircle className="h-3 w-3 text-[#999999]" />
+              <div className="bg-muted rounded-xl overflow-hidden">
+                <div className="px-3 py-2 border-b border-border bg-white">
+                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <MessageCircle className="h-3 w-3 text-muted-foreground" />
                     Comments
                   </h3>
                 </div>
@@ -278,13 +278,13 @@ const VideoDetails = () => {
                     <VideoComments videoId={video?.id || ""} />
                   ) : (
                     <div className="text-center py-6">
-                      <MessageCircle className="h-5 w-5 text-[#999999] mx-auto mb-2" />
-                      <p className="text-[#666666] text-[11px] mb-2">
+                      <MessageCircle className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-muted-foreground text-[11px] mb-2">
                         Sign in to view and post comments.
                       </p>
                       <button 
                         onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                        className="inline-block px-4 py-1.5 bg-[#FF0000] text-white rounded-full text-[11px] font-medium hover:brightness-90 transition-all"
+                        className="inline-block px-4 py-1.5 bg-primary text-white rounded-full text-[11px] font-medium hover:brightness-90 transition-all"
                       >
                         Sign In
                       </button>

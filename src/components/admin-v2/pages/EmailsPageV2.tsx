@@ -20,8 +20,8 @@ type TabView = "analytics" | "logs" | "broadcast";
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
   sent: { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
   pending: { bg: "bg-amber-500/10", text: "text-amber-400", dot: "bg-amber-400" },
-  failed: { bg: "bg-red-500/10", text: "text-red-400", dot: "bg-red-400" },
-  dlq: { bg: "bg-red-500/10", text: "text-red-400", dot: "bg-red-400" },
+  failed: { bg: "bg-primary/10", text: "text-red-400", dot: "bg-red-400" },
+  dlq: { bg: "bg-primary/10", text: "text-red-400", dot: "bg-red-400" },
   suppressed: { bg: "bg-orange-500/10", text: "text-orange-400", dot: "bg-orange-400" },
   bounced: { bg: "bg-rose-500/10", text: "text-rose-400", dot: "bg-rose-400" },
   complained: { bg: "bg-purple-500/10", text: "text-purple-400", dot: "bg-purple-400" },
@@ -229,7 +229,7 @@ function EmailAnalytics() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard label="Total Emails" value={stats.total} icon={Mail} color="text-[#818cf8]" bgColor="bg-[#6366f1]/10" />
             <StatCard label="Delivered" value={stats.sent} icon={CheckCircle} color="text-emerald-400" bgColor="bg-emerald-500/10" />
-            <StatCard label="Failed" value={stats.failed} icon={XCircle} color="text-red-400" bgColor="bg-red-500/10" />
+            <StatCard label="Failed" value={stats.failed} icon={XCircle} color="text-red-400" bgColor="bg-primary/10" />
             <StatCard label="Pending" value={stats.pending} icon={Clock} color="text-amber-400" bgColor="bg-amber-500/10" />
           </div>
 

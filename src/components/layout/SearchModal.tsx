@@ -118,7 +118,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header accent bar */}
-              <div className="h-1.5 bg-gradient-to-r from-yellow-400 via-red-400 to-yellow-400" />
+              <div className="h-1.5 bg-gradient-to-r from-brand via-red-400 to-brand" />
 
               {/* Close Button */}
               <Button
@@ -135,8 +135,8 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 {/* Header */}
                 <div className="text-center mb-4">
                   <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-900/20 mb-3">
-                    <Search className="w-4 h-4 text-red-500" />
-                    <span className="text-sm font-medium text-red-600 dark:text-red-400">Search YidVid</span>
+                    <Search className="w-4 h-4 text-brand" />
+                    <span className="text-sm font-medium text-brand dark:text-red-400">Search YidVid</span>
                   </div>
                 </div>
 
@@ -155,9 +155,9 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 <form onSubmit={handleSearch}>
                   <div className="relative">
                     <div 
-                      className="flex items-center gap-3 px-6 py-4 rounded-2xl border-2 border-yellow-300 dark:border-yellow-600 bg-yellow-50/50 dark:bg-yellow-900/10 transition-all duration-200 focus-within:border-red-400 focus-within:shadow-lg focus-within:shadow-red-100/50 dark:focus-within:shadow-red-900/20"
+                      className="flex items-center gap-3 px-6 py-4 rounded-2xl border-2 border-warning/40 dark:border-brand bg-warning-bg/50 dark:bg-yellow-900/10 transition-all duration-200 focus-within:border-red-400 focus-within:shadow-lg focus-within:shadow-red-100/50 dark:focus-within:shadow-red-900/20"
                     >
-                      <Search className="w-6 h-6 shrink-0 text-yellow-600 dark:text-yellow-400" />
+                      <Search className="w-6 h-6 shrink-0 text-brand dark:text-brand" />
                       <input
                         ref={inputRef}
                         type="text"
@@ -184,7 +184,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                   {/* Search Button */}
                   <motion.button
                     type="submit"
-                    className="w-full mt-6 py-4 rounded-2xl font-bold text-lg transition-all duration-200 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg shadow-red-200/50 dark:shadow-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full mt-6 py-4 rounded-2xl font-bold text-lg transition-all duration-200 bg-gradient-to-r from-brand to-brand hover:from-brand hover:to-red-700 text-white shadow-lg shadow-red-200/50 dark:shadow-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ fontFamily: "'Quicksand', sans-serif" }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -207,7 +207,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                         navigate(`/search?q=${encodeURIComponent(tag)}`);
                         onClose();
                       }}
-                      className="px-4 py-2 rounded-full text-sm font-medium bg-muted/50 text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 border border-transparent hover:border-red-200 dark:hover:border-red-800 transition-all"
+                      className="px-4 py-2 rounded-full text-sm font-medium bg-muted/50 text-muted-foreground hover:bg-red-50 hover:text-brand dark:hover:bg-red-900/20 dark:hover:text-red-400 border border-transparent hover:border-red-200 dark:hover:border-red-800 transition-all"
                       style={{ fontFamily: "'Quicksand', sans-serif" }}
                     >
                       {tag}

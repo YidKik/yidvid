@@ -111,7 +111,7 @@ export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResult
             }}
           />
         ) : (
-          <Users className={`text-red-500 ${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`} />
+          <Users className={`text-brand ${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`} />
         )}
       </div>
       <div className="flex-1 text-left overflow-hidden">

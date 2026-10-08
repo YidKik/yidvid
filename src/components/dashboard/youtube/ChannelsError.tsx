@@ -9,7 +9,7 @@ export const ChannelsError: React.FC<ChannelsErrorProps> = ({ refetch }) => {
   return (
     <div className="bg-card text-card-foreground rounded-lg shadow p-6 border border-border">
       <div className="text-center">
-        <h2 className="text-xl font-semibold text-red-600 mb-2">Error Loading Channels</h2>
+        <h2 className="text-xl font-semibold text-brand mb-2">Error Loading Channels</h2>
         <p className="text-gray-600">There was a problem fetching the channels.</p>
         <button 
           onClick={() => refetch()} 

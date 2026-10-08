@@ -30,7 +30,7 @@ export const SiteDisclaimerBanner = () => {
     <Card className="mx-auto max-w-5xl mb-4 bg-gradient-to-r from-gray-900 to-black border border-gray-800 shadow-md rounded-xl overflow-hidden">
       <div className="p-4">
         <div className="flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-brand flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <h3 className="text-sm font-medium text-white mb-1">
               Welcome to our beta release! 🎉
@@ -91,7 +91,7 @@ export const SiteDisclaimerBanner = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs h-8 px-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 border-none text-white rounded-full shadow-sm backdrop-blur-sm"
+                className="text-xs h-8 px-4 bg-gradient-to-r from-brand to-brand hover:from-red-700 hover:to-brand border-none text-white rounded-full shadow-sm backdrop-blur-sm"
                 onClick={handleDismiss}
               >
                 Got it, thanks!

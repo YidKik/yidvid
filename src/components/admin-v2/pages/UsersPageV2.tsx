@@ -332,7 +332,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
             <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)} className="text-gray-400 hover:text-gray-200" disabled={deletingUser}>
               Cancel
             </Button>
-            <Button onClick={handleDeleteUser} disabled={deletingUser} className="bg-red-600 hover:bg-red-700 text-white">
+            <Button onClick={handleDeleteUser} disabled={deletingUser} className="bg-primary hover:bg-primary-hover text-white">
               {deletingUser ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete Permanently"}
             </Button>
           </DialogFooter>

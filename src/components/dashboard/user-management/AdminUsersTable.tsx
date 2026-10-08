@@ -121,7 +121,7 @@ export const AdminUsersTable = ({
                             className="h-7 w-7"
                             disabled={isSubmitting}
                           >
-                            <X className="h-4 w-4 text-red-600" />
+                            <X className="h-4 w-4 text-brand" />
                           </Button>
                         </div>
                       </div>

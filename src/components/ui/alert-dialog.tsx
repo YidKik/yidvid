@@ -42,7 +42,7 @@ const AlertDialogContent = React.forwardRef<
       {...props}
     >
       <div className="absolute right-4 top-4">
-        <AlertDialogPrimitive.Cancel className="text-[#ea384c] focus:outline-none">
+        <AlertDialogPrimitive.Cancel className="text-brand focus:outline-none">
           <X className="h-5 w-5" />
           <span className="sr-only">Close</span>
         </AlertDialogPrimitive.Cancel>

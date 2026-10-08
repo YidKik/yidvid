@@ -160,7 +160,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
       className={`block group ${isGrid ? 'w-full' : `flex-none ${isMobile ? 'w-[140px]' : isTablet ? 'w-[170px]' : 'w-[210px]'}`}`}
     >
         <div className={`bg-card rounded-2xl ${isMobile ? 'p-4' : 'p-7'} shadow-md transition-all duration-300 text-center`}>
-          <div className={`relative mx-auto ${isMobile ? 'w-16 h-16' : isTablet ? 'w-20 h-20' : 'w-28 h-28'} rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-yellow-400/50`}>
+          <div className={`relative mx-auto ${isMobile ? 'w-16 h-16' : isTablet ? 'w-20 h-20' : 'w-28 h-28'} rounded-full overflow-hidden border-2 border-transparent group-hover:border-brand transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-brand/50`}>
             {channel.thumbnail_url ? (
               <img
                 src={channel.thumbnail_url}
@@ -169,7 +169,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
                 loading="lazy"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-brand to-brand flex items-center justify-center">
                 <span className="text-3xl font-bold text-white">
                   {channel.title.charAt(0).toUpperCase()}
                 </span>
@@ -293,7 +293,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
             <div className="flex justify-center mt-8">
               <button 
                 onClick={handleViewAllClick}
-                className={`${isMobile ? 'px-6 py-2 text-sm' : 'px-8 py-3 text-base'} font-friendly font-semibold text-gray-900 bg-yellow-400 hover:bg-yellow-500 rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105`}
+                className={`${isMobile ? 'px-6 py-2 text-sm' : 'px-8 py-3 text-base'} font-friendly font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105`}
               >
                 View All Channels
               </button>

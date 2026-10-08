@@ -144,9 +144,9 @@ export const ContentAnalysisTab: React.FC = () => {
     const getStatusColor = (status: string) => {
       switch (status) {
         case 'approved': return 'bg-green-100 text-green-800 border-green-300';
-        case 'rejected': return 'bg-red-100 text-red-800 border-red-300';
+        case 'rejected': return 'bg-red-100 text-error border-red-300';
         case 'manual_review': return 'bg-orange-100 text-orange-800 border-orange-300';
-        default: return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+        default: return 'bg-warning-bg text-warning border-warning/40';
       }
     };
 
@@ -224,8 +224,8 @@ export const ContentAnalysisTab: React.FC = () => {
               
               {rejectionReason && (
                 <div className="mt-2 p-3 bg-red-50 rounded-lg border-l-3 border-red-400">
-                  <p className="text-xs font-semibold text-red-800 mb-1">🚫 Reason:</p>
-                  <p className="text-xs text-red-700 line-clamp-2">
+                  <p className="text-xs font-semibold text-error mb-1">🚫 Reason:</p>
+                  <p className="text-xs text-error line-clamp-2">
                     {rejectionReason}
                   </p>
                 </div>
@@ -303,9 +303,9 @@ export const ContentAnalysisTab: React.FC = () => {
 
             {/* Rejection Reason Card */}
             {(video.content_analysis_status === 'rejected' || video.manual_review_required) && (
-              <Card className="border-2 border-red-500 bg-red-50">
+              <Card className="border-2 border-brand bg-red-50">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-red-800">
+                  <CardTitle className="flex items-center gap-2 text-error">
                     <AlertTriangle className="h-5 w-5" />
                     Rejection / Review Reason
                   </CardTitle>
@@ -327,8 +327,8 @@ export const ContentAnalysisTab: React.FC = () => {
                 <CardContent>
                   <Badge className={`text-sm ${
                     video.content_analysis_status === 'approved' ? 'bg-green-100 text-green-800' :
-                    video.content_analysis_status === 'rejected' ? 'bg-red-100 text-red-800' :
-                    'bg-yellow-100 text-yellow-800'
+                    video.content_analysis_status === 'rejected' ? 'bg-red-100 text-error' :
+                    'bg-warning-bg text-warning'
                   }`}>
                     {video.content_analysis_status || 'pending'}
                   </Badge>
@@ -371,9 +371,9 @@ export const ContentAnalysisTab: React.FC = () => {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {details.thumbnailAnalysis.rejection_reason && (
-                        <div className="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-                          <p className="text-sm font-semibold text-red-800 mb-1">Rejection Reason:</p>
-                          <p className="text-sm text-red-700">{details.thumbnailAnalysis.rejection_reason}</p>
+                        <div className="p-4 bg-red-50 rounded-lg border-l-4 border-brand">
+                          <p className="text-sm font-semibold text-error mb-1">Rejection Reason:</p>
+                          <p className="text-sm text-error">{details.thumbnailAnalysis.rejection_reason}</p>
                         </div>
                       )}
                       
@@ -416,7 +416,7 @@ export const ContentAnalysisTab: React.FC = () => {
                         </div>
                         <div>
                           <p className="font-medium">Issues Detected:</p>
-                          <p className="text-2xl font-bold text-red-600">
+                          <p className="text-2xl font-bold text-brand">
                             {details.videoAnalysis.issues_detected?.length || 0}
                           </p>
                         </div>
@@ -424,7 +424,7 @@ export const ContentAnalysisTab: React.FC = () => {
 
                       {details.videoAnalysis.issues_detected && details.videoAnalysis.issues_detected.length > 0 && (
                         <div className="p-3 bg-red-50 rounded-lg">
-                          <p className="text-sm font-semibold text-red-800 mb-2">Issues Found:</p>
+                          <p className="text-sm font-semibold text-error mb-2">Issues Found:</p>
                           <div className="flex flex-wrap gap-2">
                             {details.videoAnalysis.issues_detected.map((issue: string, idx: number) => (
                               <Badge key={idx} variant="destructive">{issue.replace('_', ' ')}</Badge>
@@ -437,7 +437,7 @@ export const ContentAnalysisTab: React.FC = () => {
                       {details.videoAnalysis.problematic_frames && details.videoAnalysis.problematic_frames.length > 0 && (
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <h4 className="font-semibold text-red-800">🚫 Problematic Frames Detected:</h4>
+                            <h4 className="font-semibold text-error">🚫 Problematic Frames Detected:</h4>
                             <Badge variant="destructive">
                               {details.videoAnalysis.problematic_frames.length} frame(s)
                             </Badge>
@@ -459,13 +459,13 @@ export const ContentAnalysisTab: React.FC = () => {
                                       </p>
                                     </div>
                                     <div className="flex-1">
-                                      <p className="text-sm font-semibold text-red-800 mb-2">
+                                      <p className="text-sm font-semibold text-error mb-2">
                                         Issues in this frame:
                                       </p>
                                       <ul className="text-sm space-y-1">
                                         {frame.issues?.map((issue: string, issueIdx: number) => (
-                                          <li key={issueIdx} className="text-red-700 flex items-start gap-2">
-                                            <span className="text-red-500">•</span>
+                                          <li key={issueIdx} className="text-error flex items-start gap-2">
+                                            <span className="text-brand">•</span>
                                             <span>{issue}</span>
                                           </li>
                                         ))}

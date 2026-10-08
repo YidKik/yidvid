@@ -152,7 +152,7 @@ export const OverviewPageV2 = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <MiniStat label="Pending" value={modStats.pending + modStats.manualReview} color="#f59e0b" />
                 <MiniStat label="Approved" value={modStats.approved} color="#10b981" />
-                <MiniStat label="Rejected" value={modStats.rejected} color="#ef4444" />
+                <MiniStat label="Rejected" value={modStats.rejected} color="#C9253A" />
                 <MiniStat label="Total" value={modStats.total} color="#6366f1" />
               </div>
             )}
@@ -232,7 +232,7 @@ export const OverviewPageV2 = () => {
                     style={{
                       width: `${quotaPct}%`,
                       backgroundColor:
-                        quotaPct <= 10 ? "#ef4444" : quotaPct <= 25 ? "#f59e0b" : "#10b981",
+                        quotaPct <= 10 ? "#C9253A" : quotaPct <= 25 ? "#f59e0b" : "#10b981",
                     }}
                   />
                 </div>
@@ -340,7 +340,7 @@ const StatusPill = ({ status }: { status: string }) => {
     responded: "bg-[#10b981]/10 text-[#10b981]",
     added: "bg-[#6366f1]/10 text-[#818cf8]",
     approved: "bg-[#10b981]/10 text-[#10b981]",
-    rejected: "bg-[#ef4444]/10 text-[#ef4444]",
+    rejected: "bg-primary/10 text-brand",
   };
 
   return (

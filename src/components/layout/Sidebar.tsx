@@ -91,15 +91,15 @@ const getNavItemClass = (isExpanded: boolean, active: boolean, disabled = false)
     disabled
       ? "opacity-40 cursor-default border border-transparent"
       : active
-        ? "bg-[#F5F5F5] dark:bg-[#272727] border-l-[3px] border-[#FF0000] text-[#FF0000]"
-        : "border border-transparent hover:bg-[#F0F0F0] dark:hover:bg-[#272727] text-[#666666] dark:text-[#aaa] hover:text-[#1A1A1A] dark:hover:text-[#e8e8e8]"
+        ? "bg-muted dark:bg-secondary border-l-[3px] border-brand text-brand"
+        : "border border-transparent hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
   );
 
 const getIconClass = (active: boolean, disabled = false) =>
-  cn("w-5 h-5 shrink-0 transition-colors", disabled ? "text-[#999999]" : active ? "text-[#FF0000]" : "text-[#1A1A1A] dark:text-[#e8e8e8]");
+  cn("w-5 h-5 shrink-0 transition-colors", disabled ? "text-muted-foreground" : active ? "text-brand" : "text-foreground dark:text-foreground");
 
 const getLabelClass = (active: boolean, disabled = false) =>
-  cn("truncate transition-colors", disabled ? "text-[#999999]" : active ? "text-[#FF0000]" : "text-[#1A1A1A] dark:text-[#e8e8e8]");
+  cn("truncate transition-colors", disabled ? "text-muted-foreground" : active ? "text-brand" : "text-foreground dark:text-foreground");
 
 export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
   const location = useLocation();
@@ -205,18 +205,18 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
       initial={false}
       animate={{ width: sidebarWidth }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className="fixed top-0 left-0 bottom-0 z-40 bg-white dark:bg-[#0f0f0f] flex flex-col overflow-hidden border-r border-[#E5E5E5] dark:border-[#333]"
+      className="fixed top-0 left-0 bottom-0 z-40 bg-white dark:bg-background flex flex-col overflow-hidden border-r border-border dark:border-border"
       style={{ fontFamily: "'Quicksand', sans-serif" }}
     >
       {/* Logo */}
       <div className={cn(
-        "flex items-center border-b border-[#E5E5E5] dark:border-[#333] h-14",
+        "flex items-center border-b border-border dark:border-border h-14",
         effectiveIsExpanded ? "px-4 justify-between" : "px-2 justify-center"
       )}>
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <img src={yidvidLogoIcon} alt="YidVid" className="w-12 h-12 rounded-full object-contain" />
           {effectiveIsExpanded && (
-            <span className="text-base font-bold text-[#1A1A1A] dark:text-[#e8e8e8]" style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}>
+            <span className="text-base font-bold text-foreground dark:text-foreground" style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}>
               YidVid
             </span>
           )}
@@ -227,7 +227,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             variant="ghost"
             size="icon"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="h-8 w-8 rounded-full hover:bg-[#F0F0F0] dark:hover:bg-[#272727] text-[#666666] dark:text-[#aaa]"
+            className="h-8 w-8 rounded-full hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground"
           >
             {effectiveIsExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </Button>
@@ -236,13 +236,13 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
       {/* Back Button */}
       {canGoBack() && location.pathname !== "/" && location.pathname !== "/videos" && (
-        <div className={cn("px-2 py-2 border-b border-[#E5E5E5] dark:border-[#333]", effectiveIsExpanded ? "px-3" : "")}>
+        <div className={cn("px-2 py-2 border-b border-border dark:border-border", effectiveIsExpanded ? "px-3" : "")}>
           <button
             onClick={handleGoBack}
             title="Go back"
             className={cn(
               "flex items-center rounded-full text-sm font-medium transition-all duration-200",
-              "text-[#666666] dark:text-[#aaa] hover:bg-[#F0F0F0] dark:hover:bg-[#272727] hover:text-[#1A1A1A] dark:hover:text-[#e8e8e8]",
+              "text-muted-foreground dark:text-muted-foreground hover:bg-surface-hover dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground",
               effectiveIsExpanded ? "gap-2 px-3 py-2.5 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
             )}
           >
@@ -284,22 +284,22 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
         {/* Categories - only visible when expanded */}
         {effectiveIsExpanded && (
-          <div className="mt-2 pt-2 border-t border-[#E5E5E5] dark:border-[#333]">
+          <div className="mt-2 pt-2 border-t border-border dark:border-border">
             <button
               onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
               className={cn(
                 "flex items-center text-sm font-medium transition-all duration-200 w-full",
                 "gap-3 px-3 py-2.5 rounded-full justify-between",
-                "border border-transparent hover:bg-[#F0F0F0] dark:hover:bg-[#272727] text-[#666666] dark:text-[#aaa] hover:text-[#1A1A1A] dark:hover:text-[#e8e8e8]"
+                "border border-transparent hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
               )}
             >
               <div className="flex items-center gap-3">
                 <LayoutGrid className="w-5 h-5 shrink-0" />
-                <span className="text-[#1A1A1A] dark:text-[#e8e8e8]">Categories</span>
+                <span className="text-foreground dark:text-foreground">Categories</span>
               </div>
               {isCategoriesOpen
-                ? <ChevronUp className="w-4 h-4 text-[#999999]" />
-                : <ChevronDown className="w-4 h-4 text-[#999999]" />
+                ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                : <ChevronDown className="w-4 h-4 text-muted-foreground" />
               }
             </button>
 
@@ -324,8 +324,8 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                         className={cn(
                           "w-full text-left px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 my-0.5",
                           isCategoryActive(category.id)
-                            ? "bg-[#F5F5F5] dark:bg-[#272727] border-l-[3px] border-[#FF0000] text-[#FF0000]"
-                            : "text-[#1A1A1A] dark:text-[#e8e8e8] hover:bg-[#F0F0F0] dark:hover:bg-[#272727] border border-transparent"
+                            ? "bg-muted dark:bg-secondary border-l-[3px] border-brand text-brand"
+                            : "text-foreground dark:text-foreground hover:bg-surface-hover dark:hover:bg-secondary border border-transparent"
                         )}
                       >
                         {category.label}
@@ -338,9 +338,9 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         )}
 
         {/* Library */}
-        <div className="mt-3 pt-3 border-t border-[#E5E5E5] dark:border-[#333]">
+        <div className="mt-3 pt-3 border-t border-border dark:border-border">
           {effectiveIsExpanded && (
-            <div className="px-3 py-1.5 text-[10px] font-semibold text-[#999999] uppercase tracking-wider">
+            <div className="px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
               {librarySection.title}
             </div>
           )}
@@ -367,7 +367,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
         {/* Settings & About */}
         {navSections.slice(1).map((section, sectionIdx) => (
-          <div key={sectionIdx} className="mt-3 pt-3 border-t border-[#E5E5E5] dark:border-[#333]">
+          <div key={sectionIdx} className="mt-3 pt-3 border-t border-border dark:border-border">
             <div className="space-y-1">
               {section.items.map((item) => {
                 const Icon = item.icon;
@@ -390,7 +390,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
 
         {/* Subscriptions - only visible when expanded */}
         {effectiveIsExpanded && (
-          <div className="mt-3 pt-3 border-t border-[#E5E5E5] dark:border-[#333]">
+          <div className="mt-3 pt-3 border-t border-border dark:border-border">
             <button
               onClick={() => {
               if (!isAuthenticated) {
@@ -402,16 +402,16 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               className={cn(
                 "flex items-center text-sm font-medium transition-all duration-200 w-full",
                 "gap-3 px-3 py-2.5 rounded-full justify-between",
-                "border border-transparent hover:bg-[#F0F0F0] dark:hover:bg-[#272727] text-[#666666] dark:text-[#aaa] hover:text-[#1A1A1A] dark:hover:text-[#e8e8e8]"
+                "border border-transparent hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
               )}
             >
               <div className="flex items-center gap-3">
                 <Bell className="w-5 h-5 shrink-0" />
-                <span className="text-[#1A1A1A] dark:text-[#e8e8e8]">Subscriptions</span>
+                <span className="text-foreground dark:text-foreground">Subscriptions</span>
               </div>
               {isSubscriptionsOpen
-                ? <ChevronUp className="w-4 h-4 text-[#999999]" />
-                : <ChevronDown className="w-4 h-4 text-[#999999]" />
+                ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                : <ChevronDown className="w-4 h-4 text-muted-foreground" />
               }
             </button>
 
@@ -429,7 +429,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       <Link
                         key={sub.channel.channel_id}
                         to={`/channel/${sub.channel.channel_id}`}
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-full text-[#666666] dark:text-[#aaa] hover:bg-[#F0F0F0] dark:hover:bg-[#272727] hover:text-[#1A1A1A] dark:hover:text-[#e8e8e8] border border-transparent transition-all duration-200 my-0.5"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-full text-muted-foreground dark:text-muted-foreground hover:bg-surface-hover dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground border border-transparent transition-all duration-200 my-0.5"
                       >
                         <img
                           src={sub.channel.thumbnail_url || '/placeholder.svg'}
@@ -440,7 +440,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       </Link>
                     ))
                   ) : (
-                    <div className="px-3 py-2 text-xs text-[#999999]">
+                    <div className="px-3 py-2 text-xs text-muted-foreground">
                       No subscriptions yet
                     </div>
                   )}

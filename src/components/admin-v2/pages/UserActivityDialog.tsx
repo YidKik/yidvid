@@ -190,7 +190,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
   const statusColor = (status: string | null) => {
     switch (status) {
       case "approved": case "resolved": return "bg-emerald-500/15 text-emerald-400 border-emerald-500/20";
-      case "rejected": return "bg-red-500/15 text-red-400 border-red-500/20";
+      case "rejected": return "bg-primary/15 text-red-400 border-brand/20";
       case "pending": return "bg-amber-500/15 text-amber-400 border-amber-500/20";
       default: return "bg-slate-500/15 text-slate-400 border-slate-500/20";
     }

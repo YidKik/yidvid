@@ -5,10 +5,10 @@ const FALLBACK_SVG =
   "data:image/svg+xml;utf8," +
   encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice">
-      <rect width="320" height="180" fill="#1a1a1a"/>
-      <rect x="128" y="62" width="64" height="44" rx="12" fill="#FF0000"/>
+      <rect width="320" height="180" fill="#242832"/>
+      <rect x="128" y="62" width="64" height="44" rx="12" fill="#C9253A"/>
       <path d="M152 72 L174 84 L152 96 Z" fill="#FFFFFF"/>
-      <text x="160" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFCC00">YidVid</text>
+      <text x="160" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#F2F4F7">YidVid</text>
     </svg>`
   );
 

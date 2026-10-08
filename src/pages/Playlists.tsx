@@ -88,8 +88,8 @@ const Playlists = () => {
       <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
         <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-12">
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-6 shadow-sm">
-              <ListMusic className="w-12 h-12 text-red-500" />
+            <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
+              <ListMusic className="w-12 h-12 text-brand" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2 font-friendly">Sign in to view your playlists</h1>
             <p className="text-gray-500 mb-6 max-w-md">
@@ -97,7 +97,7 @@ const Playlists = () => {
             </p>
             <Button
               onClick={() => setIsAuthOpen(true)}
-              className="rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
+              className="rounded-full gap-2 bg-primary hover:bg-primary-hover text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
             >
               <LogIn className="w-4 h-4" />
               Sign In
@@ -126,7 +126,7 @@ const Playlists = () => {
           {/* Header */}
           <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg`}>
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-lg`}>
                 <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
@@ -162,7 +162,7 @@ const Playlists = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleDeletePlaylist(selectedPlaylist.id)}
-                  className="flex items-center gap-2 cursor-pointer text-red-600 hover:bg-red-50"
+                  className="flex items-center gap-2 cursor-pointer text-brand hover:bg-red-50"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete playlist
@@ -186,14 +186,14 @@ const Playlists = () => {
             </div>
           ) : !playlistItems || playlistItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 rounded-full bg-brand-soft flex items-center justify-center mb-4">
                 <ListMusic className="w-10 h-10 text-red-400" />
               </div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2 font-friendly">No videos in this playlist</h2>
               <p className="text-gray-500">Add videos from any video page using the menu.</p>
               <Button
                 onClick={() => navigate('/videos')}
-                className="mt-6 rounded-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+                className="mt-6 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
               >
                 Browse Videos
               </Button>
@@ -216,13 +216,13 @@ const Playlists = () => {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                      <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center shadow-md">
+                      <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md">
                         <Play className="w-5 h-5 text-gray-900 fill-gray-900 ml-0.5" />
                       </div>
                     </div>
                   </div>
                   <div className="flex-1 min-w-0 py-1">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-red-500 transition-colors">
+                    <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-brand transition-colors">
                       {cleanVideoTitle(item.video?.title)}
                     </h3>
                     <p className="text-sm text-gray-500 mt-1.5">{item.video?.channel_name}</p>
@@ -231,7 +231,7 @@ const Playlists = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 hover:bg-red-50"
+                      className="h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-brand hover:bg-red-50"
                       onClick={() => removeFromPlaylist.mutate({ playlistId: selectedPlaylistId, videoId: item.video?.id })}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -255,13 +255,13 @@ const Playlists = () => {
                 placeholder="Playlist name"
                 value={editingPlaylist?.title || ""}
                 onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, title: e.target.value } : null)}
-                className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400"
+                className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand"
               />
               <Textarea
                 placeholder="Description (optional)"
                 value={editingPlaylist?.description || ""}
                 onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, description: e.target.value } : null)}
-                className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400 resize-none"
+                className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand resize-none"
                 rows={3}
               />
             </div>
@@ -272,7 +272,7 @@ const Playlists = () => {
               <Button
                 onClick={handleUpdatePlaylist}
                 disabled={!editingPlaylist?.title.trim() || updatePlaylist.isPending}
-                className="rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold"
+                className="rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold"
               >
                 Save Changes
               </Button>
@@ -290,7 +290,7 @@ const Playlists = () => {
         {/* Header */}
           <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-lg`}>
+              <div className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-2xl bg-gradient-to-br from-brand to-brand flex items-center justify-center shadow-lg`}>
                 <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
@@ -300,7 +300,7 @@ const Playlists = () => {
           </div>
           <Button
             onClick={() => setShowCreateDialog(true)}
-            className={`rounded-full gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold ${isMobile ? 'px-4 text-xs' : 'px-6'} shadow-md hover:shadow-lg transition-all`}
+            className={`rounded-full gap-2 bg-primary hover:bg-primary-hover text-white font-semibold ${isMobile ? 'px-4 text-xs' : 'px-6'} shadow-md hover:shadow-lg transition-all`}
           >
             <Plus className="w-4 h-4" />
             New Playlist
@@ -319,7 +319,7 @@ const Playlists = () => {
           </div>
         ) : !playlists || playlists.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-6 shadow-sm">
+            <div className="w-24 h-24 rounded-full bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
               <ListMusic className="w-12 h-12 text-red-400" />
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2 font-friendly">No playlists yet</h2>
@@ -328,7 +328,7 @@ const Playlists = () => {
             </p>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="rounded-full gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 shadow-md hover:shadow-lg transition-all"
+              className="rounded-full gap-2 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
             >
               <Plus className="w-4 h-4" />
               Create Playlist
@@ -345,19 +345,19 @@ const Playlists = () => {
                 className="group cursor-pointer bg-white rounded-2xl p-5 hover:shadow-lg transition-all border border-gray-100 hover:border-gray-200"
                 onClick={() => setSearchParams({ id: playlist.id })}
               >
-                <div className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-yellow-100 via-orange-50 to-red-100 mb-4 flex items-center justify-center shadow-sm">
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-brand-soft mb-4 flex items-center justify-center shadow-sm">
                   <ListMusic className="w-14 h-14 text-red-400" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   {/* Play overlay */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg">
+                    <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
                       <Play className="w-5 h-5 text-gray-900 fill-gray-900 ml-0.5" />
                     </div>
                   </div>
                 </div>
                 <div className="flex items-start justify-between">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-gray-900 truncate group-hover:text-red-500 transition-colors">
+                    <h3 className="font-semibold text-gray-900 truncate group-hover:text-brand transition-colors">
                       {playlist.title}
                     </h3>
                     {playlist.description && (
@@ -391,7 +391,7 @@ const Playlists = () => {
                           e.stopPropagation();
                           handleDeletePlaylist(playlist.id);
                         }}
-                        className="flex items-center gap-2 cursor-pointer text-red-600 hover:bg-red-50"
+                        className="flex items-center gap-2 cursor-pointer text-brand hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4" />
                         Delete
@@ -417,13 +417,13 @@ const Playlists = () => {
               placeholder="Playlist name"
               value={newPlaylistTitle}
               onChange={(e) => setNewPlaylistTitle(e.target.value)}
-              className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400"
+              className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand"
             />
             <Textarea
               placeholder="Description (optional)"
               value={newPlaylistDescription}
               onChange={(e) => setNewPlaylistDescription(e.target.value)}
-              className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400 resize-none"
+              className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand resize-none"
               rows={3}
             />
           </div>
@@ -434,7 +434,7 @@ const Playlists = () => {
             <Button
               onClick={handleCreatePlaylist}
               disabled={!newPlaylistTitle.trim() || createPlaylist.isPending}
-              className="rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold"
+              className="rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold"
             >
               Create
             </Button>
@@ -453,13 +453,13 @@ const Playlists = () => {
               placeholder="Playlist name"
               value={editingPlaylist?.title || ""}
               onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, title: e.target.value } : null)}
-              className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400"
+              className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand"
             />
             <Textarea
               placeholder="Description (optional)"
               value={editingPlaylist?.description || ""}
               onChange={(e) => setEditingPlaylist((prev) => prev ? { ...prev, description: e.target.value } : null)}
-              className="rounded-xl border-gray-200 focus:border-yellow-400 focus:ring-yellow-400 resize-none"
+              className="rounded-xl border-gray-200 focus:border-brand focus:ring-brand resize-none"
               rows={3}
             />
           </div>
@@ -470,7 +470,7 @@ const Playlists = () => {
             <Button
               onClick={handleUpdatePlaylist}
               disabled={!editingPlaylist?.title.trim() || updatePlaylist.isPending}
-              className="rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold"
+              className="rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold"
             >
               Save Changes
             </Button>

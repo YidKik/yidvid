@@ -206,7 +206,7 @@ export const UserDetailPanel = ({
                 <Button
                   size="sm"
                   variant="outline"
-                  className="w-full border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 justify-start h-8"
+                  className="w-full border-brand/20 text-red-400 hover:text-red-300 hover:bg-primary/10 justify-start h-8"
                   onClick={onDeleteUser}
                 >
                   <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete User

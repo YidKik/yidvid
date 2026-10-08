@@ -131,7 +131,7 @@ export const ApiQuotaStatus = () => {
                 ? "bg-destructive text-destructive-foreground" 
                 : alertLevel.level === "high"
                 ? "bg-orange-500 text-white"
-                : "bg-yellow-500 text-yellow-950"
+                : "bg-primary text-yellow-950"
             }`}>
               <AlertTriangle className="h-4 w-4" />
               <span className="text-sm font-semibold uppercase">
@@ -145,7 +145,7 @@ export const ApiQuotaStatus = () => {
         {/* Critical Alert Banner */}
         {showAlert && (
           <Alert variant={alertLevel.color === "destructive" ? "destructive" : "default"} 
-                 className={alertLevel.color === "warning" ? "border-yellow-500 bg-yellow-50" : ""}>
+                 className={alertLevel.color === "warning" ? "border-brand bg-warning-bg" : ""}>
             <AlertCircle className="h-4 w-4" />
             <AlertTitle className="font-bold">
               {alertLevel.level === "critical" && "CRITICAL: Quota Almost Exhausted!"}
@@ -175,7 +175,7 @@ export const ApiQuotaStatus = () => {
             <span className={`font-semibold ${
               quotaPercentage <= 5 ? "text-destructive" :
               quotaPercentage <= 10 ? "text-orange-600" :
-              quotaPercentage <= 20 ? "text-yellow-600" :
+              quotaPercentage <= 20 ? "text-brand" :
               ""
             }`}>
               {quotaRemaining.toLocaleString()} / {quotaLimit.toLocaleString()} units
@@ -186,14 +186,14 @@ export const ApiQuotaStatus = () => {
             className={`h-3 ${
               quotaPercentage <= 5 ? "[&>div]:bg-destructive" :
               quotaPercentage <= 10 ? "[&>div]:bg-orange-500" :
-              quotaPercentage <= 20 ? "[&>div]:bg-yellow-500" :
+              quotaPercentage <= 20 ? "[&>div]:bg-primary" :
               ""
             }`} 
           />
           <p className={`text-xs font-medium ${
             quotaPercentage <= 5 ? "text-destructive" :
             quotaPercentage <= 10 ? "text-orange-600" :
-            quotaPercentage <= 20 ? "text-yellow-600" :
+            quotaPercentage <= 20 ? "text-brand" :
             "text-muted-foreground"
           }`}>
             {quotaPercentage.toFixed(1)}% remaining

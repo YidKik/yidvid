@@ -62,7 +62,7 @@ export const RelatedVideosSidebar = ({
           {videos.slice(0, 10).map((video, index) => (
             <div 
               key={video.id}
-              className="group hover:bg-muted/50 rounded-lg p-2 transition-colors"
+              className="group hover:bg-surface-hover/50 rounded-lg p-2 transition-colors"
             >
               <VideoCard
                 id={video.id}

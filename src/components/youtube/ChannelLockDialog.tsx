@@ -78,7 +78,7 @@ export const ChannelLockDialog = ({ isOpen, onClose, onUnlock, onDelete, storedP
                 type="button" 
                 variant="outline"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="w-full max-w-sm py-2 px-4 bg-card border-2 border-border rounded-lg text-foreground hover:bg-muted hover:border-border transition-all duration-200 flex items-center justify-center gap-2 group"
+                className="w-full max-w-sm py-2 px-4 bg-card border-2 border-border rounded-lg text-foreground hover:bg-surface-hover hover:border-border transition-all duration-200 flex items-center justify-center gap-2 group"
               >
                 <Trash2 className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                 <span className="font-medium">Remove Parental Control</span>

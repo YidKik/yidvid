@@ -38,7 +38,7 @@ export const SignUpFormField: React.FC<SignUpFormFieldProps> = ({
         className="text-sm font-semibold text-[#444444] flex items-center gap-2"
         style={{ fontFamily: "'Quicksand', sans-serif" }}
       >
-        <Icon size={15} className="text-[#FF0000]" />
+        <Icon size={15} className="text-brand" />
         {placeholder}
       </label>
       <Input
@@ -49,9 +49,9 @@ export const SignUpFormField: React.FC<SignUpFormFieldProps> = ({
         className={`${isMobile 
           ? 'h-12 text-sm' 
           : 'h-13 text-base'} 
-          px-4 border-2 border-[#E5E5E5] bg-[#FAFAFA] focus:bg-white transition-all duration-200 
-          rounded-2xl focus:ring-2 focus:ring-[#FFCC00]/40 focus:border-[#FFCC00] text-[#1A1A1A]
-          placeholder:text-[#BBBBBB] py-3`}
+          px-4 border-2 border-border bg-muted focus:bg-white transition-all duration-200 
+          rounded-2xl focus:ring-2 focus:ring-brand/40 focus:border-brand text-foreground
+          placeholder:text-muted-foreground py-3`}
         style={{ fontFamily: "'Quicksand', sans-serif" }}
         required={required}
         disabled={disabled}

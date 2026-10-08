@@ -213,7 +213,7 @@ export const TishaBavContentPopup: React.FC<WelcomePopupProps> = ({ isOpen, onCl
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={onClose}
-              className="p-2 rounded-full bg-muted hover:bg-muted/80 transition-colors shadow-md"
+              className="p-2 rounded-full bg-muted hover:bg-surface-hover/80 transition-colors shadow-md"
             >
               <X size={20} />
             </motion.button>

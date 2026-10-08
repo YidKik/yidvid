@@ -97,7 +97,7 @@ const MainContent = () => {
           className={`fixed ${isTablet ? 'bottom-24' : 'bottom-4'} right-4 p-3 rounded-full cursor-pointer z-40`}
           style={{
             backgroundColor: 'transparent',
-            border: '2px solid hsl(50, 100%, 50%)'
+            border: '2px solid hsl(var(--brand))'
           }}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ 
@@ -115,7 +115,7 @@ const MainContent = () => {
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="hsl(50, 100%, 50%)"
+            stroke="hsl(var(--brand))"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -165,7 +165,7 @@ const Videos = () => {
         </script>
       </Helmet>
       
-      <div className="min-h-screen w-full bg-white dark:bg-[#0f0f0f] videos-page overflow-x-hidden max-w-[100vw] flex flex-col">
+      <div className="min-h-screen w-full bg-white dark:bg-background videos-page overflow-x-hidden max-w-[100vw] flex flex-col">
         <div className="flex-1">
           <MainContent />
         </div>

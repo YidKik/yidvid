@@ -85,9 +85,9 @@ export default function SecureAuth() {
 
   const getPasswordStrengthColor = () => {
     if (!signUpData.password) return 'bg-gray-200';
-    if (passwordStrength.errors.length > 3) return 'bg-red-500';
+    if (passwordStrength.errors.length > 3) return 'bg-primary';
     if (passwordStrength.errors.length > 1) return 'bg-orange-500';
-    if (passwordStrength.errors.length > 0) return 'bg-yellow-500';
+    if (passwordStrength.errors.length > 0) return 'bg-primary';
     return 'bg-green-500';
   };
 

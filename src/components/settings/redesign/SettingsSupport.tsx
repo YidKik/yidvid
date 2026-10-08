@@ -80,10 +80,10 @@ export const SettingsSupport = () => {
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
-        <HelpCircle className="h-5 w-5 text-[#FF0000]" />
-        <h3 className="text-base font-bold text-[#1A1A1A] dark:text-[#e8e8e8]">Help & Support</h3>
+        <HelpCircle className="h-5 w-5 text-brand" />
+        <h3 className="text-base font-bold text-foreground dark:text-foreground">Help & Support</h3>
       </div>
-      <p className="text-sm text-[#666] dark:text-[#aaa] mb-5">
+      <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-5">
         Need help or have suggestions? Send us a message and we'll get back to you.
       </p>
       <ContactForm form={form} onSubmit={onSubmit} />

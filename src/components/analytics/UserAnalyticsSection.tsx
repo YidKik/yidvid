@@ -186,8 +186,8 @@ export const UserAnalyticsSection = () => {
       label: "Streak",
       value: stats?.currentStreak || 0,
       subtext: stats?.currentStreak === 1 ? "day" : "days in a row",
-      color: "bg-yellow-500",
-      lightColor: "bg-yellow-50",
+      color: "bg-primary",
+      lightColor: "bg-warning-bg",
     },
   ];
 

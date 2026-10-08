@@ -23,7 +23,7 @@ const Settings = () => {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0f0f0f] pt-16 px-4 pl-0 lg:pl-[200px] transition-all duration-300">
+      <div className="min-h-screen bg-white dark:bg-background pt-16 px-4 pl-0 lg:pl-[200px] transition-all duration-300">
         <div className="max-w-4xl mx-auto">
           <ProfileSectionSkeleton />
         </div>
@@ -32,18 +32,18 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F9F9] dark:bg-[#0f0f0f] pt-14 pl-0 lg:pl-[200px] pb-24 lg:pb-8 transition-all duration-300">
+    <div className="min-h-screen bg-muted dark:bg-background pt-14 pl-0 lg:pl-[200px] pb-24 lg:pb-8 transition-all duration-300">
       <div className={cn(
         "max-w-5xl mx-auto",
         isMobile ? "px-4 pt-4" : "px-8 pt-6"
       )}>
         {/* Page Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-[#FF0000] rounded-xl">
+          <div className="p-2 bg-primary rounded-xl">
             <SettingsIcon className="w-5 h-5 text-white" />
           </div>
           <h1 className={cn(
-            "font-bold text-[#1A1A1A] dark:text-[#e8e8e8]",
+            "font-bold text-foreground dark:text-foreground",
             isMobile ? "text-xl" : "text-2xl"
           )}>
             Settings
@@ -74,11 +74,11 @@ const Settings = () => {
                       : "px-4 py-2.5 text-sm rounded-xl w-full text-left",
                     isActive
                       ? isMobile
-                        ? "bg-[#FF0000] text-white border-[#FF0000]"
-                        : "bg-white dark:bg-[#1a1a1a] text-[#FF0000] shadow-sm border border-[#E5E5E5] dark:border-[#333]"
+                        ? "bg-primary text-white border-brand"
+                        : "bg-white dark:bg-card text-brand shadow-sm border border-border dark:border-border"
                       : isMobile
-                        ? "text-[#666] border-[#E5E5E5] dark:border-[#333] dark:text-[#aaa] hover:bg-white dark:hover:bg-[#1a1a1a]"
-                        : "text-[#666] dark:text-[#aaa] hover:bg-white dark:hover:bg-[#1a1a1a] hover:text-[#1A1A1A] dark:hover:text-[#e8e8e8] border border-transparent"
+                        ? "text-muted-foreground border-border dark:border-border dark:text-muted-foreground hover:bg-white dark:hover:bg-card"
+                        : "text-muted-foreground dark:text-muted-foreground hover:bg-white dark:hover:bg-card hover:text-foreground dark:hover:text-foreground border border-transparent"
                   )}
                 >
                   <Icon size={isMobile ? 14 : 18} />
@@ -91,7 +91,7 @@ const Settings = () => {
           {/* Content Area */}
           <div className="flex-1 min-w-0">
             <div className={cn(
-              "bg-white dark:bg-[#1a1a1a] rounded-2xl border border-[#E5E5E5] dark:border-[#333] shadow-sm",
+              "bg-white dark:bg-card rounded-2xl border border-border dark:border-border shadow-sm",
               isMobile ? "p-4" : "p-6"
             )}>
               {activeSection === "profile" && (

@@ -95,7 +95,7 @@ export const FriendlyChannelSection = ({
             <Link to={`/channel/${channelId}`}>
               <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
                 <AvatarImage src={channelThumbnail || ''} alt={channelName} />
-                <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
+                <AvatarFallback className="bg-muted text-muted-foreground text-sm font-bold">
                   {channelName?.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -103,7 +103,7 @@ export const FriendlyChannelSection = ({
           ) : (
             <Avatar className={compact ? "h-8 w-8" : "h-10 w-10"}>
               <AvatarImage src={channelThumbnail || ''} alt={channelName} />
-              <AvatarFallback className="bg-[#F5F5F5] text-[#666666] text-sm font-bold">
+              <AvatarFallback className="bg-muted text-muted-foreground text-sm font-bold">
                 {channelName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -113,12 +113,12 @@ export const FriendlyChannelSection = ({
             {channelId ? (
               <Link 
                 to={`/channel/${channelId}`}
-                className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] hover:text-[#FF0000] transition-colors block truncate`}
+                className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-foreground hover:text-brand transition-colors block truncate`}
               >
                 {channelName}
               </Link>
             ) : (
-              <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-[#1A1A1A] truncate block`}>{channelName}</span>
+              <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-foreground truncate block`}>{channelName}</span>
             )}
           </div>
           
@@ -128,8 +128,8 @@ export const FriendlyChannelSection = ({
               disabled={isLoading}
               className={`${compact ? 'h-7 px-3 text-xs' : 'h-9 px-4 text-sm'} rounded-full font-semibold transition-all ${
                 isSubscribed 
-                  ? "bg-[#F5F5F5] text-[#1A1A1A] hover:bg-[#E5E5E5]" 
-                  : "bg-[#FF0000] text-white hover:brightness-90"
+                  ? "bg-muted text-foreground hover:bg-[#E5E5E5]" 
+                  : "bg-primary text-white hover:brightness-90"
               }`}
             >
               {isLoading ? (
@@ -149,10 +149,10 @@ export const FriendlyChannelSection = ({
       
       {/* Description - collapsible, minimal */}
       {description && (
-        <div className={`bg-[#F5F5F5] rounded-xl ${compact ? 'p-2.5' : 'p-4'}`}>
+        <div className={`bg-muted rounded-xl ${compact ? 'p-2.5' : 'p-4'}`}>
           <p 
             ref={descriptionRef}
-            className={`${compact ? 'text-[11px]' : 'text-sm'} text-[#666666] leading-relaxed whitespace-pre-wrap ${
+            className={`${compact ? 'text-[11px]' : 'text-sm'} text-muted-foreground leading-relaxed whitespace-pre-wrap ${
               !isDescriptionExpanded ? 'line-clamp-3' : ''
             }`}
           >
@@ -162,7 +162,7 @@ export const FriendlyChannelSection = ({
           {needsExpand && (
             <button
               onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-              className={`mt-1.5 ${compact ? 'text-[11px]' : 'text-sm'} font-medium text-[#1A1A1A] hover:text-[#FF0000] transition-colors`}
+              className={`mt-1.5 ${compact ? 'text-[11px]' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
             >
               {isDescriptionExpanded ? "Show less" : "Show more"}
             </button>
@@ -179,13 +179,13 @@ export const FriendlyChannelSection = ({
         <div>
           <div className="h-px bg-[#E5E5E5] mb-4" />
           <div className={`flex items-center justify-between ${compact ? 'mb-2' : 'mb-3'}`}>
-            <p className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-[#1A1A1A]`}>
+            <p className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-foreground`}>
               More from {channelName}
             </p>
             {channelId && (
               <Link 
                 to={`/channel/${channelId}`}
-                className="text-xs font-medium text-[#606060] hover:text-[#1A1A1A] transition-colors"
+                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 View all
               </Link>
@@ -198,10 +198,10 @@ export const FriendlyChannelSection = ({
               <Link
                 key={video.id}
                 to={`/video/${video.video_id || video.id}`}
-                className={`flex ${compact ? 'gap-2' : 'gap-3'} group rounded-lg hover:bg-[#F5F5F5] transition-colors p-1 -mx-1`}
+                className={`flex ${compact ? 'gap-2' : 'gap-3'} group rounded-lg hover:bg-surface-hover transition-colors p-1 -mx-1`}
               >
                 {/* Thumbnail */}
-                <div className={`${compact ? 'w-[110px]' : 'w-[168px]'} flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-[#F0F0F0]`}>
+                <div className={`${compact ? 'w-[110px]' : 'w-[168px]'} flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-muted`}>
                   <img
                     src={video.thumbnail || "/placeholder.svg"}
                     alt={cleanVideoTitle(video.title)}
@@ -212,13 +212,13 @@ export const FriendlyChannelSection = ({
                 
                 {/* Info */}
                 <div className="flex-1 min-w-0 py-0.5">
-                  <h4 className={`${compact ? 'text-[11px]' : 'text-[13px]'} font-medium text-[#1A1A1A] line-clamp-2 leading-snug group-hover:text-[#1A1A1A]`}>
+                  <h4 className={`${compact ? 'text-[11px]' : 'text-[13px]'} font-medium text-foreground line-clamp-2 leading-snug group-hover:text-foreground`}>
                     {cleanVideoTitle(video.title)}
                   </h4>
-                  <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-[#606060] ${compact ? 'mt-0.5' : 'mt-1'} truncate`}>
+                  <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-muted-foreground ${compact ? 'mt-0.5' : 'mt-1'} truncate`}>
                     {video.channel_name}
                   </p>
-                  <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-[#606060] mt-0.5`}>
+                  <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} text-muted-foreground mt-0.5`}>
                     {formatViewCount(video.views || 0)} • {getFormattedDate(video.uploaded_at)}
                   </p>
                 </div>
@@ -230,7 +230,7 @@ export const FriendlyChannelSection = ({
           {channelVideos.length > initialCount && (
             <button
               onClick={() => setShowAllVideos(!showAllVideos)}
-              className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-[#606060] hover:text-[#1A1A1A] hover:bg-[#F5F5F5] rounded-lg transition-colors"
+              className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-surface-hover rounded-lg transition-colors"
             >
               {showAllVideos ? (
                 <>Show less <ChevronUp className="w-3.5 h-3.5" /></>

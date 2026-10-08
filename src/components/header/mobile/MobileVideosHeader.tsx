@@ -77,7 +77,7 @@ export const MobileVideosHeader = ({
             variant="ghost"
             size="icon"
             onClick={() => setIsSearchExpanded(!isSearchExpanded)}
-            className="h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full bg-primary hover:bg-primary text-primary-foreground"
+            className="h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground"
           >
             {isSearchExpanded ? (
               <X className="h-3.5 w-3.5 min-[360px]:h-4 min-[360px]:w-4" />
@@ -91,7 +91,7 @@ export const MobileVideosHeader = ({
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(true)}
-              className="h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full bg-primary hover:bg-primary text-primary-foreground"
+              className="h-7 w-7 min-[360px]:h-9 min-[360px]:w-9 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground"
             >
               <Menu className="h-3.5 w-3.5 min-[360px]:h-4 min-[360px]:w-4" />
             </Button>

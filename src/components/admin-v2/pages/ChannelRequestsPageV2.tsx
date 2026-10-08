@@ -96,7 +96,7 @@ export const ChannelRequestsPageV2 = () => {
       case "approved":
         return <Badge className={`bg-emerald-500/15 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 ${cls}`}><CheckCircle2 className="w-3 h-3 mr-1" />Approved</Badge>;
       case "rejected":
-        return <Badge className={`bg-red-500/15 text-red-400 border-red-500/20 hover:bg-red-500/20 ${cls}`}><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
+        return <Badge className={`bg-primary/15 text-red-400 border-brand/20 hover:bg-primary/20 ${cls}`}><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
       default:
         return <Badge className={`bg-amber-500/15 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 ${cls}`}><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
     }
@@ -257,7 +257,7 @@ export const ChannelRequestsPageV2 = () => {
                       size="sm"
                       disabled={selected.status === "rejected"}
                       onClick={() => handleStatusChange(selected.id, "rejected")}
-                      className="flex-1 h-9 text-xs bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 disabled:opacity-30"
+                      className="flex-1 h-9 text-xs bg-primary/15 text-red-400 border border-brand/20 hover:bg-primary/25 disabled:opacity-30"
                     >
                       <XCircle className="w-3.5 h-3.5 mr-1.5" />
                       Reject

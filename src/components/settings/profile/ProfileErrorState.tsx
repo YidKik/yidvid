@@ -154,7 +154,7 @@ export const ProfileErrorState = ({ userEmail, isLoggingOut, handleLogout }: Pro
                   <Button
                     variant="destructive"
                     onClick={handleDeleteAccount}
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-primary hover:bg-primary-hover"
                   >
                     Yes, Delete My Account
                   </Button>

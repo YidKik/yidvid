@@ -87,15 +87,15 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
           onClick={handleLike}
           className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
             isLiked 
-              ? "bg-card border-red-500 hover:bg-muted" 
-              : "bg-card border-border hover:bg-muted hover:border-red-500"
+              ? "bg-card border-brand hover:bg-surface-hover" 
+              : "bg-card border-border hover:bg-surface-hover hover:border-brand"
           } ${isClickAnimating ? 'like-click-animation' : ''}`}
         >
           <ThumbsUp 
             className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 ${
               isLiked 
-                ? "text-red-500 fill-red-500 stroke-red-500" 
-                : "text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110"
+                ? "text-brand fill-brand stroke-brand" 
+                : "text-gray-600 group-hover:text-brand group-hover:stroke-brand group-hover:scale-110"
             }`}
           />
         </Button>
@@ -105,9 +105,9 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant="outline"
           onClick={handleShare}
-          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border bg-card border-border hover:bg-muted hover:border-red-500"
+          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border bg-card border-border hover:bg-surface-hover hover:border-brand"
         >
-          <Share className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-red-500 group-hover:stroke-red-500 group-hover:scale-110" />
+          <Share className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-gray-600 group-hover:text-brand group-hover:stroke-brand group-hover:scale-110" />
         </Button>
       </div>
     </>

@@ -48,14 +48,14 @@ export const ContactSuccessOverlay = ({ show, onComplete }: ContactSuccessOverla
               {/* Outer ring pulse */}
               <motion.div
                 className="absolute inset-0 rounded-full"
-                style={{ border: '3px solid #FFCC00' }}
+                style={{ border: '3px solid #C9253A' }}
                 initial={{ scale: 1, opacity: 0.8 }}
                 animate={{ scale: 1.8, opacity: 0 }}
                 transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
               />
               <motion.div
                 className="absolute inset-0 rounded-full"
-                style={{ border: '3px solid #FF0000' }}
+                style={{ border: '3px solid #C9253A' }}
                 initial={{ scale: 1, opacity: 0.6 }}
                 animate={{ scale: 2.2, opacity: 0 }}
                 transition={{ duration: 1.4, delay: 0.8, ease: "easeOut" }}
@@ -64,7 +64,7 @@ export const ContactSuccessOverlay = ({ show, onComplete }: ContactSuccessOverla
               {/* Main circle */}
               <motion.div
                 className="w-24 h-24 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: '#FFCC00' }}
+                style={{ backgroundColor: 'hsl(var(--primary))' }}
                 initial={{ rotate: -180, scale: 0 }}
                 animate={{ rotate: 0, scale: 1 }}
                 transition={{ type: "spring", stiffness: 150, damping: 12, delay: 0.3 }}
@@ -86,7 +86,7 @@ export const ContactSuccessOverlay = ({ show, onComplete }: ContactSuccessOverla
               animate={{ y: -80, opacity: [0, 1, 1, 0] }}
               transition={{ duration: 2, delay: 1, ease: "easeOut" }}
             >
-              <Mail className="w-6 h-6" style={{ color: '#FF0000' }} />
+              <Mail className="w-6 h-6" style={{ color: 'hsl(var(--brand))' }} />
             </motion.div>
 
             {/* Text */}
@@ -107,7 +107,7 @@ export const ContactSuccessOverlay = ({ show, onComplete }: ContactSuccessOverla
             {/* Bottom accent bar */}
             <motion.div
               className="h-1 rounded-full"
-              style={{ backgroundColor: '#FF0000' }}
+              style={{ backgroundColor: 'hsl(var(--primary))' }}
               initial={{ width: 0 }}
               animate={{ width: 120 }}
               transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}

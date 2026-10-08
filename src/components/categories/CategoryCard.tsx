@@ -17,9 +17,9 @@ interface CategoryCardProps {
 // Using the primary color for all categories
 const categoryColors = {
   bg: '#FFFFFF',
-  border: '#ea384c',
+  border: '#C9253A',
   text: '#333333',
-  iconBg: '#ea384c'
+  iconBg: '#C9253A'
 };
 
 export const CategoryCard = ({ icon, label, id, isCustomImage = false }: CategoryCardProps) => {

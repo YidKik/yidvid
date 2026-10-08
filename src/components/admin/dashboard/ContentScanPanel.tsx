@@ -114,10 +114,10 @@ export const ContentScanPanel: React.FC = () => {
   const running = job?.status === "running";
 
   return (
-    <Card className="border-l-4 border-l-[#FF0000]">
+    <Card className="border-l-4 border-l-brand">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
-          <ShieldCheck className="h-5 w-5 text-[#FF0000]" />
+          <ShieldCheck className="h-5 w-5 text-brand" />
           Thumbnail safety scan
           <Badge variant="outline" className="ml-2 capitalize">
             {job?.status || "idle"}

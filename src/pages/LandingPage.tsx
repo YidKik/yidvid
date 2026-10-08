@@ -102,7 +102,7 @@ const LandingPage = () => {
       <HeroSearchSection />
 
       {/* Features Section */}
-      <section className={`${isMobile ? 'py-10 px-4' : isTablet ? 'py-14 px-5' : 'py-20 px-6'} bg-[#F5F5F5]`}>
+      <section className={`${isMobile ? 'py-10 px-4' : isTablet ? 'py-14 px-5' : 'py-20 px-6'} bg-muted`}>
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -115,7 +115,7 @@ const LandingPage = () => {
             className={`${isMobile ? 'text-2xl mb-2' : isTablet ? 'text-3xl mb-3' : 'text-4xl md:text-5xl mb-4'} font-extrabold text-center`}
             style={{ fontFamily: "'Quicksand', sans-serif", color: '#1A1A1A', letterSpacing: '-0.02em' }}
           >
-            Built for <span style={{ color: '#FF0000' }}>You</span>
+            Built for <span style={{ color: 'hsl(var(--brand))' }}>You</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
@@ -132,14 +132,14 @@ const LandingPage = () => {
                 variants={itemVariants}
                 className={`group relative rounded-2xl ${isMobile ? 'p-3 text-center flex flex-col items-center' : isTablet ? 'p-4 text-center flex flex-col items-center' : 'p-6'} border-2 transition-all duration-300 hover:shadow-lg cursor-pointer bg-white`}
                 style={{
-                  borderColor: '#FF0000'
+                  borderColor: 'hsl(var(--border))'
                 }}
                 initial="rest"
                 whileHover="hover"
                 animate="rest"
               >
                 <motion.div 
-                  className={`${isMobile ? 'w-10 h-10 rounded-lg mb-2' : isTablet ? 'w-11 h-11 rounded-lg mb-3' : 'w-14 h-14 rounded-xl mb-4'} flex items-center justify-center bg-[#F5F5F5]`}
+                  className={`${isMobile ? 'w-10 h-10 rounded-lg mb-2' : isTablet ? 'w-11 h-11 rounded-lg mb-3' : 'w-14 h-14 rounded-xl mb-4'} flex items-center justify-center bg-muted`}
                   variants={{ rest: { y: 0 }, hover: { y: -5 } }}
                   transition={{ duration: 0.3 }}
                 >
@@ -147,12 +147,12 @@ const LandingPage = () => {
                     variants={feature.iconVariants}
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
-                    <feature.icon className={`${isMobile ? 'w-5 h-5' : isTablet ? 'w-5 h-5' : 'w-7 h-7'}`} style={{ color: '#FF0000' }} strokeWidth={2} />
+                    <feature.icon className={`${isMobile ? 'w-5 h-5' : isTablet ? 'w-5 h-5' : 'w-7 h-7'}`} style={{ color: 'hsl(var(--brand))' }} strokeWidth={2} />
                   </motion.div>
                 </motion.div>
                 <h3 
                   className={`${isMobile ? 'text-sm' : isTablet ? 'text-base' : 'text-xl'} font-bold mb-1`}
-                  style={{ fontFamily: "'Quicksand', sans-serif", color: '#FF0000' }}
+                  style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(var(--brand))' }}
                 >
                   {feature.title}
                 </h3>
@@ -182,7 +182,7 @@ const LandingPage = () => {
             className={`${isMobile ? 'text-2xl mb-2' : isTablet ? 'text-3xl mb-3' : 'text-4xl md:text-5xl mb-4'} font-bold text-center`}
             style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1A1A1A' }}
           >
-            Find What You <span style={{ color: '#FF0000' }}>Love</span>
+            Find What You <span style={{ color: 'hsl(var(--brand))' }}>Love</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
@@ -201,7 +201,7 @@ const LandingPage = () => {
               <motion.button
                 key={category.label}
                 onClick={() => navigate(category.path)}
-                className={`group relative flex flex-col items-center ${isMobile ? 'gap-1.5 px-3 py-4' : isTablet ? 'gap-2 px-4 py-5' : 'gap-3 px-6 py-8'} rounded-2xl font-semibold transition-all duration-500 overflow-hidden bg-white border border-[#E5E5E5]`}
+                className={`group relative flex flex-col items-center ${isMobile ? 'gap-1.5 px-3 py-4' : isTablet ? 'gap-2 px-4 py-5' : 'gap-3 px-6 py-8'} rounded-2xl font-semibold transition-all duration-500 overflow-hidden bg-white border border-border`}
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
                   color: '#1A1A1A',
@@ -215,21 +215,21 @@ const LandingPage = () => {
               >
                 {/* Hover overlay */}
                 <div 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[#F5F5F5]"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-muted"
                 />
                 
                 {/* Icon container */}
                 <div 
-                  className={`relative z-10 ${isMobile ? 'w-10 h-10 rounded-lg' : isTablet ? 'w-11 h-11 rounded-lg' : 'w-14 h-14 rounded-xl'} flex items-center justify-center transition-all duration-300 group-hover:scale-110 bg-[#F5F5F5]`}
+                  className={`relative z-10 ${isMobile ? 'w-10 h-10 rounded-lg' : isTablet ? 'w-11 h-11 rounded-lg' : 'w-14 h-14 rounded-xl'} flex items-center justify-center transition-all duration-300 group-hover:scale-110 bg-muted`}
                 >
-                  <category.icon className={`${isMobile ? 'w-5 h-5' : isTablet ? 'w-5 h-5' : 'w-7 h-7'} transition-colors duration-300`} style={{ color: '#FF0000' }} />
+                  <category.icon className={`${isMobile ? 'w-5 h-5' : isTablet ? 'w-5 h-5' : 'w-7 h-7'} transition-colors duration-300`} style={{ color: 'hsl(var(--brand))' }} />
                 </div>
                 
                 <span className={`relative z-10 ${isMobile ? 'text-sm' : isTablet ? 'text-base' : 'text-lg'}`}>{category.label}</span>
                 
                 <span 
                   className={`relative z-10 ${isMobile ? 'text-[10px]' : 'text-xs'} flex items-center gap-1 transition-all duration-300 group-hover:gap-2`}
-                  style={{ color: '#FF0000' }}
+                  style={{ color: 'hsl(var(--brand))' }}
                 >
                   Watch Now <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
@@ -244,7 +244,7 @@ const LandingPage = () => {
           >
             <motion.button
               onClick={() => navigate('/videos')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-[#FF0000] text-white`}
+              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-primary text-white`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 boxShadow: '0 6px 25px rgba(255, 0, 0, 0.3)'
@@ -262,7 +262,7 @@ const LandingPage = () => {
 
             <motion.button
               onClick={() => navigate('/videos?view=channels')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-white border border-[#E5E5E5]`}
+              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-white border border-border`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
                 color: '#1A1A1A',
@@ -274,9 +274,9 @@ const LandingPage = () => {
               }}
               whileTap={{ scale: 0.97 }}
             >
-              <Grid3X3 className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} transition-transform duration-300 group-hover:scale-110`} style={{ color: '#FF0000' }} />
+              <Grid3X3 className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} transition-transform duration-300 group-hover:scale-110`} style={{ color: 'hsl(var(--brand))' }} />
               <span>View All Channels</span>
-              <ArrowRight className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} transition-transform duration-300 group-hover:translate-x-1`} style={{ color: '#FF0000' }} />
+              <ArrowRight className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} transition-transform duration-300 group-hover:translate-x-1`} style={{ color: 'hsl(var(--brand))' }} />
             </motion.button>
           </motion.div>
         </motion.div>

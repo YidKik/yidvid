@@ -65,7 +65,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
             disabled={!canScrollPrev}
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               canScrollPrev 
-                ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                ? 'bg-muted hover:bg-surface-hover/80 text-foreground' 
                 : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
             }`}
             aria-label="Previous"
@@ -79,7 +79,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
             disabled={!canScrollNext}
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               canScrollNext 
-                ? 'bg-muted hover:bg-muted/80 text-foreground' 
+                ? 'bg-muted hover:bg-surface-hover/80 text-foreground' 
                 : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
             }`}
             aria-label="Next"
@@ -100,7 +100,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
               className={`flex-none group ${isMobile ? 'w-[85%]' : isTablet ? 'w-[calc(50%-10px)]' : 'w-[calc(33.333%-14px)]'}`}
             >
               {/* Featured Card - Solid yellow border always */}
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-yellow-400">
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-border">
                 <img
                   src={video.thumbnail}
                   alt={cleanVideoTitle(video.title)}
@@ -113,7 +113,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 
                 {/* Play Button on Hover - YidVid Logo */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className={`${isMobile ? 'w-14 h-14' : 'w-[68px] h-[68px]'} rounded-full bg-yellow-400 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform`}>
+                  <div className={`${isMobile ? 'w-14 h-14' : 'w-[68px] h-[68px]'} rounded-full bg-primary flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform`}>
                     <img 
                       src={yidvidLogoIcon} 
                       alt="Play" 
@@ -127,7 +127,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
                 
                 {/* Content at Bottom */}
                 <div className={`absolute bottom-0 left-0 right-0 ${isMobile ? 'p-2' : 'p-2 md:p-2.5 xl:p-4'}`}>
-                  <h3 className={`text-white font-semibold line-clamp-2 group-hover:text-yellow-400 transition-colors drop-shadow-md ${isMobile ? 'text-[12px]' : 'text-[10px] md:text-[11px] lg:text-xs xl:text-base'}`}>
+                  <h3 className={`text-white font-semibold line-clamp-2 group-hover:text-brand transition-colors drop-shadow-md ${isMobile ? 'text-[12px]' : 'text-[10px] md:text-[11px] lg:text-xs xl:text-base'}`}>
                     {cleanVideoTitle(video.title)}
                   </h3>
                   <p className={`text-white/80 mt-0.5 truncate ${isMobile ? 'text-[10.5px]' : 'text-[8px] md:text-[9px] lg:text-[10px] xl:text-sm'}`}>

@@ -1,5 +1,5 @@
 
 /* Video title hover effect */
 .text-youtube-title:hover {
-  color: #FF0000 !important;
+  color: hsl(var(--primary)) !important;
 }

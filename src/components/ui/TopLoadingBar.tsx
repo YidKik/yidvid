@@ -86,8 +86,7 @@ export const TopLoadingBar = () => {
           <motion.div
             className="h-full"
             style={{
-              background: 'linear-gradient(90deg, hsl(50, 100%, 50%) 0%, hsl(50, 100%, 60%) 50%, hsl(50, 100%, 50%) 100%)',
-              boxShadow: '0 0 10px hsl(50, 100%, 50%), 0 0 5px hsl(50, 100%, 50%)',
+              background: 'hsl(var(--brand))',
             }}
             initial={{ width: '0%' }}
             animate={{ width: `${displayProgress}%` }}

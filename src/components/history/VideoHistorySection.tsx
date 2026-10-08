@@ -109,7 +109,7 @@ export const VideoHistorySection = () => {
   if (error) {
     return (
       <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-center">
-        <p className="text-red-600 font-medium">Error loading watch history</p>
+        <p className="text-brand font-medium">Error loading watch history</p>
         <Button 
           variant="outline" 
           size="sm"
@@ -147,7 +147,7 @@ export const VideoHistorySection = () => {
           size="sm"
           onClick={handleClearHistory}
           disabled={clearHistoryMutation.isPending}
-          className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 text-xs"
+          className="text-brand hover:text-brand hover:bg-red-50 h-8 text-xs"
         >
           <Trash2 className="h-3 w-3 mr-1" />
           {clearHistoryMutation.isPending ? "Clearing..." : "Clear All"}
@@ -182,7 +182,7 @@ export const VideoHistorySection = () => {
 
             {/* Info */}
             <div className="flex-1 min-w-0 py-0.5">
-              <p className="text-sm font-medium text-gray-900 line-clamp-1 group-hover:text-red-600 transition-colors">
+              <p className="text-sm font-medium text-gray-900 line-clamp-1 group-hover:text-brand transition-colors">
                 {entry.youtube_videos?.title || "Video unavailable"}
               </p>
               <p className="text-xs text-gray-500 mt-0.5">

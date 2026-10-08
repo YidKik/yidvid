@@ -95,7 +95,7 @@ export const GlobalHeader = () => {
           {isAuthenticated ? (
             <Link
               to="/settings"
-              className="flex items-center justify-center w-10 h-10 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 shadow-lg bg-[#FF0000]"
+              className="flex items-center justify-center w-10 h-10 rounded-full text-white font-semibold text-sm transition-transform hover:scale-105 shadow-lg bg-primary"
               style={{ fontFamily: "'Quicksand', sans-serif" }}
               title="Profile"
             >
@@ -105,7 +105,7 @@ export const GlobalHeader = () => {
             <Button
               onClick={() => setIsAuthOpen(true)}
               size="icon"
-              className="rounded-full w-10 h-10 shadow-lg hover:opacity-90 transition-all bg-[#FF0000] text-white"
+              className="rounded-full w-10 h-10 shadow-lg hover:opacity-90 transition-all bg-primary text-white"
               title="Sign In"
             >
               <LogIn className="w-5 h-5" />
@@ -120,7 +120,7 @@ export const GlobalHeader = () => {
   return (
     <>
       <header
-        className="fixed top-0 z-40 bg-white dark:bg-[#0f0f0f] border-b border-[#E5E5E5] dark:border-[#333] transition-all duration-300"
+        className="fixed top-0 z-40 bg-white dark:bg-background border-b border-border dark:border-border transition-all duration-300"
         style={{ left: isDesktop ? sidebarWidth : 0, right: 0 }}
       >
         <div className={`w-full ${isMobile ? 'px-2' : 'px-3 md:px-6'}`}>
@@ -135,14 +135,14 @@ export const GlobalHeader = () => {
             >
               <form onSubmit={handleSearchSubmit}>
                 <div 
-                  className={`flex items-center rounded-full border-2 transition-all duration-200 bg-[#F5F5F5] dark:bg-[#121212] ${
+                  className={`flex items-center rounded-full border-2 transition-all duration-200 bg-muted dark:bg-[#121212] ${
                     isSearchOpen 
-                      ? 'border-[#FFCC00] shadow-md bg-white dark:bg-[#1a1a1a]' 
-                      : 'border-[#E5E5E5] dark:border-[#333] hover:border-[#FFCC00] hover:bg-white dark:hover:bg-[#1a1a1a]'
+                      ? 'border-brand shadow-md bg-white dark:bg-card' 
+                      : 'border-border dark:border-border hover:border-brand hover:bg-white dark:hover:bg-card'
                   }`}
                 >
                   <div className={`flex items-center flex-1 ${isMobile ? 'pl-2.5 pr-1' : 'pl-4 pr-2'}`}>
-                    <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-[#999999] dark:text-[#717171] shrink-0 mr-2`} />
+                    <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-muted-foreground dark:text-muted-foreground shrink-0 mr-2`} />
                     <input
                       type="text"
                       value={searchQuery}
@@ -152,7 +152,7 @@ export const GlobalHeader = () => {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       placeholder="Search videos..."
-                      className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-1.5 text-[11px]' : 'py-2.5 text-sm'} text-[#1A1A1A] dark:text-[#e8e8e8] placeholder:text-[#999999] dark:placeholder:text-[#717171]`}
+                      className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-1.5 text-[11px]' : 'py-2.5 text-sm'} text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground`}
                       style={{ fontFamily: "'Quicksand', sans-serif" }}
                     />
                     {searchQuery && (
@@ -162,17 +162,17 @@ export const GlobalHeader = () => {
                           setSearchQuery("");
                           setIsSearchOpen(false);
                         }}
-                        className="p-1 rounded-full hover:bg-[#E5E5E5] dark:hover:bg-[#3f3f3f] transition-colors"
+                        className="p-1 rounded-full hover:bg-[#E5E5E5] dark:hover:bg-secondary transition-colors"
                       >
-                        <X className="w-4 h-4 text-[#666666] dark:text-[#aaa]" />
+                        <X className="w-4 h-4 text-muted-foreground dark:text-muted-foreground" />
                       </button>
                     )}
                   </div>
                   <button
                     type="submit"
-                    className={`${isMobile ? 'h-7 px-2.5' : 'h-10 px-4'} rounded-r-full border-l border-[#E5E5E5] dark:border-[#333] hover:bg-[#E5E5E5] dark:hover:bg-[#3f3f3f] transition-colors flex items-center justify-center bg-white dark:bg-[#222]`}
+                    className={`${isMobile ? 'h-7 px-2.5' : 'h-10 px-4'} rounded-r-full border-l border-border dark:border-border hover:bg-[#E5E5E5] dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
                   >
-                    <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-[#666666] dark:text-[#aaa]`} />
+                    <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-muted-foreground dark:text-muted-foreground`} />
                   </button>
                 </div>
               </form>
@@ -185,13 +185,13 @@ export const GlobalHeader = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#212121] rounded-2xl shadow-xl border border-[#E5E5E5] dark:border-[#333] overflow-hidden z-[100]"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-card rounded-2xl shadow-xl border border-border dark:border-border overflow-hidden z-[100]"
                     style={{ maxHeight: '70vh' }}
                   >
                     {isSearching && (
                       <div className="flex items-center justify-center py-4">
-                        <div className="w-5 h-5 border-2 border-[#FF0000] border-t-transparent rounded-full animate-spin"></div>
-                        <span className="ml-2 text-sm text-[#999999]">Searching...</span>
+                        <div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin"></div>
+                        <span className="ml-2 text-sm text-muted-foreground">Searching...</span>
                       </div>
                     )}
 
@@ -199,14 +199,14 @@ export const GlobalHeader = () => {
                       <div className="max-h-80 overflow-y-auto">
                         {searchResults.videos && searchResults.videos.length > 0 && (
                           <div>
-                            <div className="px-4 py-2 bg-[#F5F5F5] dark:bg-[#1a1a1a] text-xs font-semibold text-[#999999] dark:text-[#717171] uppercase">
+                            <div className="px-4 py-2 bg-muted dark:bg-card text-xs font-semibold text-muted-foreground dark:text-muted-foreground uppercase">
                               Videos
                             </div>
                             {searchResults.videos.slice(0, 5).map((video: any) => (
                               <button
                                 key={video.id}
                                 onClick={() => handleVideoClick(video.video_id || video.id)}
-                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-[#F0F0F0] dark:hover:bg-[#3a3a3a] transition-colors text-left"
+                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-surface-hover dark:hover:bg-[#3a3a3a] transition-colors text-left"
                               >
                                 <img
                                   src={video.thumbnail}
@@ -214,8 +214,8 @@ export const GlobalHeader = () => {
                                   className="w-16 h-10 object-cover rounded-lg"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-[#1A1A1A] dark:text-[#e8e8e8] truncate">{cleanVideoTitle(video.title)}</p>
-                                  <p className="text-xs text-[#999999] dark:text-[#717171] truncate">{video.channel_name}</p>
+                                  <p className="text-sm font-medium text-foreground dark:text-foreground truncate">{cleanVideoTitle(video.title)}</p>
+                                  <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">{video.channel_name}</p>
                                 </div>
                               </button>
                             ))}
@@ -224,14 +224,14 @@ export const GlobalHeader = () => {
 
                         {searchResults.channels && searchResults.channels.length > 0 && (
                           <div>
-                            <div className="px-4 py-2 bg-[#F5F5F5] dark:bg-[#1a1a1a] text-xs font-semibold text-[#999999] dark:text-[#717171] uppercase border-t border-[#E5E5E5] dark:border-[#333]">
+                            <div className="px-4 py-2 bg-muted dark:bg-card text-xs font-semibold text-muted-foreground dark:text-muted-foreground uppercase border-t border-border dark:border-border">
                               Channels
                             </div>
                             {searchResults.channels.slice(0, 3).map((channel: any) => (
                               <button
                                 key={channel.id}
                                 onClick={() => handleChannelClick(channel.channel_id)}
-                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-[#F0F0F0] dark:hover:bg-[#3a3a3a] transition-colors text-left"
+                                className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-surface-hover dark:hover:bg-[#3a3a3a] transition-colors text-left"
                               >
                                 <img
                                   src={channel.thumbnail_url || '/placeholder.svg'}
@@ -239,8 +239,8 @@ export const GlobalHeader = () => {
                                   className="w-10 h-10 object-cover rounded-full"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-[#1A1A1A] dark:text-[#e8e8e8] truncate">{channel.title}</p>
-                                  <p className="text-xs text-[#999999] dark:text-[#717171]">Channel</p>
+                                  <p className="text-sm font-medium text-foreground dark:text-foreground truncate">{channel.title}</p>
+                                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">Channel</p>
                                 </div>
                               </button>
                             ))}
@@ -252,12 +252,12 @@ export const GlobalHeader = () => {
                     {!isSearching && searchQuery.trim() && !hasResults && (
                       <div className="py-6 text-center">
                         <Search className="w-8 h-8 mx-auto mb-2 text-[#E5E5E5] dark:text-[#555]" />
-                        <p className="text-sm text-[#999999] dark:text-[#717171]">No results found</p>
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground">No results found</p>
                       </div>
                     )}
 
                     {searchQuery.trim() && (
-                      <div className="px-4 py-2 bg-[#F5F5F5] dark:bg-[#1a1a1a] text-xs text-[#999999] dark:text-[#717171] text-center border-t border-[#E5E5E5] dark:border-[#333]">
+                      <div className="px-4 py-2 bg-muted dark:bg-card text-xs text-muted-foreground dark:text-muted-foreground text-center border-t border-border dark:border-border">
                         Press Enter to see all results
                       </div>
                     )}
@@ -279,7 +279,7 @@ export const GlobalHeader = () => {
               {isAuthenticated ? (
                 <Link
                   to="/settings"
-                  className={`flex items-center justify-center rounded-full font-semibold transition-all duration-200 hover:bg-[#F5F5F5] dark:hover:bg-[#3f3f3f] border-2 border-[#E5E5E5] dark:border-[#3f3f3f] bg-transparent text-[#666666] dark:text-[#aaa] ${
+                  className={`flex items-center justify-center rounded-full font-semibold transition-all duration-200 hover:bg-surface-hover dark:hover:bg-secondary border-2 border-border dark:border-border bg-transparent text-muted-foreground dark:text-muted-foreground ${
                     isMobile ? 'w-7 h-7 text-xs' : 'w-9 h-9 text-sm'
                   }`}
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
@@ -291,7 +291,7 @@ export const GlobalHeader = () => {
                 <Button
                   onClick={() => setIsAuthOpen(true)}
                   size={isMobile ? "sm" : "default"}
-                  className={`rounded-full gap-1.5 font-medium hover:brightness-90 transition-all bg-[#FF0000] text-white ${
+                  className={`rounded-full gap-1.5 font-medium hover:brightness-90 transition-all bg-primary text-white ${
                     isMobile ? 'h-7 px-2.5 text-[11px]' : ''
                   }`}
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
