@@ -46,7 +46,7 @@ export const PrivacyPolicyDialog: React.FC<PrivacyPolicyDialogProps> = ({
               </div>
               <div>
                 <h2 className="text-lg font-bold text-foreground dark:!text-foreground">Privacy Policy</h2>
-                <p className="text-xs text-muted-foreground dark:!text-muted-foreground">
+                <p className="type-help text-muted-foreground dark:!text-muted-foreground">
                   Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
               </div>
@@ -58,7 +58,7 @@ export const PrivacyPolicyDialog: React.FC<PrivacyPolicyDialogProps> = ({
             className={`px-6 py-5 overflow-y-auto ${isMobile ? 'max-h-[calc(85vh-140px)]' : 'max-h-[calc(80vh-140px)]'}`}
             style={{ scrollBehavior: 'smooth' }}
           >
-            <div className="space-y-4 text-sm leading-relaxed text-foreground dark:!text-foreground">
+            <div className="space-y-4 type-legal text-foreground dark:!text-foreground">
               <h3 className="text-base font-bold text-foreground dark:!text-foreground">1. Introduction</h3>
               <p>At YidVid ("the Platform," "we," "us," or "our"), we respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Platform. Please read this policy carefully. By using YidVid, you consent to the data practices described in this Privacy Policy.</p>
 

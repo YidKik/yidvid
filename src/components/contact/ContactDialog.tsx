@@ -134,7 +134,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
                 </div>
                 <div>
                   <h2 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold`} style={{ color: 'hsl(var(--foreground))' }}>Contact Us</h2>
-                  <p className={`${isMobile ? 'text-xs' : 'text-xs'}`} style={{ color: 'hsl(var(--muted-foreground))' }}>We'd love to hear from you</p>
+                  <p className={`type-help`} style={{ color: 'hsl(var(--muted-foreground))' }}>We'd love to hear from you</p>
                 </div>
               </div>
             </div>
@@ -146,7 +146,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
                   <ContactFormFields form={form} />
                   <button
                     type="submit"
-                    className={`w-full ${isMobile ? 'h-9 text-xs' : 'h-11 text-sm'} font-bold rounded-control flex items-center justify-center gap-2 transition-opacity hover:opacity-90`}
+                    className={`w-full h-11 text-sm font-bold rounded-control flex items-center justify-center gap-2 transition-opacity hover:opacity-90`}
                     style={{ backgroundColor: 'hsl(var(--primary))', color: 'white' }}
                   >
                     <Send className="w-4 h-4" />
