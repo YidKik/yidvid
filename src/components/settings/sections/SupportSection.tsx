@@ -84,7 +84,7 @@ export const SupportSection = () => {
   }, []);
 
   return (
-    <div style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}>
+    <div>
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
         <HelpCircle size={18} className="text-brand" />
         <h2 className="text-lg font-bold text-foreground">Help & Support</h2>

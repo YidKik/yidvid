@@ -115,7 +115,7 @@ const HeroSearchSection = () => {
         >
           <h1 
             className={`${isMobile ? 'text-xl' : isTablet ? 'text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-semibold ${isMobile ? 'min-h-[40px]' : 'min-h-[70px] md:min-h-[90px]'} flex items-center justify-center ${isMobile ? '' : 'whitespace-nowrap'}`}
-            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: 'hsl(var(--foreground))', letterSpacing: '-0.01em' }}
+            style={{ color: 'hsl(var(--foreground))', letterSpacing: '-0.01em' }}
           >
             <span>{displayText}</span>
             <motion.span
@@ -151,7 +151,6 @@ const HeroSearchSection = () => {
                 onClick={handleInputClick}
                 className={`w-full ${isMobile ? 'py-2.5 pl-9 pr-16 text-sm' : isTablet ? 'py-4 pl-12 pr-28 text-base' : 'py-5 pl-14 pr-36 text-lg'} outline-none bg-transparent cursor-text`}
                 style={{ 
-                  fontFamily: "'Quicksand', sans-serif",
                   color: 'hsl(var(--foreground))'
                 }}
               />
@@ -167,7 +166,6 @@ const HeroSearchSection = () => {
                       transition={{ duration: 0.3, ease: "easeOut" }}
                       className={isMobile ? 'text-sm truncate' : ''}
                       style={{ 
-                        fontFamily: "'Quicksand', sans-serif",
                         color: 'hsl(var(--muted-foreground))',
                         fontSize: isMobile ? '0.875rem' : '1.125rem'
                       }}
@@ -181,7 +179,6 @@ const HeroSearchSection = () => {
             <motion.button
               type="submit"
               className={`absolute right-2 z-20 flex items-center gap-1.5 ${isMobile ? 'px-3 py-2 text-xs' : isTablet ? 'px-4 py-2.5 text-sm' : 'px-6 py-3'} rounded-control font-bold transition-colors cursor-pointer bg-primary text-white`}
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
               whileHover={{ filter: 'brightness(0.9)' }}
               whileTap={{ scale: 0.95 }}
             >
@@ -202,7 +199,6 @@ const HeroSearchSection = () => {
             onClick={() => navigate('/videos')}
             className={`group flex items-center gap-2 ${isMobile ? 'px-5 py-3 text-sm' : isTablet ? 'px-6 py-3' : 'px-8 py-4'} rounded-control font-semibold transition-all duration-300 bg-white border border-border`}
             style={{ 
-              fontFamily: "'Quicksand', sans-serif",
               color: 'hsl(var(--foreground))',
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
             }}

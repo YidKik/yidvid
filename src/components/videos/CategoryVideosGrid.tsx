@@ -60,7 +60,6 @@ export const CategoryVideosGrid = ({ categoryId }: CategoryVideosGridProps) => {
       <div className="flex items-center gap-3">
         <h2
           className="text-2xl font-bold text-foreground dark:text-gray-100"
-          style={{ fontFamily: "'Quicksand', sans-serif" }}
         >
           {categoryLabel} Videos
         </h2>

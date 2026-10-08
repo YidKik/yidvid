@@ -14,7 +14,6 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
   return (
     <div 
       className="flex flex-col px-8 pt-6 pb-5 bg-muted border-b border-border relative"
-      style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
     >
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand via-brand to-brand" />
@@ -37,7 +36,6 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
         {title && (
           <h3 
             className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-foreground`}
-            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             {title}
           </h3>
@@ -45,7 +43,6 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
         {subtitle && (
           <p 
             className="text-sm text-muted-foreground mt-1.5 font-medium"
-            style={{ fontFamily: "'Quicksand', sans-serif" }}
           >
             {subtitle}
           </p>

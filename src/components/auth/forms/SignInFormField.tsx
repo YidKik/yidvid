@@ -29,7 +29,6 @@ export const SignInFormField: React.FC<SignInFormFieldProps> = ({
     <div className="space-y-1.5">
       <label 
         className="text-sm font-semibold text-foreground flex items-center gap-1.5"
-        style={{ fontFamily: "'Quicksand', sans-serif" }}
       >
         <Icon size={14} className="text-brand" />
         {placeholder}
@@ -45,7 +44,6 @@ export const SignInFormField: React.FC<SignInFormFieldProps> = ({
           px-4 border-2 border-input bg-muted focus:bg-background transition-all duration-200 
           rounded-card focus:ring-2 focus:ring-ring focus:border-brand text-foreground
           placeholder:text-muted-foreground`}
-        style={{ fontFamily: "'Quicksand', sans-serif" }}
         required={required}
         disabled={disabled}
         minLength={minLength}

@@ -13,7 +13,6 @@ export default function NotFound() {
       </Helmet>
       <div
         className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-[#FAFAFA] to-white"
-        style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
       >
         {/* Logo */}
         <motion.div

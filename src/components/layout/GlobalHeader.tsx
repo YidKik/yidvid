@@ -96,7 +96,6 @@ export const GlobalHeader = () => {
             <Link
               to="/settings"
               className="flex items-center justify-center w-10 h-10 rounded-control text-white font-semibold text-sm transition-transform hover:scale-105 bg-primary"
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
               title="Profile"
                   aria-label="Profile and settings"
             >
@@ -154,7 +153,6 @@ export const GlobalHeader = () => {
                       onFocus={() => setIsSearchOpen(true)}
                       placeholder="Search videos..."
                       className={`flex-1 bg-transparent border-none outline-none ${isMobile ? 'py-1.5 text-[11px]' : 'py-2.5 text-sm'} text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground`}
-                      style={{ fontFamily: "'Quicksand', sans-serif" }}
                     />
                     {searchQuery && (
                       <button
@@ -284,7 +282,6 @@ export const GlobalHeader = () => {
                   className={`touch-hit flex items-center justify-center rounded-control font-semibold transition-all duration-200 hover:bg-surface-hover dark:hover:bg-secondary border-2 border-border dark:border-border bg-transparent text-muted-foreground dark:text-muted-foreground ${
                     isMobile ? 'w-7 h-7 text-xs' : 'w-9 h-9 text-sm'
                   }`}
-                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                   title="Profile"
                   aria-label="Profile and settings"
                 >
@@ -298,7 +295,6 @@ export const GlobalHeader = () => {
                   className={`touch-hit rounded-control gap-1.5 font-medium hover:brightness-90 transition-all bg-primary text-white ${
                     isMobile ? 'h-7 px-2.5 text-[11px]' : ''
                   }`}
-                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                 >
                   <LogIn className={isMobile ? "w-3 h-3" : "w-4 h-4"} />
                   {!isMobile && <span>Sign In</span>}

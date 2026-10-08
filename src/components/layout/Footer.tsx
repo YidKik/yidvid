@@ -30,7 +30,6 @@ export const Footer = () => {
               <span 
                 className="text-xs font-medium"
                 style={{ 
-                  fontFamily: "'Quicksand', sans-serif",
                   color: 'hsl(var(--muted-foreground))'
                 }}
               >
@@ -44,7 +43,6 @@ export const Footer = () => {
                 onClick={() => setTosDialogOpen(true)}
                 className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
-                  fontFamily: "'Quicksand', sans-serif",
                   color: 'hsl(var(--muted-foreground))'
                 }}
               >
@@ -55,7 +53,6 @@ export const Footer = () => {
                 onClick={() => setPrivacyDialogOpen(true)}
                 className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
-                  fontFamily: "'Quicksand', sans-serif",
                   color: 'hsl(var(--muted-foreground))'
                 }}
               >
@@ -66,7 +63,6 @@ export const Footer = () => {
                 onClick={() => setContactDialogOpen(true)}
                 className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
-                  fontFamily: "'Quicksand', sans-serif",
                   color: 'hsl(var(--muted-foreground))'
                 }}
               >
@@ -78,7 +74,6 @@ export const Footer = () => {
             <div 
               className="text-xs"
               style={{ 
-                fontFamily: "'Quicksand', sans-serif",
                 color: 'hsl(var(--muted-foreground))'
               }}
             >

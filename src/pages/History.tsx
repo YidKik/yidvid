@@ -65,7 +65,7 @@ export default function History() {
               </div>
               <h1
                 className="text-2xl font-bold dark:text-foreground"
-                style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(var(--foreground))' }}
+                style={{ color: 'hsl(var(--foreground))' }}
               >
                 Watch History
               </h1>
