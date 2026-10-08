@@ -31,7 +31,7 @@ export const Footer = () => {
                 className="text-xs font-medium"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#999999'
+                  color: 'hsl(var(--muted-foreground))'
                 }}
               >
                 quality Jewish content for everyone
@@ -45,29 +45,29 @@ export const Footer = () => {
                 className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#999999'
+                  color: 'hsl(var(--muted-foreground))'
                 }}
               >
                 Terms of Service
               </button>
-              <span style={{ color: '#E5E5E5' }}>|</span>
+              <span style={{ color: 'hsl(var(--muted-foreground))' }}>|</span>
               <button 
                 onClick={() => setPrivacyDialogOpen(true)}
                 className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#999999'
+                  color: 'hsl(var(--muted-foreground))'
                 }}
               >
                 Privacy Policy
               </button>
-              <span style={{ color: '#E5E5E5' }}>|</span>
+              <span style={{ color: 'hsl(var(--muted-foreground))' }}>|</span>
               <button 
                 onClick={() => setContactDialogOpen(true)}
                 className="text-xs font-medium transition-colors hover:text-brand"
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#999999'
+                  color: 'hsl(var(--muted-foreground))'
                 }}
               >
                 Contact
@@ -79,7 +79,7 @@ export const Footer = () => {
               className="text-xs"
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                color: '#BBBBBB'
+                color: 'hsl(var(--muted-foreground))'
               }}
             >
               © {new Date().getFullYear()} YidVid

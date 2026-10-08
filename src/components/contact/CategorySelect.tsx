@@ -22,7 +22,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
       name="category"
       render={({ field }) => (
         <FormItem>
-          <p className="text-sm font-semibold mb-3" style={{ color: '#333' }}>What can we help with?</p>
+          <p className="text-sm font-semibold mb-3" style={{ color: 'hsl(var(--foreground))' }}>What can we help with?</p>
           <FormControl>
             <div className="grid grid-cols-2 gap-2.5">
               {categoryOptions.map((category) => {
@@ -46,7 +46,7 @@ export const CategorySelect = ({ form }: CategorySelectProps) => {
                         backgroundColor: isSelected ? '#C9253A' : undefined,
                       }}
                     >
-                      <Icon className="w-4 h-4 dark:!text-[#e8e8e8]" style={{ color: isSelected ? '#222' : undefined }} />
+                      <Icon className="w-4 h-4 dark:!text-foreground" style={{ color: isSelected ? '#222' : undefined }} />
                     </div>
                     <span className="text-xs font-semibold leading-tight dark:!text-muted-foreground" style={{ color: isSelected ? '#222' : undefined }}>
                       {category.label}

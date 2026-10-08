@@ -22,11 +22,11 @@ export const WelcomeSection = () => {
         </div>
         
         {/* Welcome text */}
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-center">
           Welcome to <span className="text-brand">YidVid</span>
         </h1>
         
-        <p className="text-xl text-gray-700 mb-6 text-center">
+        <p className="text-xl text-foreground mb-6 text-center">
           Your gateway to curated Jewish content.
           <br />
           Discover videos that inspire, entertain, and connect.

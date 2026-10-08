@@ -47,7 +47,7 @@ export const DesktopHeaderActions = ({
   // Use filled style (solid red circle) on videos and search pages
   const isFilled = isVideosPage || isSearchPage;
   // Keep only sizing/rounding here; background comes from variant when filled
-  const buttonBaseClass = `h-9 w-9 rounded-full ${!isFilled ? 'bg-[#222222] hover:bg-[#333333] text-primary' : ''}`;
+  const buttonBaseClass = `h-9 w-9 rounded-full ${!isFilled ? 'bg-secondary hover:bg-surface-active text-primary' : ''}`;
 
   return (
     <div className="flex items-center gap-3">

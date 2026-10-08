@@ -233,7 +233,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-11 rounded-lg bg-primary hover:bg-[#E6B800] text-primary-foreground font-semibold transition-colors disabled:opacity-50"
+                className="w-full h-11 rounded-lg bg-primary hover:bg-primary-hover text-primary-foreground font-semibold transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">

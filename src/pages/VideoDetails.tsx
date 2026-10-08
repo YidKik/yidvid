@@ -75,8 +75,8 @@ const VideoDetails = () => {
           <div className="mx-auto w-full max-w-[1600px] mt-4 flex gap-6">
             <div className="flex-1 min-w-0">
               <div className={`aspect-video w-full bg-black rounded-xl ${isMobile ? '-mx-3 w-[calc(100%+1.5rem)] rounded-none' : ''}`} />
-              <div className="h-6 w-3/4 mt-4 rounded bg-[#EEE] dark:bg-card animate-pulse" />
-              <div className="h-4 w-1/3 mt-3 rounded bg-[#EEE] dark:bg-card animate-pulse" />
+              <div className="h-6 w-3/4 mt-4 rounded bg-surface-active dark:bg-card animate-pulse" />
+              <div className="h-4 w-1/3 mt-3 rounded bg-surface-active dark:bg-card animate-pulse" />
             </div>
             {!isMobile && !isTablet && <div className="w-[380px] flex-shrink-0" />}
           </div>
@@ -165,7 +165,7 @@ const VideoDetails = () => {
                 </div>
                 
                 {/* Thin divider */}
-                <div className="h-px bg-[#E5E5E5] dark:bg-secondary my-4" />
+                <div className="h-px bg-surface-active dark:bg-secondary my-4" />
                 
                 {/* Description + More Videos (no channel header - it's in action bar now) */}
                 <FriendlyChannelSection
@@ -247,7 +247,7 @@ const VideoDetails = () => {
               />
               
               {/* Divider */}
-              <div className="h-px bg-[#E5E5E5]" />
+              <div className="h-px bg-surface-active" />
 
               {/* Description only */}
               <FriendlyChannelSection
@@ -262,7 +262,7 @@ const VideoDetails = () => {
               />
               
               {/* Divider */}
-              <div className="h-px bg-[#E5E5E5]" />
+              <div className="h-px bg-surface-active" />
               
               {/* Comments - Mobile (before more videos) */}
               <div className="bg-muted rounded-xl overflow-hidden">
@@ -294,7 +294,7 @@ const VideoDetails = () => {
               </div>
 
               {/* Divider */}
-              <div className="h-px bg-[#E5E5E5]" />
+              <div className="h-px bg-surface-active" />
 
               {/* More from channel videos */}
               <FriendlyChannelSection

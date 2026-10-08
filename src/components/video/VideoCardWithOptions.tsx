@@ -106,7 +106,7 @@ export const VideoCardWithOptions = ({
           <p className={`${
             isMobile ? 'text-[10px] mt-0 min-h-[12px]' 
             : 'text-[8px] md:text-[9px] lg:text-[9px] xl:text-xs mt-0 md:mt-0.5 xl:mt-1.5 min-h-[10px] md:min-h-[12px] xl:min-h-[16px]'
-          } text-muted-foreground/80`}>
+          } text-muted-foreground`}>
             {views?.toLocaleString() || 0} views • {formattedDate}
           </p>
         </div>

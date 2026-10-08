@@ -182,7 +182,7 @@ const Search = () => {
                 >
                   <Avatar className={`${isMobile ? 'w-7 h-7' : 'w-8 h-8'} flex-shrink-0`}>
                     <AvatarImage src={channel.thumbnail_url} alt={channel.title} />
-                    <AvatarFallback className="bg-[#E5E5E5] dark:bg-secondary">
+                    <AvatarFallback className="bg-surface-active dark:bg-secondary">
                       <Youtube className="w-3.5 h-3.5 text-brand" />
                     </AvatarFallback>
                   </Avatar>
@@ -283,7 +283,7 @@ const Search = () => {
                     <div className={`flex items-center gap-1.5 ${isMobile ? 'mt-1.5' : 'mt-2.5'}`}>
                       <Avatar className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} flex-shrink-0`}>
                         <AvatarImage src={channelThumbnails[video.channel_id]} alt={video.channel_name} />
-                        <AvatarFallback className="bg-[#E5E5E5] dark:bg-secondary text-[8px] font-bold text-muted-foreground">
+                        <AvatarFallback className="bg-surface-active dark:bg-secondary text-[8px] font-bold text-muted-foreground">
                           {video.channel_name?.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
@@ -301,9 +301,9 @@ const Search = () => {
         {/* No results at all */}
         {totalResults === 0 && (
           <div className="text-center py-16">
-            <SearchIcon className="w-10 h-10 mx-auto mb-3 text-[#E5E5E5] dark:text-[#444]" />
+            <SearchIcon className="w-10 h-10 mx-auto mb-3 text-muted-foreground dark:text-muted-foreground" />
             <p className="text-sm font-medium text-muted-foreground">No results found for "{query}"</p>
-            <p className="text-xs text-[#CCCCCC] mt-1">Try different keywords</p>
+            <p className="text-xs text-muted-foreground mt-1">Try different keywords</p>
           </div>
         )}
       </main>

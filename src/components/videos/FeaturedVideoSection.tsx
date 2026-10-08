@@ -66,7 +66,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               canScrollPrev 
                 ? 'bg-muted hover:bg-surface-hover/80 text-foreground' 
-                : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                : 'bg-muted/30 text-muted-foreground cursor-not-allowed'
             }`}
             aria-label="Previous"
           >
@@ -80,7 +80,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               canScrollNext 
                 ? 'bg-muted hover:bg-surface-hover/80 text-foreground' 
-                : 'bg-muted/30 text-muted-foreground/30 cursor-not-allowed'
+                : 'bg-muted/30 text-muted-foreground cursor-not-allowed'
             }`}
             aria-label="Next"
           >

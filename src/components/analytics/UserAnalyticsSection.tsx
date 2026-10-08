@@ -133,9 +133,9 @@ export const UserAnalyticsSection = () => {
   if (!isAuthenticated) {
     return (
       <div className="p-6 bg-gray-100 rounded-xl text-center">
-        <Play className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-        <p className="text-gray-600 font-medium">Sign in to see your viewing stats</p>
-        <p className="text-sm text-gray-500 mt-1">Track your watch history and activity</p>
+        <Play className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+        <p className="text-muted-foreground font-medium">Sign in to see your viewing stats</p>
+        <p className="text-sm text-muted-foreground mt-1">Track your watch history and activity</p>
       </div>
     );
   }
@@ -203,9 +203,9 @@ export const UserAnalyticsSection = () => {
               <stat.icon className="h-4 w-4 text-white" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-          <p className="text-xs font-medium text-gray-700 mt-0.5">{stat.label}</p>
-          <p className="text-xs text-gray-500 mt-1">{stat.subtext}</p>
+          <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+          <p className="text-xs font-medium text-foreground mt-0.5">{stat.label}</p>
+          <p className="text-xs text-muted-foreground mt-1">{stat.subtext}</p>
         </Card>
       ))}
     </div>

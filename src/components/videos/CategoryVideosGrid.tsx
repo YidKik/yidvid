@@ -47,7 +47,7 @@ export const CategoryVideosGrid = ({ categoryId }: CategoryVideosGridProps) => {
   if (categoryVideos.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No videos found in this category</p>
+        <p className="text-muted-foreground">No videos found in this category</p>
       </div>
     );
   }
@@ -59,12 +59,12 @@ export const CategoryVideosGrid = ({ categoryId }: CategoryVideosGridProps) => {
       {/* Category Header */}
       <div className="flex items-center gap-3">
         <h2
-          className="text-2xl font-bold text-gray-800 dark:text-gray-100"
+          className="text-2xl font-bold text-foreground dark:text-gray-100"
           style={{ fontFamily: "'Quicksand', sans-serif" }}
         >
           {categoryLabel} Videos
         </h2>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
+        <span className="text-sm text-muted-foreground dark:text-gray-400">
           ({totalCount} videos)
         </span>
       </div>
@@ -98,7 +98,7 @@ export const CategoryVideosGrid = ({ categoryId }: CategoryVideosGridProps) => {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
-          <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+          <span className="text-sm text-muted-foreground dark:text-gray-400 font-medium">
             Page {safeCurrentPage} of {totalPages}
           </span>
           <CustomPaginationArrow

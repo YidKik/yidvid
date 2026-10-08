@@ -154,19 +154,19 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Thumbnail
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Title
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Channel Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Current Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -182,8 +182,8 @@ export function VideoCategoryManagement({ videos, onUpdate }: VideoCategoryManag
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{cleanVideoTitle(video.title)}</div>
-                    <div className="text-sm text-gray-500">{video.channel_name}</div>
+                    <div className="text-sm text-foreground">{cleanVideoTitle(video.title)}</div>
+                    <div className="text-sm text-muted-foreground">{video.channel_name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100">

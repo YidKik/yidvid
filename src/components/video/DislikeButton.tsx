@@ -61,7 +61,7 @@ export const DislikeButton = ({ videoId }: DislikeButtonProps) => {
         className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 ${
           isDisliked 
             ? "text-brand fill-brand stroke-brand" 
-            : "text-gray-600 group-hover:text-brand group-hover:stroke-brand group-hover:scale-110"
+            : "text-muted-foreground group-hover:text-brand group-hover:stroke-brand group-hover:scale-110"
         }`}
       />
     </Button>

@@ -522,7 +522,7 @@ export const CustomVideoControls = ({
                         }`}
                         style={
                           isActive
-                            ? { backgroundColor: ACCENT, color: "#1A1A1A" }
+                            ? { backgroundColor: ACCENT, color: 'hsl(var(--foreground))' }
                             : undefined
                         }
                       >

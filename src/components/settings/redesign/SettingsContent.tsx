@@ -112,7 +112,7 @@ export const SettingsContent = () => {
               >
                 <Avatar className="h-9 w-9 shrink-0">
                   <AvatarImage src={channel.thumbnail_url || ""} alt={channel.title} />
-                  <AvatarFallback className="bg-[#E5E5E5] dark:bg-secondary text-muted-foreground text-xs font-bold">
+                  <AvatarFallback className="bg-surface-active dark:bg-secondary text-icon text-xs font-bold">
                     {channel.title[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>

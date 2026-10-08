@@ -65,7 +65,7 @@ export default {
         },
         icon: "hsl(var(--icon) / <alpha-value>)",
         "input-border": "hsl(var(--input-border) / <alpha-value>)",
-        surface: { DEFAULT: "hsl(var(--surface) / <alpha-value>)", hover: "hsl(var(--surface-hover) / <alpha-value>)" },
+        surface: { DEFAULT: "hsl(var(--surface) / <alpha-value>)", hover: "hsl(var(--surface-hover) / <alpha-value>)", active: "hsl(var(--surface-active) / <alpha-value>)" },
         success: { DEFAULT: "hsl(var(--success) / <alpha-value>)", bg: "hsl(var(--success-bg) / <alpha-value>)" },
         warning: { DEFAULT: "hsl(var(--warning) / <alpha-value>)", bg: "hsl(var(--warning-bg) / <alpha-value>)" },
         error: { DEFAULT: "hsl(var(--error) / <alpha-value>)", bg: "hsl(var(--error-bg) / <alpha-value>)" },

@@ -155,7 +155,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
             onClick={handleSkip}
-            className="absolute top-6 right-6 z-10 p-3 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white/90 transition-colors text-gray-600 shadow-lg"
+            className="absolute top-6 right-6 z-10 p-3 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white/90 transition-colors text-muted-foreground shadow-lg"
           >
             <X className="w-6 h-6" />
           </motion.button>
@@ -201,7 +201,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="text-4xl md:text-6xl font-bold text-gray-800 drop-shadow-sm"
+                  className="text-4xl md:text-6xl font-bold text-foreground drop-shadow-sm"
                 >
                   {steps[currentStep].title}
                 </motion.h1>
@@ -215,7 +215,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                 >
                   {currentStep === 1 ? (
                     <span className="flex items-center justify-center gap-2">
-                      Over <NumberTicker value={400} className="text-gray-800 font-bold" /> Channels
+                      Over <NumberTicker value={400} className="text-foreground font-bold" /> Channels
                     </span>
                   ) : (
                     steps[currentStep].subtitle
@@ -227,7 +227,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.9 }}
-                  className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed drop-shadow-sm"
+                  className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed drop-shadow-sm"
                 >
                   {steps[currentStep].description}
                 </motion.p>
@@ -261,7 +261,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ onComplete, 
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   {isPreloading && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     {isPreloading ? 'Preparing your content...' : 'Ready to explore!'}
                   </p>
                 </div>

@@ -60,13 +60,13 @@ export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResult
         />
         <div className="flex-1 text-left overflow-hidden">
           <h4 className={`
-            font-medium text-gray-800 line-clamp-2
+            font-medium text-foreground line-clamp-2
             ${isMobile ? 'text-sm' : 'text-base'}
           `}>
             {cleanVideoTitle(video.title)}
           </h4>
           <p className={`
-            text-gray-500 truncate
+            text-muted-foreground truncate
             ${isMobile ? 'text-xs' : 'text-sm'}
           `}>
             {video.channel_name}
@@ -116,13 +116,13 @@ export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResult
       </div>
       <div className="flex-1 text-left overflow-hidden">
         <h4 className={`
-          font-medium text-gray-800 truncate
+          font-medium text-foreground truncate
           ${isMobile ? 'text-sm' : 'text-base'}
         `}>
           {channel.title}
         </h4>
         <p className={`
-          text-gray-500
+          text-muted-foreground
           ${isMobile ? 'text-xs' : 'text-sm'}
         `}>
           Channel

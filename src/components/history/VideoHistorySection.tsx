@@ -89,9 +89,9 @@ export const VideoHistorySection = () => {
   if (!isAuthenticated) {
     return (
       <div className="p-6 bg-gray-100 rounded-xl text-center">
-        <Play className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-        <p className="text-gray-600 font-medium">Sign in to see your watch history</p>
-        <p className="text-sm text-gray-500 mt-1">Keep track of videos you've watched</p>
+        <Play className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+        <p className="text-muted-foreground font-medium">Sign in to see your watch history</p>
+        <p className="text-sm text-muted-foreground mt-1">Keep track of videos you've watched</p>
       </div>
     );
   }
@@ -125,9 +125,9 @@ export const VideoHistorySection = () => {
   if (!history || history.length === 0) {
     return (
       <div className="p-6 bg-gray-100 rounded-xl text-center">
-        <Clock className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-        <p className="text-gray-600 font-medium">No watch history yet</p>
-        <p className="text-sm text-gray-500 mt-1">Videos you watch will appear here</p>
+        <Clock className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+        <p className="text-muted-foreground font-medium">No watch history yet</p>
+        <p className="text-sm text-muted-foreground mt-1">Videos you watch will appear here</p>
         <Link to="/videos">
           <Button variant="outline" size="sm" className="mt-3">
             Browse Videos
@@ -141,7 +141,7 @@ export const VideoHistorySection = () => {
     <div className="space-y-3">
       {/* Header with clear button */}
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs text-gray-500">{history.length} videos in history</p>
+        <p className="text-xs text-muted-foreground">{history.length} videos in history</p>
         <Button 
           variant="ghost" 
           size="sm"
@@ -172,7 +172,7 @@ export const VideoHistorySection = () => {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <Play className="h-6 w-6 text-gray-400" />
+                  <Play className="h-6 w-6 text-muted-foreground" />
                 </div>
               )}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
@@ -182,13 +182,13 @@ export const VideoHistorySection = () => {
 
             {/* Info */}
             <div className="flex-1 min-w-0 py-0.5">
-              <p className="text-sm font-medium text-gray-900 line-clamp-1 group-hover:text-brand transition-colors">
+              <p className="text-sm font-medium text-foreground line-clamp-1 group-hover:text-brand transition-colors">
                 {entry.youtube_videos?.title || "Video unavailable"}
               </p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {entry.youtube_videos?.channel_name || "Unknown channel"}
               </p>
-              <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
+              <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
                 {formatDistanceToNow(new Date(entry.watched_at), { addSuffix: true })}
               </div>
@@ -196,7 +196,7 @@ export const VideoHistorySection = () => {
 
             {/* Arrow */}
             <div className="flex-shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <ExternalLink className="h-4 w-4 text-gray-400" />
+              <ExternalLink className="h-4 w-4 text-muted-foreground" />
             </div>
           </Link>
         ))}

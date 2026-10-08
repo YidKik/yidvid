@@ -100,7 +100,7 @@ export const SettingsActivity = () => {
         </div>
       ) : !isAuthenticated ? (
         <div className="py-10 text-center rounded-xl border border-border dark:border-border bg-muted dark:bg-background">
-          <Play className="h-8 w-8 text-[#ccc] mx-auto mb-2" />
+          <Play className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
           <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Sign in to see your stats</p>
         </div>
       ) : (

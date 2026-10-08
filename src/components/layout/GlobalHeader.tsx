@@ -162,7 +162,7 @@ export const GlobalHeader = () => {
                           setSearchQuery("");
                           setIsSearchOpen(false);
                         }}
-                        className="p-1 rounded-full hover:bg-[#E5E5E5] dark:hover:bg-secondary transition-colors"
+                        className="p-1 rounded-full hover:bg-surface-active dark:hover:bg-secondary transition-colors"
                       >
                         <X className="w-4 h-4 text-muted-foreground dark:text-muted-foreground" />
                       </button>
@@ -170,7 +170,7 @@ export const GlobalHeader = () => {
                   </div>
                   <button
                     type="submit"
-                    className={`${isMobile ? 'h-7 px-2.5' : 'h-10 px-4'} rounded-r-full border-l border-border dark:border-border hover:bg-[#E5E5E5] dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
+                    className={`${isMobile ? 'h-7 px-2.5' : 'h-10 px-4'} rounded-r-full border-l border-border dark:border-border hover:bg-surface-active dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
                   >
                     <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-muted-foreground dark:text-muted-foreground`} />
                   </button>
@@ -251,7 +251,7 @@ export const GlobalHeader = () => {
 
                     {!isSearching && searchQuery.trim() && !hasResults && (
                       <div className="py-6 text-center">
-                        <Search className="w-8 h-8 mx-auto mb-2 text-[#E5E5E5] dark:text-[#555]" />
+                        <Search className="w-8 h-8 mx-auto mb-2 text-muted-foreground dark:text-muted-foreground" />
                         <p className="text-sm text-muted-foreground dark:text-muted-foreground">No results found</p>
                       </div>
                     )}

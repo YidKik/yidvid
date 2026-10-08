@@ -13,7 +13,7 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
   
   return (
     <div 
-      className="flex flex-col px-8 pt-6 pb-5 bg-muted border-b border-[#EEEEEE] relative"
+      className="flex flex-col px-8 pt-6 pb-5 bg-muted border-b border-border relative"
       style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
     >
       {/* Top accent line */}
@@ -25,7 +25,7 @@ export const AuthHeader = ({ onBack, title, subtitle }: AuthHeaderProps) => {
             variant="ghost"
             size="icon"
             onClick={onBack}
-            className="h-9 w-9 rounded-xl transition-all duration-200 hover:bg-[#EEEEEE] border border-border"
+            className="h-9 w-9 rounded-xl transition-all duration-200 hover:bg-surface-active border border-border"
           >
             <ArrowLeft className="h-4 w-4 text-foreground" />
           </Button>

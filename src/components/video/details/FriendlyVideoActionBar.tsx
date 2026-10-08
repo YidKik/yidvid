@@ -176,7 +176,7 @@ export const FriendlyVideoActionBar = ({
   const isSubLoading = authLoading || isProfileLoading || subscriptionLoading;
 
   const shareOptions = [
-    { name: "Copy Link", icon: Copy, action: handleCopyLink, color: "text-gray-600" },
+    { name: "Copy Link", icon: Copy, action: handleCopyLink, color: "text-muted-foreground" },
     { name: "WhatsApp", icon: MessageCircle, action: () => window.open(`https://wa.me/?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`, '_blank'), color: "text-green-600" },
     { name: "Facebook", icon: Facebook, action: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank'), color: "text-blue-600" },
     { name: "Twitter", icon: Twitter, action: () => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank'), color: "text-sky-500" },
@@ -184,8 +184,8 @@ export const FriendlyVideoActionBar = ({
   ];
 
   const pillBtn = compact
-    ? "h-7 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-[#E5E5E5] dark:hover:bg-secondary text-foreground dark:text-foreground"
-    : "h-9 px-4 rounded-full text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-[#E5E5E5] dark:hover:bg-secondary text-foreground dark:text-foreground";
+    ? "h-7 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
+    : "h-9 px-4 rounded-full text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground";
 
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
 
@@ -310,7 +310,7 @@ export const FriendlyVideoActionBar = ({
           {/* 3-dot menu: Report, Favorite, Watch Later, Playlist */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className={`${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-full bg-muted dark:bg-secondary hover:bg-[#E5E5E5] dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
+              <Button variant="ghost" size="icon" className={`${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-full bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
                 <MoreVertical className={iconSize} />
               </Button>
             </DropdownMenuTrigger>
@@ -355,12 +355,12 @@ export const FriendlyVideoActionBar = ({
               playlists.map((playlist) => (
                 <button key={playlist.id} onClick={() => handleAddToPlaylist(playlist.id)}
                   className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-gray-100 transition-colors text-left">
-                  <ListPlus className="w-4 h-4 text-gray-500" />
+                  <ListPlus className="w-4 h-4 text-muted-foreground" />
                   <span className="truncate">{playlist.title}</span>
                 </button>
               ))
             ) : (
-              <p className="text-sm text-gray-500 text-center py-2">No playlists yet</p>
+              <p className="text-sm text-muted-foreground text-center py-2">No playlists yet</p>
             )}
           </div>
           <div className="border-t pt-4">

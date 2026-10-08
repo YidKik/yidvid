@@ -91,8 +91,8 @@ const Playlists = () => {
             <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
               <ListMusic className="w-12 h-12 text-brand" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2 font-friendly">Sign in to view your playlists</h1>
-            <p className="text-gray-500 mb-6 max-w-md">
+            <h1 className="text-2xl font-bold text-foreground mb-2 font-friendly">Sign in to view your playlists</h1>
+            <p className="text-muted-foreground mb-6 max-w-md">
               Create custom playlists to organize your favorite videos. Sign in to get started.
             </p>
             <Button
@@ -117,7 +117,7 @@ const Playlists = () => {
           {/* Back button */}
           <button
             onClick={() => setSearchParams({})}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 transition-colors font-medium"
+            className="flex items-center gap-2 text-muted-foreground hover:text-gray-900 mb-6 transition-colors font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Playlists</span>
@@ -130,11 +130,11 @@ const Playlists = () => {
                 <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
-                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900 font-friendly`}>{selectedPlaylist.title}</h1>
+                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-foreground font-friendly`}>{selectedPlaylist.title}</h1>
                 {selectedPlaylist.description && (
-                  <p className="text-gray-500 text-sm mt-1">{selectedPlaylist.description}</p>
+                  <p className="text-muted-foreground text-sm mt-1">{selectedPlaylist.description}</p>
                 )}
-                <p className="text-gray-400 text-sm mt-1">
+                <p className="text-muted-foreground text-sm mt-1">
                   {playlistItems?.length || 0} video{(playlistItems?.length || 0) !== 1 ? "s" : ""}
                 </p>
               </div>
@@ -142,7 +142,7 @@ const Playlists = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100">
-                  <MoreVertical className="w-5 h-5 text-gray-500" />
+                  <MoreVertical className="w-5 h-5 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-xl shadow-lg">
@@ -189,8 +189,8 @@ const Playlists = () => {
               <div className="w-20 h-20 rounded-full bg-brand-soft flex items-center justify-center mb-4">
                 <ListMusic className="w-10 h-10 text-red-400" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2 font-friendly">No videos in this playlist</h2>
-              <p className="text-gray-500">Add videos from any video page using the menu.</p>
+              <h2 className="text-lg font-semibold text-foreground mb-2 font-friendly">No videos in this playlist</h2>
+              <p className="text-muted-foreground">Add videos from any video page using the menu.</p>
               <Button
                 onClick={() => navigate('/videos')}
                 className="mt-6 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-6 shadow-md hover:shadow-lg transition-all"
@@ -217,21 +217,21 @@ const Playlists = () => {
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md">
-                        <Play className="w-5 h-5 text-gray-900 fill-gray-900 ml-0.5" />
+                        <Play className="w-5 h-5 text-foreground fill-gray-900 ml-0.5" />
                       </div>
                     </div>
                   </div>
                   <div className="flex-1 min-w-0 py-1">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-brand transition-colors">
+                    <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-brand transition-colors">
                       {cleanVideoTitle(item.video?.title)}
                     </h3>
-                    <p className="text-sm text-gray-500 mt-1.5">{item.video?.channel_name}</p>
+                    <p className="text-sm text-muted-foreground mt-1.5">{item.video?.channel_name}</p>
                   </div>
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-brand hover:bg-red-50"
+                      className="h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-brand hover:bg-red-50"
                       onClick={() => removeFromPlaylist.mutate({ playlistId: selectedPlaylistId, videoId: item.video?.id })}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -294,8 +294,8 @@ const Playlists = () => {
                 <ListMusic className={`${isMobile ? 'w-6 h-6' : 'w-8 h-8'} text-white`} />
               </div>
               <div>
-                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900 font-friendly`}>Playlists</h1>
-              <p className="text-gray-500 mt-1">{playlists?.length || 0} playlist{(playlists?.length || 0) !== 1 ? "s" : ""}</p>
+                <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-foreground font-friendly`}>Playlists</h1>
+              <p className="text-muted-foreground mt-1">{playlists?.length || 0} playlist{(playlists?.length || 0) !== 1 ? "s" : ""}</p>
             </div>
           </div>
           <Button
@@ -322,8 +322,8 @@ const Playlists = () => {
             <div className="w-24 h-24 rounded-full bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
               <ListMusic className="w-12 h-12 text-red-400" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2 font-friendly">No playlists yet</h2>
-            <p className="text-gray-500 max-w-md mb-6">
+            <h2 className="text-xl font-semibold text-foreground mb-2 font-friendly">No playlists yet</h2>
+            <p className="text-muted-foreground max-w-md mb-6">
               Create your first playlist to organize your favorite videos.
             </p>
             <Button
@@ -351,23 +351,23 @@ const Playlists = () => {
                   {/* Play overlay */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                      <Play className="w-5 h-5 text-gray-900 fill-gray-900 ml-0.5" />
+                      <Play className="w-5 h-5 text-foreground fill-gray-900 ml-0.5" />
                     </div>
                   </div>
                 </div>
                 <div className="flex items-start justify-between">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-gray-900 truncate group-hover:text-brand transition-colors">
+                    <h3 className="font-semibold text-foreground truncate group-hover:text-brand transition-colors">
                       {playlist.title}
                     </h3>
                     {playlist.description && (
-                      <p className="text-xs text-gray-500 truncate mt-1">{playlist.description}</p>
+                      <p className="text-xs text-muted-foreground truncate mt-1">{playlist.description}</p>
                     )}
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                       <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full shrink-0 hover:bg-gray-100">
-                        <MoreVertical className="w-4 h-4 text-gray-400" />
+                        <MoreVertical className="w-4 h-4 text-muted-foreground" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-white border border-gray-200 rounded-xl shadow-lg">

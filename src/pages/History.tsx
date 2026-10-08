@@ -25,7 +25,7 @@ export default function History() {
               <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-muted dark:bg-secondary flex items-center justify-center mb-6 shadow-sm">
                 <HistoryIcon className="w-10 h-10 lg:w-12 lg:h-12 text-brand" />
               </div>
-              <h1 className="text-xl lg:text-2xl font-bold text-foreground dark:!text-[#e8e8e8] mb-2">Sign in to view your history</h1>
+              <h1 className="text-xl lg:text-2xl font-bold text-foreground dark:!text-foreground mb-2">Sign in to view your history</h1>
               <p className="text-sm lg:text-base text-muted-foreground dark:!text-muted-foreground mb-6 max-w-md">
                 Keep track of videos you've watched. Sign in to access your watch history.
               </p>
@@ -61,11 +61,11 @@ export default function History() {
                 className="w-10 h-10 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: 'hsl(var(--primary))' }}
               >
-                <HistoryIcon className="w-5 h-5" style={{ color: '#1A1A1A' }} />
+                <HistoryIcon className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
               </div>
               <h1
                 className="text-2xl font-bold dark:text-foreground"
-                style={{ fontFamily: "'Quicksand', sans-serif", color: '#1A1A1A' }}
+                style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(var(--foreground))' }}
               >
                 Watch History
               </h1>

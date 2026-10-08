@@ -147,7 +147,7 @@ const CategoryVideos = () => {
             <span className="text-4xl mb-4 block">{categoryInfo.icon}</span>
             <h1 className="text-3xl font-bold">{categoryInfo.label} Videos</h1>
             {videos && (
-              <p className="text-gray-600 mt-2">{videos.length} videos found</p>
+              <p className="text-muted-foreground mt-2">{videos.length} videos found</p>
             )}
           </motion.div>
         </div>
@@ -175,7 +175,7 @@ const CategoryVideos = () => {
           </motion.div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600">No videos found in this category</p>
+            <p className="text-muted-foreground">No videos found in this category</p>
           </div>
         )}
       </main>

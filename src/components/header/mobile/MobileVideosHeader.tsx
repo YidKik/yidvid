@@ -104,7 +104,7 @@ export const MobileVideosHeader = ({
       <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
         <SheetContent side="right" className="w-[280px] bg-gray-50">
           <SheetHeader>
-            <SheetTitle className="text-left text-gray-900">Menu</SheetTitle>
+            <SheetTitle className="text-left text-foreground">Menu</SheetTitle>
           </SheetHeader>
           
           <div className="mt-6 space-y-4">
@@ -117,7 +117,7 @@ export const MobileVideosHeader = ({
                     setIsMenuOpen(false);
                   }}
                   variant="ghost"
-                  className="w-full justify-start gap-2 text-gray-900 hover:bg-gray-200"
+                  className="w-full justify-start gap-2 text-foreground hover:bg-gray-200"
                 >
                   <Bell className="h-4 w-4" />
                   Notifications
@@ -130,7 +130,7 @@ export const MobileVideosHeader = ({
                     setIsMenuOpen(false);
                   }}
                   variant="ghost"
-                  className="w-full justify-start gap-2 text-gray-900 hover:bg-gray-200"
+                  className="w-full justify-start gap-2 text-foreground hover:bg-gray-200"
                 >
                   <Settings className="h-4 w-4" />
                   Settings
@@ -153,7 +153,7 @@ export const MobileVideosHeader = ({
             {/* Category Selection - Only show if category props are available */}
             {selectedCategory && onCategoryChange && (
               <div className="pt-4 border-t border-gray-300">
-                <p className="text-sm font-medium mb-3 text-gray-900">Categories</p>
+                <p className="text-sm font-medium mb-3 text-foreground">Categories</p>
                 <div className="space-y-2">
                   {categories.map((category) => (
                     <Button
@@ -165,7 +165,7 @@ export const MobileVideosHeader = ({
                       }}
                       className={selectedCategory === category.id 
                         ? "w-full justify-start" 
-                        : "w-full justify-start text-gray-900 hover:bg-gray-200"}
+                        : "w-full justify-start text-foreground hover:bg-gray-200"}
                     >
                       {category.label}
                     </Button>

@@ -27,7 +27,7 @@ export const ContentPreferencesSection = ({
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
         <Video size={18} className="text-brand" />
-        <h2 className="text-lg font-bold text-gray-900">Content Preferences</h2>
+        <h2 className="text-lg font-bold text-foreground">Content Preferences</h2>
       </div>
       
       <div className="space-y-6">
@@ -35,7 +35,7 @@ export const ContentPreferencesSection = ({
         <div>
           <div className="flex items-center gap-2 mb-3">
             <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-            <h3 className="text-sm font-semibold text-gray-800">Channel Subscriptions</h3>
+            <h3 className="text-sm font-semibold text-foreground">Channel Subscriptions</h3>
           </div>
           <ChannelSubscriptions />
         </div>
@@ -43,10 +43,10 @@ export const ContentPreferencesSection = ({
         {/* Channel Visibility */}
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 mb-2">
-            <Eye size={14} className="text-gray-500" />
-            <h3 className="text-sm font-semibold text-gray-800">Channel Visibility</h3>
+            <Eye size={14} className="text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">Channel Visibility</h3>
           </div>
-          <p className="text-xs text-gray-500 mb-3">
+          <p className="text-xs text-muted-foreground mb-3">
             Choose which channels appear in your feed. Hidden channels won't show in recommendations.
           </p>
           <ChannelControl />
@@ -55,8 +55,8 @@ export const ContentPreferencesSection = ({
         {/* Playback Settings */}
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 mb-3">
-            <Play size={14} className="text-gray-500" />
-            <h3 className="text-sm font-semibold text-gray-800">Playback</h3>
+            <Play size={14} className="text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">Playback</h3>
           </div>
           <PlaybackSettings 
             autoplay={autoplay}

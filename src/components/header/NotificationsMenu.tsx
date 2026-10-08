@@ -83,7 +83,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
         className={`
           ${isMobile ? 'w-full h-[100vh] rounded-t-xl' : 'w-[240px] sm:w-[400px] h-[100vh]'} 
           ${isMobile ? 'bg-[#222222]/90 backdrop-blur-md' : 'bg-[#222222] rounded-l-xl'} 
-          border-[#333333] p-0
+          border-border p-0
           ${isMobile ? 'animate-slide-up' : 'animate-slide-in-right'}
         `}
         ref={sheetContentRef}

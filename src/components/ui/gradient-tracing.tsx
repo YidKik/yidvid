@@ -90,7 +90,7 @@ export const GradientTracing: React.FC<GradientTracingProps> = ({
         </svg>
       </div>
       {text && (
-        <p className={`mt-3 ${fontSize} text-gray-600`}>{text}</p>
+        <p className={`mt-3 ${fontSize} text-muted-foreground`}>{text}</p>
       )}
     </div>
   );

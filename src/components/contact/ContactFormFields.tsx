@@ -10,7 +10,7 @@ interface ContactFormFieldsProps {
 }
 
 export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
-  const inputStyle = "h-10 rounded-full border border-border bg-transparent hover:border-brand focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 placeholder:text-gray-400";
+  const inputStyle = "h-10 rounded-full border border-border bg-transparent hover:border-brand focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 placeholder:text-muted-foreground";
 
   return (
     <div className="space-y-4">
@@ -19,13 +19,13 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-semibold" style={{ color: '#333' }}>Name</FormLabel>
+            <FormLabel className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Name</FormLabel>
             <FormControl>
               <Input 
                 placeholder="Your name" 
                 {...field} 
                 className={inputStyle}
-                style={{ color: '#222' }}
+                style={{ color: 'hsl(var(--foreground))' }}
               />
             </FormControl>
             <FormMessage />
@@ -37,14 +37,14 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-semibold" style={{ color: '#333' }}>Email</FormLabel>
+            <FormLabel className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Email</FormLabel>
             <FormControl>
               <Input 
                 placeholder="you@example.com" 
                 type="email" 
                 {...field} 
                 className={inputStyle}
-                style={{ color: '#222' }}
+                style={{ color: 'hsl(var(--foreground))' }}
               />
             </FormControl>
             <FormMessage />
@@ -56,13 +56,13 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="user_id_display"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-semibold" style={{ color: '#333' }}>User ID <span className="text-xs font-normal text-gray-400">(optional)</span></FormLabel>
+            <FormLabel className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>User ID <span className="text-xs font-normal text-muted-foreground">(optional)</span></FormLabel>
             <FormControl>
               <Input 
                 placeholder="Auto-filled when signed in" 
                 {...field} 
                 className={inputStyle}
-                style={{ color: '#222' }}
+                style={{ color: 'hsl(var(--foreground))' }}
                 readOnly
               />
             </FormControl>
@@ -75,12 +75,12 @@ export const ContactFormFields = ({ form }: ContactFormFieldsProps) => {
         name="message"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm font-semibold" style={{ color: '#333' }}>Message</FormLabel>
+            <FormLabel className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Message</FormLabel>
             <FormControl>
               <Textarea 
                 placeholder="Tell us what's on your mind..." 
-                className="min-h-[100px] resize-none rounded-xl border border-border bg-transparent hover:border-brand focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 placeholder:text-gray-400"
-                style={{ color: '#222' }}
+                className="min-h-[100px] resize-none rounded-xl border border-border bg-transparent hover:border-brand focus:border-[#222] focus:ring-0 focus:bg-transparent transition-colors px-4 py-3 placeholder:text-muted-foreground"
+                style={{ color: 'hsl(var(--foreground))' }}
                 {...field} 
               />
             </FormControl>

@@ -24,10 +24,10 @@ export const HomeHero = () => {
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
           <span className="text-brand">Welcome to YidVid</span>
         </h1>
-        <div className="text-xl md:text-2xl text-gray-700 max-w-xl mb-2">
+        <div className="text-xl md:text-2xl text-foreground max-w-xl mb-2">
           Your gateway to curated Jewish content.
         </div>
-        <p className="text-lg text-gray-600 opacity-80 mb-6 max-w-lg">
+        <p className="text-lg text-muted-foreground opacity-80 mb-6 max-w-lg">
           Discover videos that inspire, entertain, and connect.
         </p>
         

@@ -139,7 +139,7 @@ export const AuthOptions = ({
           <Button 
             onClick={() => onSelectOption('signup')}
             variant="outline"
-            className="w-full h-13 text-base border-2 border-brand text-primary-foreground bg-white hover:bg-primary 
+            className="w-full h-13 text-base border-2 border-brand text-foreground hover:text-primary-foreground bg-card hover:bg-primary 
               rounded-2xl font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}

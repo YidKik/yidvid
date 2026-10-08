@@ -51,7 +51,7 @@ export const VideoCarousels = ({ videos, isLoading, onVideoClick }: VideoCarouse
           transition={{ duration: 0.5, delay: index * 0.2 }}
           className="overflow-hidden"
         >
-          <h3 className="text-lg font-semibold text-gray-800 mb-2 px-6 md:px-16">
+          <h3 className="text-lg font-semibold text-foreground mb-2 px-6 md:px-16">
             {rowLabels[index]}
           </h3>
           <VideoCarousel 

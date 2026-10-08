@@ -115,8 +115,8 @@ const ResetPassword = () => {
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
           <div className="mb-6 text-center">
             <img src="/yidvid-logo-full.png" alt="YidVid Logo" className="h-20 w-auto mx-auto mb-4" />
-            <h1 className="text-2xl font-semibold text-gray-800">This reset link has expired</h1>
-            <p className="text-sm text-gray-600 mt-2">
+            <h1 className="text-2xl font-semibold text-foreground">This reset link has expired</h1>
+            <p className="text-sm text-muted-foreground mt-2">
               Reset links can only be used once and expire after a while. Enter your email to get a new one.
             </p>
           </div>
@@ -126,14 +126,14 @@ const ResetPassword = () => {
             </div>
           ) : (
             <form onSubmit={handleRequestNewLink} className="space-y-4" noValidate>
-              <label htmlFor="recovery-email" className="block text-sm font-medium text-gray-700">Email</label>
+              <label htmlFor="recovery-email" className="block text-sm font-medium text-foreground">Email</label>
               <Input
                 id="recovery-email"
                 type="email"
                 autoComplete="email"
                 value={recoveryEmail}
                 onChange={(e) => setRecoveryEmail(e.target.value)}
-                className="h-12 text-base px-4 text-gray-800"
+                className="h-12 text-base px-4 text-foreground"
                 disabled={recoveryLoading}
               />
               {recoveryError && <p role="alert" className="text-sm text-brand">{recoveryError}</p>}
@@ -154,7 +154,7 @@ const ResetPassword = () => {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md text-center">
-          <p className="text-gray-500">Verifying your reset link...</p>
+          <p className="text-muted-foreground">Verifying your reset link...</p>
         </div>
       </div>
     );
@@ -169,8 +169,8 @@ const ResetPassword = () => {
             alt="YidVid Logo"
             className="h-20 w-auto mx-auto mb-4 drop-shadow-lg" 
           />
-          <h2 className="text-2xl font-semibold text-gray-800">Reset Your Password</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-2xl font-semibold text-foreground">Reset Your Password</h2>
+          <p className="text-sm text-muted-foreground mt-1">
             Please enter your new password below
           </p>
         </div>
@@ -178,7 +178,7 @@ const ResetPassword = () => {
         {!success ? (
           <form onSubmit={handleResetPassword} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-foreground">
                 New Password
               </label>
               <Input
@@ -187,7 +187,7 @@ const ResetPassword = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter new password"
-                className="h-12 text-base px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800"
+                className="h-12 text-base px-4 border-border bg-muted focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-foreground"
                 required
                 minLength={6}
                 disabled={isLoading}
@@ -195,7 +195,7 @@ const ResetPassword = () => {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground">
                 Confirm New Password
               </label>
               <Input
@@ -204,7 +204,7 @@ const ResetPassword = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm new password"
-                className="h-12 text-base px-4 border-[#E9ECEF] bg-[#F8F9FA] focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-gray-800"
+                className="h-12 text-base px-4 border-border bg-muted focus:bg-white transition-all duration-300 rounded-lg focus:ring-2 focus:ring-purple-400/30 focus:border-purple-400 shadow-sm text-foreground"
                 required
                 minLength={6}
                 disabled={isLoading}

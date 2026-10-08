@@ -35,7 +35,7 @@ export const SignUpFormField: React.FC<SignUpFormFieldProps> = ({
   return (
     <div className="space-y-2">
       <label 
-        className="text-sm font-semibold text-[#444444] flex items-center gap-2"
+        className="text-sm font-semibold text-foreground flex items-center gap-2"
         style={{ fontFamily: "'Quicksand', sans-serif" }}
       >
         <Icon size={15} className="text-brand" />

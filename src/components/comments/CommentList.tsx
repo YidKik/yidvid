@@ -40,11 +40,11 @@ export const CommentList = ({ comments }: CommentListProps) => {
             <div className="flex-1 min-w-0">
               {/* Header */}
               <div className={`flex items-center ${isMobile ? 'gap-1.5 mb-0.5' : 'gap-2 mb-1'}`}>
-                <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground/70 font-medium`}>
+                <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground font-medium`}>
                   {getDisplayName(comment.profiles)}
                 </span>
-                <span className={`${isMobile ? 'text-[8px]' : 'text-[10px]'} text-muted-foreground/50`}>•</span>
-                <time className={`${isMobile ? 'text-[8px]' : 'text-[10px]'} text-muted-foreground/50`}>
+                <span className={`${isMobile ? 'text-[8px]' : 'text-[10px]'} text-muted-foreground`}>•</span>
+                <time className={`${isMobile ? 'text-[8px]' : 'text-[10px]'} text-muted-foreground`}>
                   {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                 </time>
               </div>

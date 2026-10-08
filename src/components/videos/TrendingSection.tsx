@@ -159,7 +159,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-4'}`}>
                 <button
                   onClick={handleBackClick}
-                  className={`flex items-center gap-1.5 ${isMobile ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm`}
+                  className={`flex items-center gap-1.5 ${isMobile ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} font-medium text-muted-foreground hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm`}
                 >
                   <ChevronLeft className={isMobile ? 'w-3 h-3' : 'w-4 h-4'} />
                   Back
@@ -168,7 +168,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                   Trending Videos
                 </h2>
               </div>
-              <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500 dark:text-gray-400`}>
+              <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground dark:text-gray-400`}>
                 {currentPage + 1}/{totalPages}
               </span>
             </div>
@@ -192,7 +192,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                 disabled={currentPage === 0}
                 className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
                   currentPage === 0
-                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                    ? 'bg-gray-100 dark:bg-gray-800 text-muted-foreground dark:text-gray-600 cursor-not-allowed'
                     : 'bg-primary text-white shadow-md hover:shadow-lg hover:scale-105'
                 }`}
               >
@@ -202,8 +202,8 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
               
               <div className={`flex items-center gap-1 ${isMobile ? 'px-2 py-0.5' : isTablet ? 'px-2.5 py-1' : 'px-4 py-2'} bg-gray-100 dark:bg-gray-800 rounded-full shadow-sm`}>
                 <span className={`${isMobile ? 'text-[10px]' : isTablet ? 'text-xs' : 'text-sm'} font-medium text-foreground`}>{currentPage + 1}</span>
-                <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>/</span>
-                <span className={`${isMobile ? 'text-[10px]' : isTablet ? 'text-xs' : 'text-sm'} text-gray-500`}>{totalPages}</span>
+                <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground`}>/</span>
+                <span className={`${isMobile ? 'text-[10px]' : isTablet ? 'text-xs' : 'text-sm'} text-muted-foreground`}>{totalPages}</span>
               </div>
               
               <button
@@ -211,7 +211,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                 disabled={currentPage >= totalPages - 1}
                 className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-full font-semibold transition-all duration-300 ${
                   currentPage >= totalPages - 1
-                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                    ? 'bg-gray-100 dark:bg-gray-800 text-muted-foreground dark:text-gray-600 cursor-not-allowed'
                     : 'bg-primary text-white shadow-md hover:shadow-lg hover:scale-105'
                 }`}
               >
@@ -231,7 +231,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
                 Trending Videos
               </h2>
               
@@ -249,7 +249,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                     disabled={!canScrollPrev}
                     className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
                       canScrollPrev 
-                        ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110' 
+                        ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                         : 'bg-gray-50 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                     }`}
                   >
@@ -260,7 +260,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
                     disabled={!canScrollNext}
                     className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
                       canScrollNext 
-                        ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110' 
+                        ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                         : 'bg-gray-50 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                     }`}
                   >

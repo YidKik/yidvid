@@ -76,7 +76,7 @@ export const AuthSuccessOverlay = ({ show, type, onComplete }: AuthSuccessOverla
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.7, type: "spring", stiffness: 300 }}
                 >
-                  <Check className="w-12 h-12" style={{ color: '#222' }} strokeWidth={3} />
+                  <Check className="w-12 h-12" style={{ color: 'hsl(var(--foreground))' }} strokeWidth={3} />
                 </motion.div>
               </motion.div>
             </motion.div>
