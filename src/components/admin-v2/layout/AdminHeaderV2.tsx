@@ -325,7 +325,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
                               <div className={`p-1.5 rounded-control ${cfg.bg}`}>
                                 <Icon className={`w-4 h-4 ${cfg.color}`} />
                               </div>
-                              <span className="text-[11px] font-bold text-[#c4c7d4] uppercase tracking-wider">
+                              <span className="text-[11px] font-bold text-[#c4c7d4] uppercase">
                                 {cfg.sectionLabel}
                               </span>
                             </div>

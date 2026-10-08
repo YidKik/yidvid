@@ -113,7 +113,6 @@ export const VideoCardInfo = ({
     <div className="mt-2 xl:mt-3 px-1">
       <h3 
         className="text-[12px] xl:text-sm font-bold line-clamp-2 text-foreground leading-snug"
-        style={{ fontFamily: "'Quicksand', 'Rubik', 'Varela Round', sans-serif" }}
         title={cleanTitle}
       >
         {cleanTitle}
@@ -121,13 +120,12 @@ export const VideoCardInfo = ({
       
       <div 
         className="flex items-center gap-2 xl:gap-3 mt-1 xl:mt-1.5 text-muted-foreground"
-        style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
       >
-        <div className="flex items-center gap-1 text-[10px] xl:text-xs">
+        <div className="flex items-center gap-1 text-xs xl:text-xs">
           <Clock size={10} className="text-muted-foreground xl:w-3 xl:h-3" />
           <span>{formattedDate}</span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] xl:text-xs">
+        <div className="flex items-center gap-1 text-xs xl:text-xs">
           <Eye size={10} className="text-muted-foreground xl:w-3 xl:h-3" />
           <span>{formatViewCount(views)}</span>
         </div>

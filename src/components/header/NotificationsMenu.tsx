@@ -70,7 +70,7 @@ export const NotificationsMenu = ({ onMarkAsRead }: NotificationsMenuProps) => {
           {notifications && notifications.length > 0 && (
             <Badge 
               variant="destructive" 
-              className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[10px] font-medium bg-primary text-white rounded-badge"
+              className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-xs font-medium bg-primary text-white rounded-badge"
             >
               {notifications.length > 9 ? '9+' : notifications.length}
             </Badge>

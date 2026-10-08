@@ -68,7 +68,7 @@ export const VideoCardWithOptions = ({
               <div className="absolute bottom-2 right-2 pointer-events-auto">
                 <div className={`bg-[#1A1A1A] rounded-control ${isMobile ? 'px-1.5 py-0.5' : 'px-2.5 py-1'} flex items-center gap-1`}>
                   <Clock size={isMobile ? 9 : 11} className="text-white" />
-                  <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold text-white`}>{duration}</span>
+                  <span className={`${isMobile ? 'text-xs' : 'text-xs'} font-semibold text-white`}>{duration}</span>
                 </div>
               </div>
             )}
@@ -77,10 +77,7 @@ export const VideoCardWithOptions = ({
         
         {/* Video Info - scales with viewport */}
         <div className={isMobile ? 'mt-1' : 'mt-1 md:mt-1.5 xl:mt-3'}>
-          <h3 dir="auto" className={`${
-            isMobile ? 'text-[12px] leading-tight min-h-[30px]' 
-            : 'text-[10px] md:text-[11px] lg:text-[11px] xl:text-sm min-h-[24px] md:min-h-[28px] xl:min-h-[38px]'
-          } font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
+          <h3 dir="auto" title={cleanVideoTitle(title)} className="type-card-title text-foreground line-clamp-2 min-h-[44px] md:min-h-[48px]">
             {cleanVideoTitle(title)}
           </h3>
           {!hideChannelInfo && (
@@ -93,19 +90,18 @@ export const VideoCardWithOptions = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className={`w-full h-full bg-primary flex items-center justify-center ${isMobile ? 'text-[7px]' : 'text-[6px] md:text-[7px] lg:text-[8px] xl:text-[10px]'} font-bold text-white`}>
+                  <div className={`w-full h-full bg-primary flex items-center justify-center ${isMobile ? 'text-xs' : 'text-xs lg:text-xs xl:text-xs'} font-bold text-white`}>
                     {channelName.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-              <p className={`${isMobile ? 'text-[10.5px]' : 'text-[8px] md:text-[9px] lg:text-[9px] xl:text-xs'} text-muted-foreground truncate`}>
+              <p className={`type-meta text-muted-foreground truncate`}>
                 {channelName}
               </p>
             </div>
           )}
           <p className={`${
-            isMobile ? 'text-[10px] mt-0 min-h-[12px]' 
-            : 'text-[8px] md:text-[9px] lg:text-[9px] xl:text-xs mt-0 md:mt-0.5 xl:mt-1.5 min-h-[10px] md:min-h-[12px] xl:min-h-[16px]'
+            'type-meta mt-0.5'
           } text-muted-foreground`}>
             {views?.toLocaleString() || 0} views • {formattedDate}
           </p>

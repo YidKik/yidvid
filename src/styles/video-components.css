@@ -1,7 +1,7 @@
 
 /* YouTube-style Video Components Styling */
 .video-title {
-  font-family: 'Roboto', 'Arial', sans-serif;
+  font-family: 'Inter', 'Noto Sans Hebrew', system-ui, sans-serif;
   font-weight: 500;
   letter-spacing: 0;
   color: hsl(var(--foreground));
@@ -14,13 +14,13 @@
 }
 
 .video-channel-name {
-  font-family: 'Roboto', 'Arial', sans-serif;
+  font-family: 'Inter', 'Noto Sans Hebrew', system-ui, sans-serif;
   font-weight: 400;
   color: hsl(var(--muted-foreground));
 }
 
 .video-meta-text {
-  font-family: 'Roboto', 'Arial', sans-serif;
+  font-family: 'Inter', 'Noto Sans Hebrew', system-ui, sans-serif;
   font-weight: 400;
   color: hsl(var(--muted-foreground));
 }

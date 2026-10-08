@@ -207,7 +207,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
-                className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-badge font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-xs' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-badge font-semibold transition-all duration-300 ${
                   currentPage === 0
                     ? 'bg-gray-100 dark:bg-gray-800 text-muted-foreground dark:text-gray-600 cursor-not-allowed'
                     : 'bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:scale-105'
@@ -218,15 +218,15 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               </button>
               
               <div className={`flex items-center gap-1 ${isMobile ? 'px-2 py-0.5' : isTablet ? 'px-2.5 py-1' : 'px-4 py-2'} bg-white dark:bg-gray-800 rounded-control shadow-sm`}>
-                <span className={`${isMobile ? 'text-[10px]' : isTablet ? 'text-xs' : 'text-sm'} font-medium text-foreground`}>{currentPage + 1}</span>
-                <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground`}>/</span>
-                <span className={`${isMobile ? 'text-[10px]' : isTablet ? 'text-xs' : 'text-sm'} text-muted-foreground`}>{totalPages}</span>
+                <span className={`${isMobile ? 'text-xs' : isTablet ? 'text-xs' : 'text-sm'} font-medium text-foreground`}>{currentPage + 1}</span>
+                <span className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground`}>/</span>
+                <span className={`${isMobile ? 'text-xs' : isTablet ? 'text-xs' : 'text-sm'} text-muted-foreground`}>{totalPages}</span>
               </div>
               
               <button
                 onClick={handleNextPage}
                 disabled={currentPage >= totalPages - 1}
-                className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-badge font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-1 ${isMobile ? 'px-2.5 py-1 text-xs' : isTablet ? 'px-3 py-1.5 text-xs' : 'px-8 py-3'} rounded-badge font-semibold transition-all duration-300 ${
                   currentPage >= totalPages - 1
                     ? 'bg-gray-100 dark:bg-gray-800 text-muted-foreground dark:text-gray-600 cursor-not-allowed'
                     : 'bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:scale-105'
@@ -248,14 +248,14 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
+              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase">
                 Latest Videos
               </h2>
               
               <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-4'}`}>
                 <button 
                   onClick={handleViewAllClick}
-                  className={`${isMobile ? 'px-2.5 py-1 text-[10px]' : isTablet ? 'px-3 py-1 text-[11px]' : 'px-4 py-1.5 text-xs'} font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-control transition-all duration-200 hover:scale-105 shadow-sm`}
+                  className={`${isMobile ? 'px-2.5 py-1 text-xs' : isTablet ? 'px-3 py-1 text-xs' : 'px-4 py-1.5 text-xs'} font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-control transition-all duration-200 hover:scale-105 shadow-sm`}
                 >
                   View all
                 </button>

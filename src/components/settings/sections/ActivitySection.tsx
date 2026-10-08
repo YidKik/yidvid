@@ -10,7 +10,7 @@ export const ActivitySection = () => {
   const { isAuthenticated } = useUnifiedAuth();
   
   return (
-    <div style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}>
+    <div>
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
         <div className="p-1.5 bg-warning-bg rounded-control">

@@ -76,9 +76,9 @@ export default {
         },
       },
       fontFamily: {
-        'display': ['Playfair Display', 'serif'],
-        'sans': ['Inter', 'sans-serif'],
-        'friendly': ['Quicksand', 'sans-serif'],
+        'display': ['Inter', 'Noto Sans Hebrew', 'system-ui', 'sans-serif'],
+        'sans': ['Inter', 'Noto Sans Hebrew', 'system-ui', 'sans-serif'],
+        'friendly': ['Inter', 'Noto Sans Hebrew', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'youtube-title': ['14px', '20px'],

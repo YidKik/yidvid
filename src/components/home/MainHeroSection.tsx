@@ -15,12 +15,12 @@ export const MainHeroSection: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="inline-block mb-6"
         >
-          <span className="px-5 py-2 rounded-control border border-[#77b0aa]/40 bg-[#135d66]/30 text-[#77b0aa] text-sm font-medium tracking-widest uppercase backdrop-blur-sm">
+          <span className="px-5 py-2 rounded-control border border-[#77b0aa]/40 bg-[#135d66]/30 text-[#77b0aa] text-sm font-medium uppercase backdrop-blur-sm">
             ✡ Curated Jewish Content
           </span>
         </motion.div>
 
-        <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold mb-8 tracking-tight text-center">
+        <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold mb-8 text-center">
           <motion.span 
             className="bg-clip-text text-transparent bg-gradient-to-b from-[#e3fef7] to-[#e3fef7]/80 inline"
             initial={{ opacity: 0, y: 20 }}
@@ -41,7 +41,7 @@ export const MainHeroSection: React.FC = () => {
         </h1>
         
         <motion.p 
-          className="text-lg md:text-xl text-[#77b0aa] mb-10 font-light tracking-wide max-w-2xl mx-auto text-center"
+          className="text-lg md:text-xl text-[#77b0aa] mb-10 font-light max-w-2xl mx-auto text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.8 }}

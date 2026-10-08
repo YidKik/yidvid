@@ -85,7 +85,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
           >
             <div className="w-12 h-1 bg-surface-active dark:bg-[#555] rounded-full mx-auto mt-3" />
             <div className="p-4 pb-2">
-              <h3 className="text-sm font-bold text-foreground dark:text-foreground mb-3 px-1" style={{ fontFamily: "'Quicksand', sans-serif" }}>Library</h3>
+              <h3 className="text-sm font-bold text-foreground dark:text-foreground mb-3 px-1">Library</h3>
               <div className="grid grid-cols-3 gap-2 pb-2">
                 {libraryItems.map((item) => {
                   const Icon = item.icon;
@@ -112,7 +112,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
       </AnimatePresence>
 
       {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-card border-t border-border dark:border-border shadow-lg lg:hidden" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-card border-t border-border dark:border-border shadow-lg lg:hidden">
         <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -127,7 +127,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                 className="flex flex-col items-center justify-center h-full px-3 min-w-0"
               >
                 <Icon className={cn("w-5 h-5 mb-0.5 transition-colors", active ? "text-brand" : "text-muted-foreground dark:text-muted-foreground")} />
-                <span className={cn("text-[10px] font-semibold transition-colors", active ? "text-brand" : "text-muted-foreground dark:text-muted-foreground")}>
+                <span className={cn("text-xs font-semibold transition-colors", active ? "text-brand" : "text-muted-foreground dark:text-muted-foreground")}>
                   {item.label}
                 </span>
               </button>

@@ -13,7 +13,6 @@ export default function NotFound() {
       </Helmet>
       <div
         className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-[#FAFAFA] to-white"
-        style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
       >
         {/* Logo */}
         <motion.div
@@ -31,7 +30,7 @@ export default function NotFound() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-[120px] sm:text-[160px] font-black leading-none tracking-tight"
+          className="text-[120px] sm:text-[160px] font-black leading-none"
           style={{
             background: "linear-gradient(135deg, #C9253A, #C9253A)",
             WebkitBackgroundClip: "text",

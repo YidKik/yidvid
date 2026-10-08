@@ -59,7 +59,7 @@ export const ShortsSection = () => {
     <section className={`${isMobile ? 'py-4 -mx-3 px-3' : 'py-6 -mx-6 px-6'} rounded-card`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
+        <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase">
             Shorts
           </h2>
 
@@ -138,7 +138,7 @@ const ShortCard = ({
       </p>
       {/* Views below title */}
       {short.views != null && short.views > 0 && (
-        <p className={`mt-0.5 ${isMobile ? 'text-[11px]' : 'text-[12px]'} text-muted-foreground`}>
+        <p className={`mt-0.5 ${isMobile ? 'text-xs' : 'text-[12px]'} text-muted-foreground`}>
           {formatViews(short.views)} views
         </p>
       )}

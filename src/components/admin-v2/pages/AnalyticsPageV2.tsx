@@ -26,7 +26,7 @@ const KPI = ({
   <Card className="p-4">
     <div className="flex items-start justify-between">
       <div className="space-y-1">
-        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{label}</p>
+        <p className="text-xs text-gray-500 font-medium uppercase">{label}</p>
         <p className="text-2xl font-bold text-white">{typeof value === "number" ? fmt(value) : value}</p>
         {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
       </div>
@@ -211,7 +211,7 @@ export const AnalyticsPageV2 = () => {
 
       {/* ── User & Engagement KPIs ─────────────────────────────── */}
       <div>
-        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-3">Users & Engagement</p>
+        <p className="text-xs text-gray-500 uppercase font-medium mb-3">Users & Engagement</p>
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <KPI label="Active Now" value={s.activeUsers} icon={Activity} accent="bg-emerald-600" subtitle="Live sessions" />
           <KPI label="Total Users" value={s.totalUsers} icon={Users} accent="bg-indigo-600" />
@@ -223,7 +223,7 @@ export const AnalyticsPageV2 = () => {
 
       {/* ── Engagement Details ─────────────────────────────────── */}
       <div>
-        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-3">Engagement Details</p>
+        <p className="text-xs text-gray-500 uppercase font-medium mb-3">Engagement Details</p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <KPI label="Avg. Engagement" value={`${s.avgEngagementTime} min`} icon={Timer} accent="bg-rose-600" subtitle="Per user" />
           <KPI label="Engagement Rate" value={`${s.engagementRate}%`} icon={MousePointerClick} accent="bg-teal-600" />
@@ -234,7 +234,7 @@ export const AnalyticsPageV2 = () => {
 
       {/* ── Content Stats ──────────────────────────────────────── */}
       <div>
-        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-3">Content</p>
+        <p className="text-xs text-gray-500 uppercase font-medium mb-3">Content</p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           <KPI label="Total Channels" value={s.totalChannels} icon={Tv} accent="bg-indigo-600" />
           <KPI label="Total Videos" value={s.totalVideos} icon={Video} accent="bg-sky-600" />

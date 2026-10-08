@@ -206,7 +206,6 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
       animate={{ width: sidebarWidth }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
       className="fixed top-0 left-0 bottom-0 z-40 bg-white dark:bg-background flex flex-col overflow-hidden border-r border-border dark:border-border"
-      style={{ fontFamily: "'Quicksand', sans-serif" }}
     >
       {/* Logo */}
       <div className={cn(
@@ -216,7 +215,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <img src={yidvidLogoIcon} alt="YidVid" className="w-12 h-12 rounded-full object-contain" />
           {effectiveIsExpanded && (
-            <span className="text-base font-bold text-foreground dark:text-foreground" style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}>
+            <span className="text-base font-bold text-foreground dark:text-foreground">
               YidVid
             </span>
           )}
@@ -340,7 +339,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
         {/* Library */}
         <div className="mt-3 pt-3 border-t border-border dark:border-border">
           {effectiveIsExpanded && (
-            <div className="px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase">
               {librarySection.title}
             </div>
           )}

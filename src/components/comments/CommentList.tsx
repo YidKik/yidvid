@@ -32,7 +32,7 @@ export const CommentList = ({ comments }: CommentListProps) => {
           <div className={`flex items-start ${isMobile ? 'gap-2' : 'gap-2.5'}`}>
             {/* Small Avatar */}
             <div className={`${isMobile ? 'w-5 h-5' : 'w-7 h-7'} bg-brand-soft text-brand rounded-control flex items-center justify-center flex-shrink-0`}>
-              <span className={`${isMobile ? 'text-[8px]' : 'text-xs'} font-medium text-warning`}>
+              <span className={`${isMobile ? 'text-xs' : 'text-xs'} font-medium text-warning`}>
                 {getDisplayName(comment.profiles).charAt(0).toUpperCase()}
               </span>
             </div>
@@ -40,17 +40,17 @@ export const CommentList = ({ comments }: CommentListProps) => {
             <div className="flex-1 min-w-0">
               {/* Header */}
               <div className={`flex items-center ${isMobile ? 'gap-1.5 mb-0.5' : 'gap-2 mb-1'}`}>
-                <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground font-medium`}>
+                <span className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground font-medium`}>
                   {getDisplayName(comment.profiles)}
                 </span>
-                <span className={`${isMobile ? 'text-[8px]' : 'text-[10px]'} text-muted-foreground`}>•</span>
-                <time className={`${isMobile ? 'text-[8px]' : 'text-[10px]'} text-muted-foreground`}>
+                <span className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground`}>•</span>
+                <time className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground`}>
                   {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                 </time>
               </div>
               
               {/* Comment Content */}
-              <p className={`${isMobile ? 'text-[11px]' : 'text-sm'} text-foreground leading-relaxed whitespace-pre-wrap break-words`}>
+              <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-foreground leading-relaxed whitespace-pre-wrap break-words`}>
                 {comment.content}
               </p>
             </div>

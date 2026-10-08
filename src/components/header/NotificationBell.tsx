@@ -81,7 +81,7 @@ export const NotificationBell = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Bell className="h-5 w-5 text-brand" />
-                      <h2 className="text-lg font-semibold text-foreground" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                      <h2 className="text-lg font-semibold text-foreground">
                         New Videos
                       </h2>
                     </div>
@@ -107,7 +107,7 @@ export const NotificationBell = () => {
                       </Button>
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                  <p className="text-xs text-muted-foreground mt-1">
                     From channels you follow
                   </p>
                 </div>
@@ -119,7 +119,7 @@ export const NotificationBell = () => {
                       <div className="w-16 h-16 rounded-card bg-muted flex items-center justify-center mx-auto mb-4">
                         <LogIn className="h-8 w-8 text-brand" />
                       </div>
-                      <h3 className="text-base font-semibold text-foreground mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                      <h3 className="text-base font-semibold text-foreground mb-2">
                         Sign in to get notified
                       </h3>
                       <p className="text-sm text-muted-foreground mb-4">
@@ -146,7 +146,7 @@ export const NotificationBell = () => {
                       <div className="w-16 h-16 rounded-card bg-muted flex items-center justify-center mx-auto mb-4">
                         <Bell className="h-8 w-8 text-muted-foreground" />
                       </div>
-                      <h3 className="text-base font-semibold text-foreground mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                      <h3 className="text-base font-semibold text-foreground mb-2">
                         No new videos yet
                       </h3>
                       <p className="text-sm text-muted-foreground">
@@ -181,7 +181,6 @@ export const NotificationBell = () => {
                             <div className="flex-1 min-w-0">
                               <p 
                                 className="text-sm font-medium text-foreground line-clamp-2"
-                                style={{ fontFamily: "'Quicksand', sans-serif" }}
                               >
                                 {notification.video?.title || "Video"}
                               </p>

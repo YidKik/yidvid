@@ -47,7 +47,6 @@ export const AuthOptions = ({
   return (
     <div 
       className="flex flex-col items-center justify-center w-full relative"
-      style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
     >
       {/* Top accent bar */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand via-brand to-brand" />
@@ -62,13 +61,11 @@ export const AuthOptions = ({
         >
           <h2 
             className={`${isMobile ? 'text-2xl' : 'text-[28px]'} font-bold text-foreground`}
-            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             Welcome! 👋
           </h2>
           <p 
             className="text-base text-muted-foreground font-medium max-w-[280px] mx-auto"
-            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             Sign in to your account or create a new one to get started
           </p>
@@ -77,7 +74,7 @@ export const AuthOptions = ({
         {/* Divider */}
         <div className="relative flex items-center w-full py-1">
           <div className="flex-grow border-t border-gray-200"></div>
-          <span className="flex-shrink mx-4 text-xs text-muted-foreground font-medium" style={{ fontFamily: "'Quicksand', sans-serif" }}>or</span>
+          <span className="flex-shrink mx-4 text-xs text-muted-foreground font-medium">or</span>
           <div className="flex-grow border-t border-gray-200"></div>
         </div>
 
@@ -95,7 +92,6 @@ export const AuthOptions = ({
             className="w-full h-13 text-base border-2 border-gray-200 text-foreground bg-white hover:bg-gray-50 
               rounded-card font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
-            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -122,7 +118,6 @@ export const AuthOptions = ({
             className="w-full h-13 text-base bg-primary hover:brightness-90 text-white rounded-card font-semibold
               transition-all duration-200 shadow-md hover:shadow-lg
               flex items-center justify-center gap-2.5 py-4"
-            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             <User size={20} />
             Sign In
@@ -142,7 +137,6 @@ export const AuthOptions = ({
             className="w-full h-13 text-base border-2 border-brand text-foreground hover:text-primary-foreground bg-card hover:bg-primary 
               rounded-card font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
-            style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
             <UserPlus size={20} />
             Create Account
@@ -152,7 +146,7 @@ export const AuthOptions = ({
       
       {/* Footer */}
       <div className="px-8 pb-6">
-        <p className="text-xs text-muted-foreground text-center" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+        <p className="text-xs text-muted-foreground text-center">
           Join our friendly community today!
         </p>
       </div>

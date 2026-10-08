@@ -41,6 +41,41 @@ body {
   width: 100%;
   max-width: 100vw;
   position: relative;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 24px;
+}
+
+:root { --font-ui: 'Inter', 'Noto Sans Hebrew', system-ui, sans-serif; }
+button, input, select, textarea, optgroup { font-family: inherit; }
+
+/* Form field text: 16px/24 on every device (prevents iOS focus zoom) */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select, textarea { font-size: 16px; line-height: 24px; }
+input::placeholder, textarea::placeholder { font-size: 16px; }
+
+/* Semantic type roles (phone <768 / tablet 768-1023 / desktop >=1024) */
+.type-hero { font-size: 32px; line-height: 40px; font-weight: 700; }
+.type-h1 { font-size: 28px; line-height: 36px; font-weight: 700; }
+.type-h2 { font-size: 22px; line-height: 30px; font-weight: 700; }
+.type-h3 { font-size: 18px; line-height: 26px; font-weight: 600; }
+.type-body { font-size: 16px; line-height: 24px; font-weight: 400; }
+.type-legal { font-size: 16px; line-height: 26px; max-width: 70ch; }
+.type-card-title { font-size: 15px; line-height: 22px; font-weight: 600; }
+.type-meta { font-size: 13px; line-height: 20px; font-weight: 400; }
+.type-label { font-size: 14px; line-height: 20px; font-weight: 500; }
+.type-help { font-size: 13px; line-height: 20px; }
+.type-caption { font-size: 12px; line-height: 16px; font-weight: 500; }
+.type-footer { font-size: 13px; line-height: 20px; }
+@media (min-width: 768px) {
+  .type-hero { font-size: 40px; line-height: 48px; }
+  .type-h1 { font-size: 30px; line-height: 38px; }
+  .type-h2 { font-size: 24px; line-height: 32px; }
+  .type-card-title { font-size: 16px; line-height: 24px; }
+}
+@media (min-width: 1024px) {
+  .type-hero { font-size: 48px; line-height: 56px; }
+  .type-h1 { font-size: 32px; line-height: 40px; }
 }
 
 /* Ensure all elements respect the viewport width */
@@ -519,9 +554,4 @@ textarea:focus-visible,
 /* Shared touch-target role: real hit box >=44px on touch/coarse pointers */
 @media (pointer: coarse) {
   .touch-target { min-height: 44px; min-width: 44px; }
-}
-/* Expands only the invisible hit area (keeps compact header visuals) */
-@media (pointer: coarse) {
-  .touch-hit { position: relative; }
-  .touch-hit::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
 }

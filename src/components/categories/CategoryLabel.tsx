@@ -16,9 +16,9 @@ export const CategoryLabel = ({ label, textColor }: CategoryLabelProps) => {
     
     // Reduce font size for long category names
     if (text === "Entertainment" || text.length > 11) {
-      return { fontSize: '9px', letterSpacing: '-0.02em' };
+      return { fontSize: '9px' };
     } else if (text.length > 8) {
-      return { fontSize: '10px', letterSpacing: '-0.01em' };
+      return { fontSize: '10px' };
     }
     
     return {};
@@ -26,9 +26,9 @@ export const CategoryLabel = ({ label, textColor }: CategoryLabelProps) => {
 
   return (
     <h3 
-      className={`font-medium tracking-tight line-clamp-2 ${
+      className={`font-medium line-clamp-2 ${
         isMobile 
-          ? 'text-[10px] leading-tight max-w-[70px]' 
+          ? 'text-xs leading-tight max-w-[70px]' 
           : 'text-sm max-w-[120px]'
       }`}
       style={{ 

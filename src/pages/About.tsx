@@ -29,14 +29,12 @@ const About = () => {
             className="text-center mb-12"
           >
             <h1 
-              className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold mb-4 text-foreground dark:text-foreground`}
-              style={{ fontFamily: "'Fredoka One', 'Nunito', sans-serif" }}
+              className={`type-h1 mb-4 text-foreground dark:text-foreground`}
             >
               About YidVid
             </h1>
             <p 
               className={`${isMobile ? 'text-base' : 'text-lg'} max-w-2xl mx-auto text-muted-foreground dark:text-muted-foreground`}
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               Your premier destination for kosher Jewish content, curated with care for the entire family.
             </p>
@@ -83,11 +81,10 @@ const About = () => {
                 />
                 <h3 
                   className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-foreground dark:text-foreground`}
-                  style={{ fontFamily: "'Quicksand', sans-serif" }}
                 >
                   {feature.title}
                 </h3>
-                <p style={{ fontFamily: "'Quicksand', sans-serif" }} className="text-muted-foreground dark:text-muted-foreground">
+                <p className="text-muted-foreground dark:text-muted-foreground">
                   {feature.description}
                 </p>
               </motion.div>
@@ -101,14 +98,12 @@ const About = () => {
             className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-card bg-white dark:bg-card border-2 border-brand/30 dark:border-brand/20 max-w-3xl mx-auto mb-10 shadow-sm`}
           >
             <h2 
-              className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4 text-foreground dark:text-foreground`}
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
+              className={`type-h2 mb-4 text-foreground dark:text-foreground`}
             >
               Our Mission
             </h2>
             <p 
               className="max-w-2xl mx-auto text-muted-foreground dark:text-muted-foreground"
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               YidVid was created to provide a safe, curated platform for Jewish families to access quality 
               kosher content. We believe everyone deserves access to inspiring, educational, and entertaining 
@@ -126,7 +121,6 @@ const About = () => {
             <button
               onClick={() => setShowTerms(true)}
               className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <FileText className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />
               Terms & Conditions
@@ -134,7 +128,6 @@ const About = () => {
             <button
               onClick={() => setShowPrivacy(true)}
               className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <ScrollText className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />
               Privacy Policy
@@ -142,7 +135,6 @@ const About = () => {
             <button
               onClick={() => setShowContact(true)}
               className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
-              style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <MessageSquare className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />
               Contact Us

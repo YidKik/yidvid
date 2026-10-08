@@ -224,7 +224,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
                 <>
                   <div className="flex items-center gap-2 px-4 py-2 border-b border-[#1e2028]">
                     <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Admins · {adminUsers.length}</span>
+                    <span className="text-xs font-medium text-gray-500 uppercase">Admins · {adminUsers.length}</span>
                   </div>
                   {adminUsers.map((user) => (
                     <UserRow
@@ -241,7 +241,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
               {/* Regular users header */}
               <div className="flex items-center gap-2 px-4 py-2 border-b border-[#1e2028] border-t border-t-[#1e2028]">
                 <Users className="h-3.5 w-3.5 text-indigo-400" />
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Users · {regularUsers?.length || 0}</span>
+                <span className="text-xs font-medium text-gray-500 uppercase">Users · {regularUsers?.length || 0}</span>
               </div>
               {regularUsers && regularUsers.length > 0 ? (
                 regularUsers.map((user) => (

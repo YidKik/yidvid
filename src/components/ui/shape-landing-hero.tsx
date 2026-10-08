@@ -70,7 +70,7 @@ export function HeroGeometric({
                         animate="visible"
                         style={{ scale: textScale }}
                     >
-                        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
+                        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8">
                             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
                                 {title1}
                             </span>
@@ -88,7 +88,7 @@ export function HeroGeometric({
                         animate="visible"
                         style={{ scale: textScale }}
                     >
-                        <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
+                        <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light max-w-xl mx-auto px-4">
                             Watch, share, and connect with the finest Jewish content from around the world.
                         </p>
 

@@ -75,7 +75,7 @@ export function GridMotion({
                 const content = combinedItems[rowIndex * 10 + itemIndex]
                 return (
                   <div key={itemIndex} className="relative aspect-square p-0.5">
-                    <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-[10px] transform hover:scale-105 transition-transform duration-200">
+                    <div className="relative h-full w-full overflow-hidden rounded-full bg-muted flex items-center justify-center text-foreground text-xs transform hover:scale-105 transition-transform duration-200">
                       {typeof content === 'string' && content.startsWith('http') ? (
                         <div
                           className="absolute inset-0 bg-cover bg-center rounded-full"

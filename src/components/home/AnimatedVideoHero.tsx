@@ -112,7 +112,7 @@ export function AnimatedVideoHero({ videos }: AnimatedVideoHeroProps) {
             className="inline-flex items-center gap-2 px-3 py-1 rounded-control bg-white/[0.03] border border-white/[0.08] mb-8 md:mb-12"
           >
             <Circle className="h-2 w-2 fill-brand" />
-            <span className="text-sm text-white/60 tracking-wide">
+            <span className="text-sm text-white/60">
               Welcome to YidVid
             </span>
           </motion.div>
@@ -123,7 +123,7 @@ export function AnimatedVideoHero({ videos }: AnimatedVideoHeroProps) {
             initial="hidden"
             animate="visible"
           >
-            <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8 tracking-tight">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 md:mb-8">
               <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
                 Your Gateway to
               </span>
@@ -140,7 +140,7 @@ export function AnimatedVideoHero({ videos }: AnimatedVideoHeroProps) {
             initial="hidden"
             animate="visible"
           >
-            <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
+            <p className="text-base sm:text-lg md:text-xl text-white/40 mb-8 leading-relaxed font-light max-w-xl mx-auto px-4">
               Discover videos that inspire, entertain, and connect.
               Explore our curated collection of meaningful content.
             </p>

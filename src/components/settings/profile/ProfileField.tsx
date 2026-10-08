@@ -15,8 +15,8 @@ export const ProfileField = ({ label, value, isMobile = false }: ProfileFieldPro
     
   return (
     <div className="flex items-center gap-1 text-muted-foreground overflow-hidden">
-      <span className={`${isMobile ? 'text-[10px]' : 'text-sm'} font-medium whitespace-nowrap`}>{label}:</span>
-      <span className={`${isMobile ? 'text-[10px]' : 'text-sm'} font-normal flex items-center truncate`}>
+      <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium whitespace-nowrap`}>{label}:</span>
+      <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-normal flex items-center truncate`}>
         {displayValue}
         {value && (label === "Email" || label === "Username") && (
           <CopyToClipboard textToCopy={value} label={label} />

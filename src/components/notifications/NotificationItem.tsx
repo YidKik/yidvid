@@ -63,7 +63,7 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
           <p className="text-xs min-[360px]:text-sm sm:text-base text-white line-clamp-2 font-medium">
             New video from {notification.youtube_videos.channel_name}
           </p>
-          <p className="text-[10px] min-[360px]:text-xs sm:text-sm text-white/70 mt-0.5 sm:mt-1 line-clamp-2">
+          <p className="text-xs min-[360px]:text-xs sm:text-sm text-white/70 mt-0.5 sm:mt-1 line-clamp-2">
             {notification.youtube_videos.title}
           </p>
         </div>

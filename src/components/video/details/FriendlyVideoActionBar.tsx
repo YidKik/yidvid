@@ -184,7 +184,7 @@ export const FriendlyVideoActionBar = ({
   ];
 
   const pillBtn = compact
-    ? "touch-target h-7 px-2.5 rounded-control text-[11px] font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
+    ? "touch-target h-7 px-2.5 rounded-control text-xs font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
     : "touch-target h-9 px-4 rounded-control text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground";
 
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
@@ -192,7 +192,7 @@ export const FriendlyVideoActionBar = ({
   return (
     <div className="space-y-3">
       {/* Views & date - small meta line */}
-      <div className={`flex items-center gap-1.5 ${compact ? 'text-[10px]' : 'text-xs'} text-muted-foreground dark:text-muted-foreground`}>
+      <div className={`flex items-center gap-1.5 ${compact ? 'text-xs' : 'text-xs'} text-muted-foreground dark:text-muted-foreground`}>
         <span>{formatViewCount(views)} views</span>
         {uploadedAt && (
           <>
@@ -210,7 +210,7 @@ export const FriendlyVideoActionBar = ({
             <Link to={`/channel/${channelId}`} className="flex-shrink-0">
               <Avatar className={compact ? "h-6 w-6" : "h-9 w-9"}>
                 <AvatarImage src={channelThumbnail} alt={channelName} />
-                <AvatarFallback className={`bg-primary text-white ${compact ? 'text-[9px]' : 'text-xs'} font-bold`}>
+                <AvatarFallback className={`bg-primary text-white ${compact ? 'text-xs' : 'text-xs'} font-bold`}>
                   {channelName?.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -218,7 +218,7 @@ export const FriendlyVideoActionBar = ({
           ) : (
             <Avatar className={compact ? "h-6 w-6" : "h-9 w-9"}>
               <AvatarImage src={channelThumbnail} alt={channelName} />
-              <AvatarFallback className={`bg-primary text-white ${compact ? 'text-[9px]' : 'text-xs'} font-bold`}>
+              <AvatarFallback className={`bg-primary text-white ${compact ? 'text-xs' : 'text-xs'} font-bold`}>
                 {channelName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -228,12 +228,12 @@ export const FriendlyVideoActionBar = ({
             {channelId ? (
               <Link 
                 to={`/channel/${channelId}`}
-                className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-foreground dark:text-foreground hover:text-foreground dark:hover:text-white transition-colors block truncate leading-tight`}
+                className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-foreground dark:text-foreground hover:text-foreground dark:hover:text-white transition-colors block truncate leading-tight`}
               >
                 {channelName}
               </Link>
             ) : (
-              <span className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-foreground dark:text-foreground truncate block leading-tight`}>{channelName}</span>
+              <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-foreground dark:text-foreground truncate block leading-tight`}>{channelName}</span>
             )}
           </div>
 
@@ -243,7 +243,7 @@ export const FriendlyVideoActionBar = ({
               onClick={handleSubscribeClick}
               disabled={isSubLoading}
               data-subscribed={isSubscribed ? "true" : "false"}
-              className={`${compact ? 'h-7 px-2.5 text-[11px]' : 'h-9 px-4 text-sm'} video-subscribe-button touch-target rounded-control font-semibold transition-all ml-0.5`}
+              className={`${compact ? 'h-7 px-2.5 text-xs' : 'h-9 px-4 text-sm'} video-subscribe-button touch-target rounded-control font-semibold transition-all ml-0.5`}
             >
               {isSubLoading ? (
                 <span className="opacity-70">...</span>
@@ -281,7 +281,7 @@ export const FriendlyVideoActionBar = ({
             </DialogTrigger>
             <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-card border border-border rounded-dialog overflow-hidden shadow-overlay [&>button]:hidden">
               <div className="flex items-center justify-between pl-5 pr-2 py-1 max-[768px]:pl-4 border-b border-border">
-                <h3 className="text-sm font-bold text-foreground tracking-tight">Share</h3>
+                <h3 className="text-sm font-bold text-foreground">Share</h3>
                 <button type="button" onClick={() => setShareOpen(false)} aria-label="Close share dialog" className="w-11 h-11 rounded-control flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-hover transition-colors">
                   <X className="h-4 w-4" />
                 </button>

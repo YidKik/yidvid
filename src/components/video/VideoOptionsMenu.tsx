@@ -119,7 +119,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             onClick={handleToggleFavorite}
             className={cn(
               "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
-              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
+              compact ? "gap-2 px-2 py-1.5 text-xs rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
             )}
           >
             <Heart className={cn(compact ? "w-3 h-3" : "w-3.5 h-3.5", "shrink-0", isFavorite && "fill-brand text-brand")} />
@@ -130,7 +130,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             onClick={handleToggleWatchLater}
             className={cn(
               "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
-              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
+              compact ? "gap-2 px-2 py-1.5 text-xs rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
             )}
           >
             <Clock className={cn(compact ? "w-3 h-3" : "w-3.5 h-3.5", "shrink-0", isWatchLaterSaved && "fill-blue-500 text-blue-500")} />
@@ -142,7 +142,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
           <DropdownMenuSub>
             <DropdownMenuSubTrigger className={cn(
               "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
-              compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
+              compact ? "gap-2 px-2 py-1.5 text-xs rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
             )}>
               <ListPlus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
               <span>Add to Playlist</span>
@@ -159,7 +159,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
                       onClick={() => handleAddToPlaylist(playlist.id)}
                       className={cn(
                         "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08]",
-                        compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
+                        compact ? "gap-2 px-2 py-1.5 text-xs rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
                       )}
                     >
                       <ListPlus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
@@ -179,7 +179,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
                 }}
                 className={cn(
                   "flex items-center cursor-pointer transition-colors duration-150 hover:bg-black/[0.06] dark:hover:bg-white/[0.08] text-muted-foreground",
-                  compact ? "gap-2 px-2 py-1.5 text-[11px] rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
+                  compact ? "gap-2 px-2 py-1.5 text-xs rounded-control" : "gap-2.5 px-2.5 py-2 text-[13px] rounded-control"
                 )}
               >
                 <Plus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />

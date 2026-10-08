@@ -324,7 +324,7 @@ export const ReportedVideosPageV2 = () => {
               <div className="p-5 space-y-6">
                 {/* Video info */}
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Video</p>
+                  <p className="text-[10px] uppercase text-[#565b6e] font-semibold mb-3">Video</p>
                   
                   {selected.isDeleted && (
                     <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-control bg-emerald-500/10 border border-emerald-500/20 mb-3">
@@ -378,7 +378,7 @@ export const ReportedVideosPageV2 = () => {
 
                 {/* All reporters */}
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">
+                  <p className="text-[10px] uppercase text-[#565b6e] font-semibold mb-3">
                     Reporters ({selected.reportCount})
                   </p>
                   <div className="space-y-3">
@@ -453,7 +453,7 @@ export const ReportedVideosPageV2 = () => {
 
                 {/* Actions */}
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Actions</p>
+                  <p className="text-[10px] uppercase text-[#565b6e] font-semibold mb-3">Actions</p>
                   <div className="flex gap-2">
                     {!selected.isDeleted && (
                       <Button

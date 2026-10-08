@@ -137,7 +137,6 @@ export const SignUpForm = ({
           rounded-card font-semibold transition-all duration-200 disabled:opacity-50 
           disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99] 
           disabled:hover:scale-100 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 py-4`}
-        style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
         disabled={isLoading}
       >
         <UserPlus size={20} />

@@ -372,7 +372,7 @@ export const ContactRequestsPageV2 = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <StatusIcon className={`w-3.5 h-3.5 ${status.accent} shrink-0`} />
-                        <span className={`text-xs font-semibold uppercase tracking-wide ${status.accent}`}>
+                        <span className={`text-xs font-semibold uppercase ${status.accent}`}>
                           {status.label}
                         </span>
                       </div>

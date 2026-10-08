@@ -36,7 +36,6 @@ export const SignUpFormField: React.FC<SignUpFormFieldProps> = ({
     <div className="space-y-2">
       <label 
         className="text-sm font-semibold text-foreground flex items-center gap-2"
-        style={{ fontFamily: "'Quicksand', sans-serif" }}
       >
         <Icon size={15} className="text-brand" />
         {placeholder}
@@ -52,7 +51,6 @@ export const SignUpFormField: React.FC<SignUpFormFieldProps> = ({
           px-4 border-2 border-border bg-muted focus:bg-white transition-all duration-200 
           rounded-card focus:ring-2 focus:ring-brand/40 focus:border-brand text-foreground
           placeholder:text-muted-foreground py-3`}
-        style={{ fontFamily: "'Quicksand', sans-serif" }}
         required={required}
         disabled={disabled}
         minLength={minLength}

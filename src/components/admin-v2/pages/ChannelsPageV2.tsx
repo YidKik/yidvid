@@ -168,7 +168,7 @@ export const ChannelsPageV2 = () => {
           <div className="rounded-card border border-[#1e2028] bg-[#12131a] p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Channels</p>
+                <p className="text-xs text-gray-500 font-medium uppercase">Total Channels</p>
                 <p className="text-2xl font-bold text-white">{analyticsStats.totalChannels}</p>
               </div>
               <div className="w-9 h-9 rounded-control flex items-center justify-center bg-indigo-600">
@@ -179,7 +179,7 @@ export const ChannelsPageV2 = () => {
           <div className="rounded-card border border-[#1e2028] bg-[#12131a] p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Videos</p>
+                <p className="text-xs text-gray-500 font-medium uppercase">Total Videos</p>
                 <p className="text-2xl font-bold text-white">{analyticsStats.totalVideos}</p>
               </div>
               <div className="w-9 h-9 rounded-control flex items-center justify-center bg-sky-600">
@@ -190,7 +190,7 @@ export const ChannelsPageV2 = () => {
           <div className="rounded-card border border-[#1e2028] bg-[#12131a] p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Watch Time</p>
+                <p className="text-xs text-gray-500 font-medium uppercase">Total Watch Time</p>
                 <p className="text-2xl font-bold text-white">{analyticsStats.totalHours}h</p>
               </div>
               <div className="w-9 h-9 rounded-control flex items-center justify-center bg-amber-600">

@@ -45,8 +45,8 @@ export const TermsOfServiceDialog: React.FC<TermsOfServiceDialogProps> = ({
                 <FileText className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
               </div>
               <div>
-                <h2 className="text-lg font-bold tracking-tight text-foreground dark:!text-foreground">Terms of Service</h2>
-                <p className="text-xs text-muted-foreground dark:!text-muted-foreground">
+                <h2 className="text-lg font-bold text-foreground dark:!text-foreground">Terms of Service</h2>
+                <p className="type-help text-muted-foreground dark:!text-muted-foreground">
                   Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
               </div>
@@ -58,7 +58,7 @@ export const TermsOfServiceDialog: React.FC<TermsOfServiceDialogProps> = ({
             className={`px-6 py-5 overflow-y-auto ${isMobile ? 'max-h-[calc(85vh-140px)]' : 'max-h-[calc(80vh-140px)]'}`}
             style={{ scrollBehavior: 'smooth' }}
           >
-            <div className="space-y-4 text-sm leading-relaxed text-foreground dark:!text-foreground">
+            <div className="space-y-4 type-legal text-foreground dark:!text-foreground">
               <h3 className="text-base font-bold text-foreground dark:!text-foreground">1. Acceptance of Terms</h3>
               <p>By accessing, browsing, or using YidVid ("the Platform," "we," "us," or "our"), you acknowledge that you have read, understood, and agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you must immediately discontinue use of the Platform. Your continued use of the Platform constitutes your ongoing acceptance of these Terms as they may be amended from time to time.</p>
 

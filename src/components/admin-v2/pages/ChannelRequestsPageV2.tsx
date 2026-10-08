@@ -195,7 +195,7 @@ export const ChannelRequestsPageV2 = () => {
               <div className="p-5 space-y-6">
                 {/* Channel info */}
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Channel</p>
+                  <p className="text-[10px] uppercase text-[#565b6e] font-semibold mb-3">Channel</p>
                   <div className="space-y-2.5">
                     <div className="bg-[#13141b] rounded-card p-3.5 border border-[#1e2028]">
                       <p className="text-[10px] text-[#565b6e] mb-1">Channel Name</p>
@@ -220,7 +220,7 @@ export const ChannelRequestsPageV2 = () => {
 
                 {/* Status */}
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Status</p>
+                  <p className="text-[10px] uppercase text-[#565b6e] font-semibold mb-3">Status</p>
                   <div className="bg-[#13141b] rounded-card p-3.5 border border-[#1e2028] flex items-center justify-between">
                     {statusBadge(selected.status, "lg")}
                     <p className="text-[10px] text-[#565b6e]">
@@ -231,7 +231,7 @@ export const ChannelRequestsPageV2 = () => {
 
                 {/* User details */}
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Requested By</p>
+                  <p className="text-[10px] uppercase text-[#565b6e] font-semibold mb-3">Requested By</p>
                   <div className="space-y-2.5">
                     <InfoRow icon={User} label="Username" value={selected.profiles?.username || selected.profiles?.display_name || "N/A"} />
                     <InfoRow icon={Mail} label="Email" value={selected.profiles?.email || "N/A"} copyable={!!selected.profiles?.email} onCopy={() => copyToClipboard(selected.profiles!.email, "Email")} />
@@ -242,7 +242,7 @@ export const ChannelRequestsPageV2 = () => {
 
                 {/* Actions */}
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Actions</p>
+                  <p className="text-[10px] uppercase text-[#565b6e] font-semibold mb-3">Actions</p>
                   <div className="flex gap-2">
                     <Button
                       size="sm"

@@ -74,6 +74,7 @@ const MainContent = () => {
       style={!isMobile && sidebarWidth ? { paddingLeft: `${sidebarWidth + 16}px` } : undefined}
     >
       <main className="mt-4 px-6 lg:px-8 w-full">
+        <h1 className="sr-only">Browse videos</h1>
         <div className="space-y-2 md:space-y-4">
           <div className={isMobile ? 'mt-2' : 'mt-4'}>
             <VideoContent 

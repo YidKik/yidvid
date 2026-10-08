@@ -68,7 +68,7 @@ export const ChannelLockDialog = ({ isOpen, onClose, onUnlock, onDelete, storedP
               value={pin}
               onChange={(e) => setPin(e.target.value)}
               placeholder="Enter 6-digit PIN"
-              className="text-center text-lg tracking-widest font-mono h-12 border-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="text-center text-lg font-mono h-12 border-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           

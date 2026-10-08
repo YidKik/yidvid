@@ -275,7 +275,7 @@ function StatCard({ label, value, icon: Icon, color, bgColor }: { label: string;
   return (
     <div className="rounded-card bg-[#13141b] border border-[#1e2028] p-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-[11px] font-semibold text-[#565b6e] uppercase tracking-wider">{label}</span>
+        <span className="text-[11px] font-semibold text-[#565b6e] uppercase">{label}</span>
         <div className={cn("w-8 h-8 rounded-control flex items-center justify-center", bgColor)}>
           <Icon className={cn("w-4 h-4", color)} />
         </div>
@@ -590,7 +590,7 @@ function BroadcastComposer() {
         <div className="p-5 space-y-4">
           {/* Recipients */}
           <div>
-            <label className="text-[11px] font-semibold text-[#8b8fa3] uppercase tracking-wider mb-1.5 block">Recipients</label>
+            <label className="text-[11px] font-semibold text-[#8b8fa3] uppercase mb-1.5 block">Recipients</label>
             <select
               value={filterType}
               onChange={(e) => { setFilterType(e.target.value); setSelectedUserEmails([]); }}
@@ -669,7 +669,7 @@ function BroadcastComposer() {
 
           {/* Subject */}
           <div>
-            <label className="text-[11px] font-semibold text-[#8b8fa3] uppercase tracking-wider mb-1.5 block">Subject</label>
+            <label className="text-[11px] font-semibold text-[#8b8fa3] uppercase mb-1.5 block">Subject</label>
             <input
               type="text"
               placeholder="Enter email subject..."
@@ -681,7 +681,7 @@ function BroadcastComposer() {
 
           {/* Body */}
           <div>
-            <label className="text-[11px] font-semibold text-[#8b8fa3] uppercase tracking-wider mb-1.5 block">Message (HTML supported)</label>
+            <label className="text-[11px] font-semibold text-[#8b8fa3] uppercase mb-1.5 block">Message (HTML supported)</label>
             <textarea
               placeholder="Write your email content here. HTML is supported..."
               value={body}

@@ -12,7 +12,6 @@ export const AuthTermsFooter: React.FC<AuthTermsFooterProps> = ({
   return (
     <div 
       className="mt-6 pt-5 border-t border-border text-center"
-      style={{ fontFamily: "'Quicksand', sans-serif" }}
     >
       <p className="text-xs text-muted-foreground leading-relaxed">
         By signing in, you agree to our{" "}

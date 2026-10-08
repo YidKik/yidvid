@@ -161,7 +161,7 @@ const Search = () => {
           <h1 className={`${isMobile ? 'text-base' : 'text-xl'} font-bold text-foreground dark:text-foreground`}>
             Results for "<span className="text-brand">{query}</span>"
           </h1>
-          <p className={`${isMobile ? 'text-[11px]' : 'text-xs'} text-muted-foreground mt-1`}>
+          <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground mt-1`}>
             {totalResults} result{totalResults !== 1 ? 's' : ''} found
           </p>
         </div>
@@ -171,7 +171,7 @@ const Search = () => {
           <section className="mb-8">
             <div className="flex items-center gap-2 mb-3">
               <Users className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-muted-foreground`} />
-              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase tracking-wide`}>Channels</h2>
+              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase`}>Channels</h2>
             </div>
             <div className="flex flex-wrap gap-2.5">
               {filteredChannels.map((channel: any) => (
@@ -186,7 +186,7 @@ const Search = () => {
                       <Youtube className="w-3.5 h-3.5 text-brand" />
                     </AvatarFallback>
                   </Avatar>
-                  <span className={`${isMobile ? 'text-[11px]' : 'text-sm'} font-semibold text-foreground dark:text-foreground group-hover:text-brand transition-colors whitespace-nowrap`}>
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-foreground dark:text-foreground group-hover:text-brand transition-colors whitespace-nowrap`}>
                     {channel.title}
                   </span>
                 </Link>
@@ -202,7 +202,7 @@ const Search = () => {
               <div className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} bg-primary rounded flex items-center justify-center`}>
                 <Play className="h-2 w-2 text-white fill-white" />
               </div>
-              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase tracking-wide`}>Shorts</h2>
+              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase`}>Shorts</h2>
             </div>
             <div className={`grid ${isMobile ? 'grid-cols-3 gap-2' : 'grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3'}`}>
               {filteredShorts.map((short: any) => (
@@ -219,13 +219,13 @@ const Search = () => {
                       loading="lazy"
                     />
                     <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
-                    <span className="absolute top-1.5 left-1.5 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                    <span className="absolute top-1.5 left-1.5 bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded">
                       SHORT
                     </span>
                     {short.views > 0 && (
                       <div className="absolute bottom-1.5 left-1.5 flex items-center gap-0.5">
                         <Eye className="w-2.5 h-2.5 text-white/80" />
-                        <span className="text-[9px] text-white/80 font-medium">{formatViews(short.views)}</span>
+                        <span className="text-xs text-white/80 font-medium">{formatViews(short.views)}</span>
                       </div>
                     )}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -234,7 +234,7 @@ const Search = () => {
                       </div>
                     </div>
                   </div>
-                  <p className={`mt-1.5 ${isMobile ? 'text-[10px]' : 'text-[11px]'} font-medium text-foreground dark:text-foreground line-clamp-2 leading-tight`}>
+                  <p className={`mt-1.5 ${isMobile ? 'text-xs' : 'text-xs'} font-medium text-foreground dark:text-foreground line-clamp-2 leading-tight`}>
                     {cleanVideoTitle(short.title)}
                   </p>
                 </div>
@@ -248,7 +248,7 @@ const Search = () => {
           <section>
             <div className="flex items-center gap-2 mb-3">
               <Play className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-muted-foreground`} />
-              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase tracking-wide`}>Videos</h2>
+              <h2 className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold text-muted-foreground dark:text-muted-foreground uppercase`}>Videos</h2>
             </div>
 
             <div className="space-y-3">
@@ -275,7 +275,7 @@ const Search = () => {
                     </h3>
 
                     {/* Views & date */}
-                    <p className={`${isMobile ? 'text-[10px] mt-0.5' : 'text-xs mt-1'} text-muted-foreground dark:text-muted-foreground`}>
+                    <p className={`${isMobile ? 'text-xs mt-0.5' : 'text-xs mt-1'} text-muted-foreground dark:text-muted-foreground`}>
                       {formatViews(video.views || 0)} • {formatDate(video.uploaded_at)}
                     </p>
 
@@ -283,11 +283,11 @@ const Search = () => {
                     <div className={`flex items-center gap-1.5 ${isMobile ? 'mt-1.5' : 'mt-2.5'}`}>
                       <Avatar className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} flex-shrink-0`}>
                         <AvatarImage src={channelThumbnails[video.channel_id]} alt={video.channel_name} />
-                        <AvatarFallback className="bg-surface-active dark:bg-secondary text-[8px] font-bold text-muted-foreground">
+                        <AvatarFallback className="bg-surface-active dark:bg-secondary text-xs font-bold text-muted-foreground">
                           {video.channel_name?.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-muted-foreground dark:text-muted-foreground truncate`}>
+                      <span className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground dark:text-muted-foreground truncate`}>
                         {video.channel_name}
                       </span>
                     </div>

@@ -32,7 +32,6 @@ export const CustomPaginationArrow = ({
           group-hover:px-5 group-hover:bg-highlight/10
           ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
         style={{ 
-          fontFamily: "'Quicksand', 'Rubik', sans-serif",
           borderColor: 'hsl(var(--brand))'
         }}
       >

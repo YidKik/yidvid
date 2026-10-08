@@ -41,11 +41,11 @@ export const ChannelShortsSection = ({ shorts, isLoading }: ChannelShortsSection
               <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
               {short.views > 0 && (
                 <div className="absolute bottom-2 left-2 flex items-center gap-1">
-                  <span className="text-[11px] text-white/90 font-medium">{formatViews(short.views)} views</span>
+                  <span className="text-xs text-white/90 font-medium">{formatViews(short.views)} views</span>
                 </div>
               )}
             </div>
-            <p className={`mt-2 ${isMobile ? 'text-[11px] leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-semibold text-foreground line-clamp-2`}>
+            <p className={`mt-2 ${isMobile ? 'text-xs leading-[1.3]' : 'text-[13px] leading-[1.4]'} font-semibold text-foreground line-clamp-2`}>
               {cleanVideoTitle(short.title)}
             </p>
           </div>

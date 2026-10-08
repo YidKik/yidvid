@@ -16,14 +16,14 @@ export const ThemeToggle = () => {
       onClick={cycleTheme}
       title={`Theme: ${label} — Click to change`}
       className={cn(
-        "touch-hit flex items-center justify-center rounded-control transition-all duration-200",
+        "flex items-center justify-center rounded-control transition-all duration-200",
         "border-2 hover:scale-105",
         "border-border hover:bg-surface-hover text-muted-foreground",
         "dark:border-border dark:hover:bg-secondary dark:text-muted-foreground",
-        isMobile ? "w-7 h-7" : "w-9 h-9"
+        isMobile ? "w-11 h-11" : "w-9 h-9"
       )}
     >
-      <Icon className={isMobile ? "w-3.5 h-3.5" : "w-4 h-4"} />
+      <Icon className={"w-4 h-4"} />
     </button>
   );
 };
