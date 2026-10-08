@@ -9,7 +9,7 @@
   --primary-hover: 352 69% 39%;
   --primary-pressed: 351 70% 34%;
   --icon: 216 18% 34%;
-  --input-border: 218 15% 65%;
+  --input-border: 219 13% 54%;
   --success: 152 69% 28%; --success-bg: 145 81% 96%;
   --warning: 34 100% 32%; --warning-bg: 45 100% 96%;
   --error: 4 76% 40%;     --error-bg: 5 86% 97%;
@@ -76,7 +76,7 @@
   --destructive-foreground: 0 0% 100%;
 
   --border: 218 17% 91%;
-  --input: 218 15% 65%;
+  --input: 219 13% 54%;
   --ring: 352 69% 47%;
 
   --radius: 0.5rem;
