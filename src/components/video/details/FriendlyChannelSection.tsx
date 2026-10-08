@@ -162,7 +162,7 @@ export const FriendlyChannelSection = ({
           {needsExpand && (
             <button
               onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-              className={`touch-target inline-flex items-center mt-2 ${compact ? 'text-xs' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
+              className={`touch-target inline-flex items-center mt-2 ${compact ? 'min-h-11 text-sm leading-5' : 'text-sm'} font-medium text-foreground hover:text-brand transition-colors`}
             >
               {isDescriptionExpanded ? "Show less" : "Show more"}
             </button>
@@ -230,7 +230,7 @@ export const FriendlyChannelSection = ({
           {channelVideos.length > initialCount && (
             <button
               onClick={() => setShowAllVideos(!showAllVideos)}
-              className="touch-target mt-3 w-full flex items-center justify-center gap-2 h-9 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-surface-hover rounded-control transition-colors"
+              className="touch-target mt-3 w-full flex items-center justify-center gap-2 h-11 md:h-9 text-sm leading-5 md:text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-surface-hover rounded-control transition-colors"
             >
               {showAllVideos ? (
                 <>Show less <ChevronUp className="w-3.5 h-3.5" /></>
