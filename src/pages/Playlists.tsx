@@ -88,7 +88,7 @@ const Playlists = () => {
       <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white flex flex-col pb-20 lg:pb-0">
         <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-12">
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-6 shadow-sm">
+            <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
               <ListMusic className="w-12 h-12 text-brand" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2 font-friendly">Sign in to view your playlists</h1>
@@ -186,7 +186,7 @@ const Playlists = () => {
             </div>
           ) : !playlistItems || playlistItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 rounded-full bg-brand-soft flex items-center justify-center mb-4">
                 <ListMusic className="w-10 h-10 text-red-400" />
               </div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2 font-friendly">No videos in this playlist</h2>
@@ -319,7 +319,7 @@ const Playlists = () => {
           </div>
         ) : !playlists || playlists.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-100 to-red-100 flex items-center justify-center mb-6 shadow-sm">
+            <div className="w-24 h-24 rounded-full bg-brand-soft flex items-center justify-center mb-6 shadow-sm">
               <ListMusic className="w-12 h-12 text-red-400" />
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2 font-friendly">No playlists yet</h2>
@@ -345,7 +345,7 @@ const Playlists = () => {
                 className="group cursor-pointer bg-white rounded-2xl p-5 hover:shadow-lg transition-all border border-gray-100 hover:border-gray-200"
                 onClick={() => setSearchParams({ id: playlist.id })}
               >
-                <div className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-yellow-100 via-orange-50 to-red-100 mb-4 flex items-center justify-center shadow-sm">
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-brand-soft mb-4 flex items-center justify-center shadow-sm">
                   <ListMusic className="w-14 h-14 text-red-400" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   {/* Play overlay */}

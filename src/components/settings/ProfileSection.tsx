@@ -113,7 +113,7 @@ export const ProfileSection = () => {
       </div>
       
       {showingFallback && (
-        <div className="text-amber-600 text-sm mb-4 bg-amber-50 border border-amber-200 rounded-xl p-3">
+        <div className="text-warning text-sm mb-4 bg-warning-bg border border-warning/40 rounded-xl p-3">
           Using limited profile data. Some features may be unavailable.
         </div>
       )}

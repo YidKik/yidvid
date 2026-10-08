@@ -29,14 +29,14 @@ export const FriendlyRelatedVideos = ({
 
   if (isLoading) {
     return (
-      <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-amber-200/30">
+      <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-border">
         {/* Warm gradient glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-50/25 via-transparent to-rose-50/20 pointer-events-none" />
+        <div className="absolute inset-0 hidden pointer-events-none" />
         
-        <div className="relative p-6 bg-gradient-to-r from-amber-100/40 via-rose-100/25 to-transparent">
+        <div className="relative p-6 ">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-amber-400/30 to-rose-400/20 rounded-2xl">
-              <Play className="h-5 w-5 text-amber-600 fill-amber-600" />
+            <div className="p-2.5 bg-brand-soft rounded-2xl">
+              <Play className="h-5 w-5 text-brand fill-current" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-foreground">More from {channelName}</h2>
@@ -65,13 +65,13 @@ export const FriendlyRelatedVideos = ({
 
   if (!videos || videos.length === 0) {
     return (
-      <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-amber-200/30">
+      <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-border">
         {/* Warm gradient glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-50/25 via-transparent to-rose-50/20 pointer-events-none" />
+        <div className="absolute inset-0 hidden pointer-events-none" />
         
-        <div className="relative p-6 bg-gradient-to-r from-amber-100/40 via-rose-100/25 to-transparent">
+        <div className="relative p-6 ">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-amber-400/30 to-rose-400/20 rounded-2xl">
+            <div className="p-2.5 bg-brand-soft rounded-2xl">
               <Tv className="h-5 w-5 text-amber-600" />
             </div>
             <h2 className="text-lg font-bold text-foreground">More from {channelName}</h2>
@@ -92,16 +92,16 @@ export const FriendlyRelatedVideos = ({
   }
 
   return (
-    <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-amber-200/30">
+    <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-border">
       {/* Warm gradient glow background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-amber-50/25 via-transparent to-rose-50/20 pointer-events-none" />
+      <div className="absolute inset-0 hidden pointer-events-none" />
       
       {/* Header */}
-      <div className="relative p-6 bg-gradient-to-r from-amber-100/40 via-rose-100/25 to-transparent">
+      <div className="relative p-6 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-amber-400/30 to-rose-400/20 rounded-2xl">
-              <Play className="h-5 w-5 text-amber-600 fill-amber-600" />
+            <div className="p-2.5 bg-brand-soft rounded-2xl">
+              <Play className="h-5 w-5 text-brand fill-current" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-foreground">
@@ -158,9 +158,9 @@ export const FriendlyRelatedVideos = ({
           <div className="mt-8 text-center">
             <Link 
               to={`/channel/${videos[0].channel_id}`}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-amber-100/50 via-rose-100/40 to-amber-100/50 hover:from-amber-200/60 hover:via-rose-200/50 hover:to-amber-200/60 rounded-full text-sm font-semibold text-foreground transition-all hover:shadow-lg border border-amber-200/30"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-amber-100/50 via-rose-100/40 to-amber-100/50 hover:from-amber-200/60 hover:via-rose-200/50 hover:to-amber-200/60 rounded-full text-sm font-semibold text-foreground transition-all hover:shadow-lg border border-border"
             >
-              <Play className="h-4 w-4 text-amber-600 fill-amber-600" />
+              <Play className="h-4 w-4 text-brand fill-current" />
               See all {videos.length} videos
             </Link>
           </div>
