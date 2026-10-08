@@ -114,8 +114,8 @@ const HeroSearchSection = () => {
           transition={{ delay: 0.4 }}
         >
           <h1 
-            className={`${isMobile ? 'text-xl' : isTablet ? 'text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-semibold ${isMobile ? 'min-h-[40px]' : 'min-h-[70px] md:min-h-[90px]'} flex items-center justify-center ${isMobile ? '' : 'whitespace-nowrap'}`}
-            style={{ color: 'hsl(var(--foreground))', letterSpacing: '-0.01em' }}
+            className={`type-hero min-h-[80px] md:min-h-[96px] lg:min-h-[112px] flex items-center justify-center text-center`}
+            style={{ color: 'hsl(var(--foreground))' }}
           >
             <span>{displayText}</span>
             <motion.span
