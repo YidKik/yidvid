@@ -230,7 +230,7 @@ const VideoDetails = () => {
               </div>
               
               {/* Title */}
-              <h1 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-foreground dark:text-foreground leading-tight`}>
+              <h1 className={`${isMobile ? 'text-[22px] leading-[30px]' : 'text-lg leading-tight'} font-bold text-foreground dark:text-foreground`}>
                 {cleanVideoTitle(video?.title)}
               </h1>
               

@@ -184,15 +184,15 @@ export const FriendlyVideoActionBar = ({
   ];
 
   const pillBtn = compact
-    ? "touch-target h-7 px-3 rounded-control text-xs font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
+    ? "touch-target h-11 px-4 rounded-control text-sm leading-5 font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
     : "touch-target h-9 px-4 rounded-control text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground";
 
-  const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
+  const iconSize = "h-4 w-4";
 
   return (
     <div className="space-y-3">
       {/* Views & date - small meta line */}
-      <div className={`flex items-center gap-2 ${compact ? 'text-xs' : 'text-xs'} text-muted-foreground dark:text-muted-foreground`}>
+      <div className={`flex items-center gap-2 ${compact ? 'text-[13px] leading-5' : 'text-xs'} text-muted-foreground dark:text-muted-foreground`}>
         <span>{formatViewCount(views)} views</span>
         {uploadedAt && (
           <>
@@ -243,7 +243,7 @@ export const FriendlyVideoActionBar = ({
               onClick={handleSubscribeClick}
               disabled={isSubLoading}
               data-subscribed={isSubscribed ? "true" : "false"}
-              className={`${compact ? 'h-7 px-3 text-xs' : 'h-9 px-4 text-sm'} video-subscribe-button touch-target rounded-control font-semibold transition-all ml-0.5`}
+              className={`${compact ? 'h-11 px-4 text-sm leading-5' : 'h-9 px-4 text-sm'} video-subscribe-button touch-target rounded-control font-semibold transition-all ml-0.5`}
             >
               {isSubLoading ? (
                 <span className="opacity-70">...</span>
