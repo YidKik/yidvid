@@ -113,7 +113,7 @@ export const ProfileSection = () => {
       </div>
       
       {showingFallback && (
-        <div className="text-warning text-sm mb-4 bg-warning-bg border border-warning/40 rounded-xl p-3">
+        <div className="text-warning text-sm mb-4 bg-warning-bg border border-warning/40 rounded-card p-3">
           Using limited profile data. Some features may be unavailable.
         </div>
       )}
@@ -138,15 +138,15 @@ export const ProfileSection = () => {
           <DialogTrigger asChild>
             <Button
               variant="outline"
-              className="w-full flex items-center justify-center gap-2 text-brand hover:text-brand border-2 border-red-200 hover:border-red-300 hover:bg-red-50 transition-colors rounded-xl h-11"
+              className="w-full flex items-center justify-center gap-2 text-brand hover:text-brand border-2 border-red-200 hover:border-red-300 hover:bg-red-50 transition-colors rounded-card h-11"
             >
               <Trash2 className="h-4 w-4" />
               <span className="font-semibold">Delete Account</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="border-2 border-red-200 rounded-2xl max-w-md">
+          <DialogContent className="border-2 border-red-200 rounded-dialog max-w-md">
             <DialogHeader className="text-center sm:text-center">
-              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-card bg-red-100">
                 <AlertTriangle className="h-7 w-7 text-brand" />
               </div>
               <DialogTitle className="text-brand text-xl font-bold">Delete Account</DialogTitle>
@@ -158,7 +158,7 @@ export const ProfileSection = () => {
               <Button
                 onClick={handleDeleteAccount}
                 disabled={isDeleting}
-                className="w-full bg-primary hover:bg-primary-hover text-white rounded-xl h-11 font-semibold"
+                className="w-full bg-primary hover:bg-primary-hover text-white rounded-card h-11 font-semibold"
               >
                 {isDeleting ? "Deleting..." : "Yes, Delete My Account"}
               </Button>
@@ -166,7 +166,7 @@ export const ProfileSection = () => {
                 variant="outline" 
                 onClick={() => setIsDeleteDialogOpen(false)} 
                 disabled={isDeleting}
-                className="w-full rounded-xl h-11 font-semibold"
+                className="w-full rounded-card h-11 font-semibold"
               >
                 Cancel
               </Button>

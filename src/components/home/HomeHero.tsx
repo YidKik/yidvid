@@ -34,14 +34,14 @@ export const HomeHero = () => {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
           <motion.button
-            className="bg-primary text-white px-6 py-3 rounded-full font-medium shadow-md hover:bg-[#e3fef7] hover:text-[#135d66] transition-colors"
+            className="bg-primary text-white px-6 py-3 rounded-control font-medium shadow-md hover:bg-[#e3fef7] hover:text-[#135d66] transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             Explore Videos
           </motion.button>
           <motion.button
-            className="bg-white text-brand border border-brand px-6 py-3 rounded-full font-medium shadow-md hover:bg-gray-50 transition-colors"
+            className="bg-white text-brand border border-brand px-6 py-3 rounded-control font-medium shadow-md hover:bg-gray-50 transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -58,18 +58,18 @@ export const HomeHero = () => {
         transition={{ duration: 0.6, delay: 0.2 }}
       >
         <div className="relative w-full max-w-md">
-          <div className="absolute inset-0 bg-gradient-to-br from-brand/10 to-purple-500/10 rounded-3xl transform rotate-3"></div>
-          <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden p-2">
+          <div className="absolute inset-0 bg-gradient-to-br from-brand/10 to-purple-500/10 rounded-card transform rotate-3"></div>
+          <div className="relative bg-white rounded-card shadow-xl overflow-hidden p-2">
             <img 
               src="/yidvid-logo-full.png" 
               alt="Video content preview" 
-              className="w-full h-auto rounded-xl"
+              className="w-full h-auto rounded-card"
               draggable={false}
             />
             
             {/* Floating elements */}
             <motion.div 
-              className="absolute -top-4 -right-4 bg-primary text-white p-3 rounded-full shadow-lg"
+              className="absolute -top-4 -right-4 bg-primary text-white p-3 rounded-control shadow-lg"
               animate={{ 
                 y: [0, -10, 0],
                 rotate: [0, 5, 0]

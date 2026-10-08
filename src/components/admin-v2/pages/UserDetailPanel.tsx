@@ -107,7 +107,7 @@ export const UserDetailPanel = ({
                 displayName[0]?.toUpperCase()
               )}
               {quickStats?.isLive && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#12131a] animate-pulse" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-control bg-emerald-500 border-2 border-[#12131a] animate-pulse" />
               )}
             </div>
             <div>
@@ -141,7 +141,7 @@ export const UserDetailPanel = ({
             { icon: Clock, label: "Time", value: timeStr, color: "text-amber-400" },
             { icon: Eye, label: "Status", value: quickStats?.isLive ? "Live" : "Offline", color: quickStats?.isLive ? "text-emerald-400" : "text-gray-500" },
           ].map(stat => (
-            <div key={stat.label} className="bg-[#0f1117] rounded-lg p-2 border border-[#1e2028] text-center">
+            <div key={stat.label} className="bg-[#0f1117] rounded-card p-2 border border-[#1e2028] text-center">
               <stat.icon className={`w-3.5 h-3.5 mx-auto mb-1 ${stat.color}`} />
               <p className="text-sm font-bold text-white leading-tight">{stat.value}</p>
               <p className="text-[9px] text-[#565b6e]">{stat.label}</p>

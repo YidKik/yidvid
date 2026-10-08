@@ -41,7 +41,7 @@ export const CategoryLines = ({ borderColor }: CategoryLinesProps) => {
           variants={lineVariants}
           initial="initial"
           animate="animate"
-          className={`w-[1px] md:w-[3px] rounded-full`}
+          className={`w-[1px] md:w-[3px] rounded-control`}
           style={{ 
             background: `linear-gradient(to bottom, ${borderColor}22, ${borderColor}88)` 
           }}
@@ -51,7 +51,7 @@ export const CategoryLines = ({ borderColor }: CategoryLinesProps) => {
           variants={lineVariants}
           initial="initial"
           animate="animate"
-          className={`w-[1px] md:w-[3px] rounded-full`}
+          className={`w-[1px] md:w-[3px] rounded-control`}
           style={{ 
             background: `linear-gradient(to bottom, ${borderColor}44, ${borderColor})` 
           }}
@@ -61,7 +61,7 @@ export const CategoryLines = ({ borderColor }: CategoryLinesProps) => {
           variants={lineVariants}
           initial="initial"
           animate="animate"
-          className={`w-[1px] md:w-[3px] rounded-full`}
+          className={`w-[1px] md:w-[3px] rounded-control`}
           style={{ 
             background: `linear-gradient(to bottom, ${borderColor}22, ${borderColor}88)` 
           }}

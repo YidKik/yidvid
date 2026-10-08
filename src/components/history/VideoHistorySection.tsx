@@ -80,7 +80,7 @@ export const VideoHistorySection = () => {
     return (
       <div className="space-y-3">
         {Array(3).fill(0).map((_, i) => (
-          <Skeleton key={i} className="h-20 rounded-xl" />
+          <Skeleton key={i} className="h-20 rounded-card" />
         ))}
       </div>
     );
@@ -88,7 +88,7 @@ export const VideoHistorySection = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="p-6 bg-gray-100 rounded-xl text-center">
+      <div className="p-6 bg-gray-100 rounded-card text-center">
         <Play className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
         <p className="text-muted-foreground font-medium">Sign in to see your watch history</p>
         <p className="text-sm text-muted-foreground mt-1">Keep track of videos you've watched</p>
@@ -100,7 +100,7 @@ export const VideoHistorySection = () => {
     return (
       <div className="space-y-3">
         {Array(3).fill(0).map((_, i) => (
-          <Skeleton key={i} className="h-20 rounded-xl" />
+          <Skeleton key={i} className="h-20 rounded-card" />
         ))}
       </div>
     );
@@ -108,7 +108,7 @@ export const VideoHistorySection = () => {
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-center">
+      <div className="p-4 bg-red-50 border border-red-200 rounded-card text-center">
         <p className="text-brand font-medium">Error loading watch history</p>
         <Button 
           variant="outline" 
@@ -124,7 +124,7 @@ export const VideoHistorySection = () => {
 
   if (!history || history.length === 0) {
     return (
-      <div className="p-6 bg-gray-100 rounded-xl text-center">
+      <div className="p-6 bg-gray-100 rounded-card text-center">
         <Clock className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
         <p className="text-muted-foreground font-medium">No watch history yet</p>
         <p className="text-sm text-muted-foreground mt-1">Videos you watch will appear here</p>
@@ -160,10 +160,10 @@ export const VideoHistorySection = () => {
           <Link
             key={entry.id}
             to={entry.youtube_videos ? `/video/${entry.youtube_videos.video_id}` : "#"}
-            className="flex gap-3 p-2 rounded-xl bg-white border border-gray-100 hover:border-red-200 hover:shadow-sm transition-all group"
+            className="flex gap-3 p-2 rounded-card bg-white border border-gray-100 hover:border-red-200 hover:shadow-sm transition-all group"
           >
             {/* Thumbnail */}
-            <div className="relative flex-shrink-0 w-24 h-14 rounded-lg overflow-hidden bg-gray-200">
+            <div className="relative flex-shrink-0 w-24 h-14 rounded-card overflow-hidden bg-gray-200">
               {entry.youtube_videos?.thumbnail ? (
                 <img
                   src={entry.youtube_videos.thumbnail}

@@ -39,7 +39,7 @@ const Settings = () => {
       )}>
         {/* Page Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-primary rounded-xl">
+          <div className="p-2 bg-primary rounded-card">
             <SettingsIcon className="w-5 h-5 text-white" />
           </div>
           <h1 className={cn(
@@ -70,8 +70,8 @@ const Settings = () => {
                   className={cn(
                     "flex items-center gap-2.5 font-semibold transition-all duration-200 whitespace-nowrap",
                     isMobile
-                      ? "px-4 py-2 text-xs rounded-full border"
-                      : "px-4 py-2.5 text-sm rounded-xl w-full text-left",
+                      ? "px-4 py-2 text-xs rounded-control border"
+                      : "px-4 py-2.5 text-sm rounded-control w-full text-left",
                     isActive
                       ? isMobile
                         ? "bg-primary text-white border-brand"
@@ -91,7 +91,7 @@ const Settings = () => {
           {/* Content Area */}
           <div className="flex-1 min-w-0">
             <div className={cn(
-              "bg-white dark:bg-card rounded-2xl border border-border dark:border-border shadow-sm",
+              "bg-white dark:bg-card rounded-card border border-border dark:border-border shadow-sm",
               isMobile ? "p-4" : "p-6"
             )}>
               {activeSection === "profile" && (

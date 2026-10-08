@@ -98,7 +98,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
     <button
       onClick={handleGoBack}
       className={cn(
-        "fixed left-4 z-[100] flex items-center gap-2 px-3 py-2 rounded-full",
+        "fixed left-4 z-[100] flex items-center gap-2 px-3 py-2 rounded-control",
         "top-[72px] md:top-16",
         "bg-white/60 dark:bg-gray-900/60 backdrop-blur-md",
         "border border-gray-200/50 dark:border-gray-700/50",

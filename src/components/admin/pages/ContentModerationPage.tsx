@@ -63,7 +63,7 @@ export const ContentModerationPage = () => {
           {detailVideo && (
             <div className="space-y-4">
               {detailVideo.thumbnail && (
-                <img src={detailVideo.thumbnail} alt="" className="w-full rounded-lg aspect-video object-cover" />
+                <img src={detailVideo.thumbnail} alt="" className="w-full rounded-card aspect-video object-cover" />
               )}
               <h3 className="font-semibold">{detailVideo.title}</h3>
               <p className="text-sm text-[hsl(220,10%,50%)]">Channel: {detailVideo.channel_name}</p>
@@ -74,7 +74,7 @@ export const ContentModerationPage = () => {
                 <p className="text-sm">Score: {detailVideo.analysis_score}</p>
               )}
               {detailVideo.analysis_details && (
-                <pre className="text-xs bg-[hsl(220,14%,96%)] p-3 rounded-lg overflow-auto max-h-48">
+                <pre className="text-xs bg-[hsl(220,14%,96%)] p-3 rounded-card overflow-auto max-h-48">
                   {JSON.stringify(detailVideo.analysis_details, null, 2)}
                 </pre>
               )}
@@ -87,7 +87,7 @@ export const ContentModerationPage = () => {
 };
 
 const StatusBadge = ({ label, count, color }: { label: string; count: number; color: string }) => (
-  <div className="flex items-center gap-2 bg-white border border-[hsl(220,13%,91%)] rounded-lg px-3 py-2">
+  <div className="flex items-center gap-2 bg-white border border-[hsl(220,13%,91%)] rounded-control px-3 py-2">
     <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
     <span className="text-sm text-[hsl(220,10%,40%)]">{label}</span>
     <span className="text-sm font-bold text-[hsl(220,15%,18%)]">{count}</span>
@@ -114,11 +114,11 @@ const VideoList = ({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[hsl(220,13%,91%)] divide-y divide-[hsl(220,13%,93%)]">
+    <div className="bg-white rounded-card border border-[hsl(220,13%,91%)] divide-y divide-[hsl(220,13%,93%)]">
       {videos.map((v) => (
         <div key={v.id} className="flex items-center gap-4 p-4">
           {v.thumbnail && (
-            <img src={v.thumbnail} alt="" className="w-24 h-14 rounded-md object-cover shrink-0" />
+            <img src={v.thumbnail} alt="" className="w-24 h-14 rounded-control object-cover shrink-0" />
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-[hsl(220,15%,18%)] truncate">{v.title}</p>

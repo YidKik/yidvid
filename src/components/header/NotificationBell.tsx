@@ -41,14 +41,14 @@ export const NotificationBell = () => {
           variant="outline"
           size="icon"
           onClick={toggleNotifications}
-          className="h-10 w-10 rounded-full relative border-2 border-brand bg-white hover:bg-surface-hover shadow-md"
+          className="h-10 w-10 rounded-control relative border-2 border-brand bg-white hover:bg-surface-hover shadow-md"
         >
           <Bell className="h-5 w-5 text-brand" />
           {isLoggedIn && unreadCount > 0 && (
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shadow-lg"
+              className="absolute -top-1 -right-1 h-5 w-5 rounded-control bg-primary text-white text-xs font-bold flex items-center justify-center shadow-lg"
             >
               {unreadCount > 9 ? "9+" : unreadCount}
             </motion.span>
@@ -74,7 +74,7 @@ export const NotificationBell = () => {
                 animate={{ x: 0 }}
                 exit={{ x: 320 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="fixed right-0 top-[80px] z-50 w-80 max-h-[70vh] bg-white shadow-2xl rounded-l-3xl border-2 border-brand overflow-hidden flex flex-col"
+                className="fixed right-0 top-[80px] z-50 w-80 max-h-[70vh] bg-white shadow-2xl rounded-l-card border-2 border-brand overflow-hidden flex flex-col"
               >
                 {/* Header */}
                 <div className="p-4 border-b border-border bg-muted">
@@ -101,7 +101,7 @@ export const NotificationBell = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => setIsOpen(false)}
-                        className="h-7 w-7 rounded-full hover:bg-surface-hover"
+                        className="h-7 w-7 rounded-control hover:bg-surface-hover"
                       >
                         <X className="h-4 w-4 text-brand" />
                       </Button>
@@ -116,7 +116,7 @@ export const NotificationBell = () => {
                 <div className="flex-1 overflow-y-auto">
                   {!isLoggedIn ? (
                     <div className="p-6 text-center">
-                      <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+                      <div className="w-16 h-16 rounded-card bg-muted flex items-center justify-center mx-auto mb-4">
                         <LogIn className="h-8 w-8 text-brand" />
                       </div>
                       <h3 className="text-base font-semibold text-foreground mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
@@ -143,7 +143,7 @@ export const NotificationBell = () => {
                     </div>
                   ) : notifications.length === 0 ? (
                     <div className="p-6 text-center">
-                      <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+                      <div className="w-16 h-16 rounded-card bg-muted flex items-center justify-center mx-auto mb-4">
                         <Bell className="h-8 w-8 text-muted-foreground" />
                       </div>
                       <h3 className="text-base font-semibold text-foreground mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
@@ -171,7 +171,7 @@ export const NotificationBell = () => {
                                 <img
                                   src={notification.video.thumbnail}
                                   alt={notification.video.title}
-                                  className="w-20 h-12 object-cover rounded-lg"
+                                  className="w-20 h-12 object-cover rounded-card"
                                 />
                                 {!notification.is_read && (
                                   <span className="absolute top-1 left-1 w-2 h-2 bg-primary rounded-full animate-pulse" />

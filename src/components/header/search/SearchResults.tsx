@@ -49,7 +49,7 @@ export const SearchResults = ({
   return (
     <div className={`
       absolute left-0 right-0 bg-white backdrop-blur-md
-      border-2 border-red-300 border-t-0 rounded-b-2xl shadow-2xl z-[100]
+      border-2 border-red-300 border-t-0 rounded-b-card shadow-2xl z-[100]
       ${isMobile ? 'top-10' : 'top-12'}
     `} style={{ maxHeight: '80vh' }}>
       {isLoading && (

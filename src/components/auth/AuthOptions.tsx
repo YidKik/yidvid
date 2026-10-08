@@ -93,7 +93,7 @@ export const AuthOptions = ({
             disabled={isGoogleLoading}
             variant="outline"
             className="w-full h-13 text-base border-2 border-gray-200 text-foreground bg-white hover:bg-gray-50 
-              rounded-2xl font-semibold transition-all duration-200
+              rounded-card font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >
@@ -119,7 +119,7 @@ export const AuthOptions = ({
         >
           <Button 
             onClick={() => onSelectOption('signin')}
-            className="w-full h-13 text-base bg-primary hover:brightness-90 text-white rounded-2xl font-semibold
+            className="w-full h-13 text-base bg-primary hover:brightness-90 text-white rounded-card font-semibold
               transition-all duration-200 shadow-md hover:shadow-lg
               flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
@@ -140,7 +140,7 @@ export const AuthOptions = ({
             onClick={() => onSelectOption('signup')}
             variant="outline"
             className="w-full h-13 text-base border-2 border-brand text-foreground hover:text-primary-foreground bg-card hover:bg-primary 
-              rounded-2xl font-semibold transition-all duration-200
+              rounded-card font-semibold transition-all duration-200
               shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 py-4"
             style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}
           >

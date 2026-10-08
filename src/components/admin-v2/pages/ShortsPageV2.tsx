@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 
 const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-xl border border-[#1e2028] bg-[#12131a] ${className}`}>{children}</div>
+  <div className={`rounded-card border border-[#1e2028] bg-[#12131a] ${className}`}>{children}</div>
 );
 
 export const ShortsPageV2 = () => {
@@ -104,21 +104,21 @@ export const ShortsPageV2 = () => {
         <div className="p-4 border-b border-[#1e2028] space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-primary rounded-control flex items-center justify-center">
                 <Play className="w-3.5 h-3.5 text-white fill-white" />
               </div>
               <h2 className="text-lg font-semibold text-white">Shorts</h2>
-              <span className="text-xs bg-[#1e2028] text-[#8b8fa3] px-2 py-0.5 rounded-full">
+              <span className="text-xs bg-[#1e2028] text-[#8b8fa3] px-2 py-0.5 rounded-badge">
                 {filtered.length}
               </span>
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-1 bg-[#0a0b10] rounded-lg p-1">
+          <div className="flex gap-1 bg-[#0a0b10] rounded-control p-1">
             <button
               onClick={() => { setActiveTab("active"); setSelectedShort(null); }}
-              className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${
+              className={`flex-1 py-1.5 text-xs font-medium rounded-control transition-all ${
                 activeTab === "active"
                   ? "bg-[#6366f1] text-white"
                   : "text-[#8b8fa3] hover:text-white"
@@ -128,7 +128,7 @@ export const ShortsPageV2 = () => {
             </button>
             <button
               onClick={() => { setActiveTab("deleted"); setSelectedShort(null); }}
-              className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${
+              className={`flex-1 py-1.5 text-xs font-medium rounded-control transition-all ${
                 activeTab === "deleted"
                   ? "bg-primary/20 text-red-400"
                   : "text-[#8b8fa3] hover:text-white"
@@ -225,7 +225,7 @@ export const ShortsPageV2 = () => {
           <ScrollArea className="flex-1">
             <div className="p-5 space-y-5">
               {/* Thumbnail */}
-              <div className="relative rounded-xl overflow-hidden" style={{ aspectRatio: '9/16' }}>
+              <div className="relative rounded-card overflow-hidden" style={{ aspectRatio: '9/16' }}>
                 <img src={selectedShort.thumbnail} alt="" className="w-full h-full object-cover" />
                 <span className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded">
                   SHORT

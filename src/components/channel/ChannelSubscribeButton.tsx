@@ -57,7 +57,7 @@ export const ChannelSubscribeButton = ({
       <Button
         variant="outline"
         onClick={() => toast.info("Please sign in to subscribe to channels")}
-        className={`rounded-full px-6 py-2 text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-brand text-foreground hover:text-brand ${className}`}
+        className={`rounded-control px-6 py-2 text-sm transition-all duration-300 active:scale-95 font-medium bg-white border-gray-300 hover:bg-gray-50 hover:border-brand text-foreground hover:text-brand ${className}`}
       >
         <UserPlus className="w-4 h-4 mr-2" />
         <span>Subscribe</span>
@@ -70,7 +70,7 @@ export const ChannelSubscribeButton = ({
       variant={isSubscribed ? "default" : "outline"}
       onClick={handleSubscribeClick}
       disabled={isLoading}
-      className={`rounded-full px-6 py-2 text-sm transition-all duration-300 active:scale-95 font-medium
+      className={`rounded-control px-6 py-2 text-sm transition-all duration-300 active:scale-95 font-medium
         ${isSubscribed 
           ? "bg-primary border-brand hover:bg-primary-hover text-white shadow-md" 
           : "bg-white border-gray-300 hover:bg-gray-50 hover:border-brand text-foreground hover:text-brand"

@@ -42,7 +42,7 @@ export const MobileBottomNav = ({
           <Button 
             variant="ghost" 
             size="icon"
-            className="h-10 w-10 hover:bg-gray-100/60 rounded-full"
+            className="h-10 w-10 hover:bg-gray-100/60 rounded-control"
             onClick={handleSettingsClick}
           >
             <Settings className="h-5 w-5 text-muted-foreground" />

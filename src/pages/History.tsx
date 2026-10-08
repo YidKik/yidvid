@@ -22,7 +22,7 @@ export default function History() {
         <div className="min-h-screen pt-14 pl-0 lg:pl-[200px] bg-white dark:bg-background flex flex-col pb-20 lg:pb-0">
           <div className="flex-1 max-w-6xl mx-auto px-4 lg:px-6 py-12">
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-muted dark:bg-secondary flex items-center justify-center mb-6 shadow-sm">
+              <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-card bg-muted dark:bg-secondary flex items-center justify-center mb-6 shadow-sm">
                 <HistoryIcon className="w-10 h-10 lg:w-12 lg:h-12 text-brand" />
               </div>
               <h1 className="text-xl lg:text-2xl font-bold text-foreground dark:!text-foreground mb-2">Sign in to view your history</h1>
@@ -31,7 +31,7 @@ export default function History() {
               </p>
               <Button
                 onClick={() => setIsAuthOpen(true)}
-                className="rounded-full gap-2 bg-primary hover:brightness-90 text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
+                className="rounded-control gap-2 bg-primary hover:brightness-90 text-white px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-all"
               >
                 <LogIn className="w-4 h-4" />
                 Sign In
@@ -58,7 +58,7 @@ export default function History() {
           <main className="max-w-5xl mx-auto px-4 lg:px-8 py-8 lg:py-12 flex flex-col flex-1">
             <div className="flex items-center gap-3 mb-10">
               <div
-                className="w-10 h-10 rounded-full flex items-center justify-center"
+                className="w-10 h-10 rounded-control flex items-center justify-center"
                 style={{ backgroundColor: 'hsl(var(--primary))' }}
               >
                 <HistoryIcon className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />

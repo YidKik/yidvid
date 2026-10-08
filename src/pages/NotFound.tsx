@@ -67,7 +67,7 @@ export default function NotFound() {
         >
           <Button
             asChild
-            className="flex-1 h-12 text-base bg-primary hover:brightness-90 text-white rounded-2xl font-semibold shadow-md hover:shadow-lg gap-2"
+            className="flex-1 h-12 text-base bg-primary hover:brightness-90 text-white rounded-card font-semibold shadow-md hover:shadow-lg gap-2"
           >
             <Link to="/">
               <Home size={18} />
@@ -78,7 +78,7 @@ export default function NotFound() {
           <Button
             asChild
             variant="outline"
-            className="flex-1 h-12 text-base border-2 border-brand text-brand bg-card hover:bg-primary hover:text-primary-foreground rounded-2xl font-semibold shadow-sm hover:shadow-md gap-2"
+            className="flex-1 h-12 text-base border-2 border-brand text-brand bg-card hover:bg-primary hover:text-primary-foreground rounded-card font-semibold shadow-sm hover:shadow-md gap-2"
           >
             <Link to="/videos">
               <Search size={18} />

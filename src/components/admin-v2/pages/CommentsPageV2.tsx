@@ -134,7 +134,7 @@ export const CommentsPageV2 = () => {
       <div className="grid grid-cols-2 gap-4 max-w-md">
         <Card className="bg-[#12131a] border-[#1e2028]">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10">
+            <div className="p-2 rounded-control bg-amber-500/10">
               <MessageSquare className="h-5 w-5 text-amber-400" />
             </div>
             <div>
@@ -145,7 +145,7 @@ export const CommentsPageV2 = () => {
         </Card>
         <Card className="bg-[#12131a] border-[#1e2028]">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-indigo-500/10">
+            <div className="p-2 rounded-control bg-indigo-500/10">
               <Search className="h-5 w-5 text-indigo-400" />
             </div>
             <div>
@@ -194,7 +194,7 @@ export const CommentsPageV2 = () => {
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-[#2a2b35] flex items-center justify-center text-xs font-semibold text-gray-300 shrink-0 mt-0.5">
+                        <div className="w-8 h-8 rounded-control bg-[#2a2b35] flex items-center justify-center text-xs font-semibold text-gray-300 shrink-0 mt-0.5">
                           {userName[0]?.toUpperCase() || "A"}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -268,7 +268,7 @@ export const CommentsPageV2 = () => {
 
               {/* Comment content */}
               {!editMode ? (
-                <div className="bg-[#1a1b24] rounded-lg p-3 mb-4">
+                <div className="bg-[#1a1b24] rounded-card p-3 mb-4">
                   <p className="text-sm text-gray-300 whitespace-pre-wrap">{selectedComment.content}</p>
                 </div>
               ) : (

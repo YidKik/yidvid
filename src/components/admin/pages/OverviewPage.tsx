@@ -33,7 +33,7 @@ export const OverviewPage = () => {
       {/* Moderation summary + quick actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Moderation Summary */}
-        <div className="bg-white rounded-xl border border-[hsl(220,13%,91%)] p-6">
+        <div className="bg-white rounded-card border border-[hsl(220,13%,91%)] p-6">
           <h2 className="text-base font-semibold text-[hsl(220,15%,18%)] mb-4 flex items-center gap-2">
             <Shield className="w-4 h-4" /> Content Moderation
           </h2>
@@ -50,7 +50,7 @@ export const OverviewPage = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-[hsl(220,13%,91%)] p-6">
+        <div className="bg-white rounded-card border border-[hsl(220,13%,91%)] p-6">
           <h2 className="text-base font-semibold text-[hsl(220,15%,18%)] mb-4 flex items-center gap-2">
             <Activity className="w-4 h-4" /> Quick Actions
           </h2>

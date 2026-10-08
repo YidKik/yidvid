@@ -86,8 +86,8 @@ const getNavItemClass = (isExpanded: boolean, active: boolean, disabled = false)
   cn(
     "flex items-center text-sm font-medium transition-all duration-200",
     isExpanded
-      ? "gap-3 px-3 py-2.5 rounded-full"
-      : "justify-center p-2 rounded-full mx-auto w-10 h-10",
+      ? "gap-3 px-3 py-2.5 rounded-control"
+      : "justify-center p-2 rounded-control mx-auto w-10 h-10",
     disabled
       ? "opacity-40 cursor-default border border-transparent"
       : active
@@ -227,7 +227,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             variant="ghost"
             size="icon"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="h-8 w-8 rounded-full hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground"
+            className="h-8 w-8 rounded-control hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground"
           >
             {effectiveIsExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </Button>
@@ -241,7 +241,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
             onClick={handleGoBack}
             title="Go back"
             className={cn(
-              "flex items-center rounded-full text-sm font-medium transition-all duration-200",
+              "flex items-center rounded-control text-sm font-medium transition-all duration-200",
               "text-muted-foreground dark:text-muted-foreground hover:bg-surface-hover dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground",
               effectiveIsExpanded ? "gap-2 px-3 py-2.5 w-full" : "justify-center p-2 w-10 h-10 mx-auto"
             )}
@@ -289,7 +289,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
               className={cn(
                 "flex items-center text-sm font-medium transition-all duration-200 w-full",
-                "gap-3 px-3 py-2.5 rounded-full justify-between",
+                "gap-3 px-3 py-2.5 rounded-control justify-between",
                 "border border-transparent hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
               )}
             >
@@ -322,7 +322,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                         key={category.id}
                         onClick={() => handleCategorySelect(category.id)}
                         className={cn(
-                          "w-full text-left px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 my-0.5",
+                          "w-full text-left px-3 py-2 text-sm font-medium rounded-control transition-all duration-200 my-0.5",
                           isCategoryActive(category.id)
                             ? "bg-muted dark:bg-secondary border-l-[3px] border-brand text-brand"
                             : "text-foreground dark:text-foreground hover:bg-surface-hover dark:hover:bg-secondary border border-transparent"
@@ -401,7 +401,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
               }}
               className={cn(
                 "flex items-center text-sm font-medium transition-all duration-200 w-full",
-                "gap-3 px-3 py-2.5 rounded-full justify-between",
+                "gap-3 px-3 py-2.5 rounded-control justify-between",
                 "border border-transparent hover:bg-surface-hover dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
               )}
             >
@@ -429,7 +429,7 @@ export const Sidebar = ({ isAuthenticated = false, userId }: SidebarProps) => {
                       <Link
                         key={sub.channel.channel_id}
                         to={`/channel/${sub.channel.channel_id}`}
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-full text-muted-foreground dark:text-muted-foreground hover:bg-surface-hover dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground border border-transparent transition-all duration-200 my-0.5"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-control text-muted-foreground dark:text-muted-foreground hover:bg-surface-hover dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground border border-transparent transition-all duration-200 my-0.5"
                       >
                         <img
                           src={sub.channel.thumbnail_url || '/placeholder.svg'}

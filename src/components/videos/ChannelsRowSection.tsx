@@ -125,7 +125,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   // Show skeleton while loading instead of hiding the section
   if (isLoading) {
     return (
-      <section className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800`}>
+      <section className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 rounded-card shadow-sm border border-gray-100 dark:border-gray-800`}>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
             Most Viewed Channels
@@ -159,7 +159,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
         to={`/channel/${channel.channel_id}`}
       className={`block group ${isGrid ? 'w-full' : `flex-none ${isMobile ? 'w-[140px]' : isTablet ? 'w-[170px]' : 'w-[210px]'}`}`}
     >
-        <div className={`bg-card rounded-2xl ${isMobile ? 'p-4' : 'p-7'} shadow-md transition-all duration-300 text-center`}>
+        <div className={`bg-card rounded-card ${isMobile ? 'p-4' : 'p-7'} shadow-md transition-all duration-300 text-center`}>
           <div className={`relative mx-auto ${isMobile ? 'w-16 h-16' : isTablet ? 'w-20 h-20' : 'w-28 h-28'} rounded-full overflow-hidden border-2 border-transparent group-hover:border-brand transition-all duration-300 ring-2 ring-muted/30 group-hover:ring-brand/50`}>
             {channel.thumbnail_url ? (
               <img
@@ -192,7 +192,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   return (
     <section 
       ref={sectionRef}
-      className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="sync">
         {showAllChannels ? (
@@ -209,7 +209,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
               <div className="flex items-center gap-4">
                 <button
                   onClick={handleBackClick}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-control transition-all duration-200 shadow-sm"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
@@ -254,7 +254,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
                 <button
                   onClick={scrollPrev}
                   disabled={!canScrollPrev}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
+                  className={`w-9 h-9 rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
                     canScrollPrev 
                       ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
@@ -265,7 +265,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
                 <button
                   onClick={scrollNext}
                   disabled={!canScrollNext}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
+                  className={`w-9 h-9 rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
                     canScrollNext 
                       ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
@@ -293,7 +293,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
             <div className="flex justify-center mt-8">
               <button 
                 onClick={handleViewAllClick}
-                className={`${isMobile ? 'px-6 py-2 text-sm' : 'px-8 py-3 text-base'} font-friendly font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105`}
+                className={`${isMobile ? 'px-6 py-2 text-sm' : 'px-8 py-3 text-base'} font-friendly font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-control transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105`}
               >
                 View All Channels
               </button>

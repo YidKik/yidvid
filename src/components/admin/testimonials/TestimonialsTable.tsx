@@ -68,7 +68,7 @@ export const TestimonialsTable = ({ testimonials, onEdit, onRefetch }: {
   };
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-control border">
       <Table>
         <TableHeader>
           <TableRow>

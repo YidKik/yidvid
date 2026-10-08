@@ -25,7 +25,7 @@ import { useAnalyticsData } from "@/hooks/useAnalyticsData";
 
 // ─── dark card helper ───────────────────────────────────────────────
 const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-xl border border-[#1e2028] bg-[#12131a] ${className}`}>{children}</div>
+  <div className={`rounded-card border border-[#1e2028] bg-[#12131a] ${className}`}>{children}</div>
 );
 
 // ─── Main page ──────────────────────────────────────────────────────
@@ -165,35 +165,35 @@ export const ChannelsPageV2 = () => {
       {/* Analytics summary */}
       {analyticsStats && (
         <div className="grid grid-cols-3 gap-4">
-          <div className="rounded-xl border border-[#1e2028] bg-[#12131a] p-4">
+          <div className="rounded-card border border-[#1e2028] bg-[#12131a] p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Channels</p>
                 <p className="text-2xl font-bold text-white">{analyticsStats.totalChannels}</p>
               </div>
-              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-indigo-600">
+              <div className="w-9 h-9 rounded-control flex items-center justify-center bg-indigo-600">
                 <Tv className="w-4.5 h-4.5 text-white" />
               </div>
             </div>
           </div>
-          <div className="rounded-xl border border-[#1e2028] bg-[#12131a] p-4">
+          <div className="rounded-card border border-[#1e2028] bg-[#12131a] p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Videos</p>
                 <p className="text-2xl font-bold text-white">{analyticsStats.totalVideos}</p>
               </div>
-              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-sky-600">
+              <div className="w-9 h-9 rounded-control flex items-center justify-center bg-sky-600">
                 <Video className="w-4.5 h-4.5 text-white" />
               </div>
             </div>
           </div>
-          <div className="rounded-xl border border-[#1e2028] bg-[#12131a] p-4">
+          <div className="rounded-card border border-[#1e2028] bg-[#12131a] p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Watch Time</p>
                 <p className="text-2xl font-bold text-white">{analyticsStats.totalHours}h</p>
               </div>
-              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-amber-600">
+              <div className="w-9 h-9 rounded-control flex items-center justify-center bg-amber-600">
                 <Clock className="w-4.5 h-4.5 text-white" />
               </div>
             </div>
@@ -206,7 +206,7 @@ export const ChannelsPageV2 = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setActiveTab("channels")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-control text-sm font-medium transition-colors ${
               activeTab === "channels"
                 ? "bg-indigo-600 text-white"
                 : "text-gray-400 hover:text-white hover:bg-[#1e2028]"
@@ -216,7 +216,7 @@ export const ChannelsPageV2 = () => {
           </button>
           <button
             onClick={() => setActiveTab("deleted")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-control text-sm font-medium transition-colors ${
               activeTab === "deleted"
                 ? "bg-indigo-600 text-white"
                 : "text-gray-400 hover:text-white hover:bg-[#1e2028]"
@@ -517,7 +517,7 @@ const ChannelDetailPanel = ({
                       <img
                         src={video.thumbnail}
                         alt=""
-                        className="w-24 h-14 object-cover rounded-md shrink-0"
+                        className="w-24 h-14 object-cover rounded-control shrink-0"
                       />
                       <div className="min-w-0">
                         <p className="text-sm text-white font-medium truncate max-w-[300px]">
@@ -570,7 +570,7 @@ const DeletedItemsPanel = ({
       <div className="p-4 border-b border-[#1e2028] flex items-center gap-3">
         <button
           onClick={() => setSubTab("channels")}
-          className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 py-1.5 rounded-control text-sm font-medium transition-colors ${
             subTab === "channels" ? "bg-[#1e2028] text-white" : "text-gray-400 hover:text-white"
           }`}
         >
@@ -578,7 +578,7 @@ const DeletedItemsPanel = ({
         </button>
         <button
           onClick={() => setSubTab("videos")}
-          className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 py-1.5 rounded-control text-sm font-medium transition-colors ${
             subTab === "videos" ? "bg-[#1e2028] text-white" : "text-gray-400 hover:text-white"
           }`}
         >

@@ -196,10 +196,10 @@ export const ContentAnalysisTab: React.FC = () => {
               <img 
                 src={video.thumbnail} 
                 alt={cleanVideoTitle(video.title)}
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-cover rounded-card"
               />
               {video.manual_review_required && (
-                <div className="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-md shadow-lg flex items-center gap-1">
+                <div className="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-control shadow-lg flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" />
                   <span className="text-xs font-semibold">Review</span>
                 </div>
@@ -223,7 +223,7 @@ export const ContentAnalysisTab: React.FC = () => {
               </div>
               
               {rejectionReason && (
-                <div className="mt-2 p-3 bg-red-50 rounded-lg border-l-3 border-red-400">
+                <div className="mt-2 p-3 bg-red-50 rounded-card border-l-3 border-red-400">
                   <p className="text-xs font-semibold text-error mb-1">🚫 Reason:</p>
                   <p className="text-xs text-error line-clamp-2">
                     {rejectionReason}
@@ -296,7 +296,7 @@ export const ContentAnalysisTab: React.FC = () => {
             <div className="space-y-6">
               {/* Video Info */}
               <div>
-                <img src={video.thumbnail} alt={cleanVideoTitle(video.title)} className="w-full rounded-lg shadow-md" />
+                <img src={video.thumbnail} alt={cleanVideoTitle(video.title)} className="w-full rounded-card shadow-md" />
                 <h3 className="font-bold text-lg mt-4">{cleanVideoTitle(video.title)}</h3>
               <p className="text-muted-foreground">{video.channel_name}</p>
             </div>
@@ -371,14 +371,14 @@ export const ContentAnalysisTab: React.FC = () => {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {details.thumbnailAnalysis.rejection_reason && (
-                        <div className="p-4 bg-red-50 rounded-lg border-l-4 border-brand">
+                        <div className="p-4 bg-red-50 rounded-card border-l-4 border-brand">
                           <p className="text-sm font-semibold text-error mb-1">Rejection Reason:</p>
                           <p className="text-sm text-error">{details.thumbnailAnalysis.rejection_reason}</p>
                         </div>
                       )}
                       
                       {details.thumbnailAnalysis.faces && details.thumbnailAnalysis.faces.length > 0 && (
-                        <div className="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                        <div className="p-4 bg-orange-50 rounded-card border-l-4 border-orange-500">
                           <p className="text-sm font-semibold text-orange-800 mb-1">👤 Faces Detected:</p>
                           <p className="text-sm text-orange-700">
                             {details.thumbnailAnalysis.faces.length} face(s) found in thumbnail
@@ -423,7 +423,7 @@ export const ContentAnalysisTab: React.FC = () => {
                       </div>
 
                       {details.videoAnalysis.issues_detected && details.videoAnalysis.issues_detected.length > 0 && (
-                        <div className="p-3 bg-red-50 rounded-lg">
+                        <div className="p-3 bg-red-50 rounded-card">
                           <p className="text-sm font-semibold text-error mb-2">Issues Found:</p>
                           <div className="flex flex-wrap gap-2">
                             {details.videoAnalysis.issues_detected.map((issue: string, idx: number) => (
@@ -482,7 +482,7 @@ export const ContentAnalysisTab: React.FC = () => {
                             ))}
                           </div>
                           
-                          <div className="p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                          <div className="p-3 bg-orange-50 rounded-card border-l-4 border-orange-500">
                             <p className="text-xs text-orange-800">
                               <strong>Note:</strong> These frames show where women, girls, or inappropriate content was detected. 
                               The AI automatically flags any video with female presence for manual review to ensure compliance 

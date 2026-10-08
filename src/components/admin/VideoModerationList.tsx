@@ -37,7 +37,7 @@ export const VideoModerationList: React.FC<Props> = ({ title, videos, emptyText,
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {videos.map((v) => (
-              <div key={v.id} className="border rounded-lg p-3 flex gap-3">
+              <div key={v.id} className="border rounded-card p-3 flex gap-3">
                 {v.thumbnail ? (
                   <img src={v.thumbnail} alt={v.title} className="h-20 w-32 object-cover rounded" loading="lazy" />
                 ) : (

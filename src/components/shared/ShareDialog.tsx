@@ -68,7 +68,7 @@ export const ShareDialog = ({ open, onOpenChange, url, title }: ShareDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[280px] bg-white dark:bg-card border border-border dark:border-border rounded-3xl p-5 gap-0 shadow-xl [&>button]:hidden">
+      <DialogContent className="sm:max-w-[280px] bg-white dark:bg-card border border-border dark:border-border rounded-dialog p-5 gap-0 shadow-xl [&>button]:hidden">
         <p className="text-sm font-bold text-foreground dark:text-foreground text-center mb-4">
           Share
         </p>
@@ -84,7 +84,7 @@ export const ShareDialog = ({ open, onOpenChange, url, title }: ShareDialogProps
                 className={`flex flex-col items-center gap-1.5 group`}
               >
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${option.bg} ${option.hoverBg} group-hover:scale-110 group-active:scale-95`}
+                  className={`w-12 h-12 rounded-control flex items-center justify-center transition-all duration-200 ${option.bg} ${option.hoverBg} group-hover:scale-110 group-active:scale-95`}
                 >
                   <Icon className={`w-5 h-5 ${option.iconColor}`} />
                 </div>

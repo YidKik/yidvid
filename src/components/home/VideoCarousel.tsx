@@ -79,7 +79,7 @@ export const VideoCarousel = ({
       transition={{ duration: 0.5 }}
     >
       <div 
-        className="overflow-hidden rounded-xl" 
+        className="overflow-hidden rounded-card" 
         ref={emblaRef}
         style={{ cursor: "grab" }}
       >

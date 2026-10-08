@@ -169,7 +169,7 @@ const ChannelDetails = () => {
       <div className="w-full min-h-screen bg-white text-black pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className="p-4 lg:p-6">
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+            <div className="w-20 h-20 bg-gray-100 rounded-card flex items-center justify-center mb-6">
               <EyeOff className="w-10 h-10 text-muted-foreground" />
             </div>
             <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3">Channel Hidden</h2>
@@ -246,7 +246,7 @@ const ChannelDetails = () => {
               }`}
             >
               Shorts
-              <span className="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full font-medium">{shorts.length}</span>
+              <span className="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-badge font-medium">{shorts.length}</span>
               {activeTab === 'shorts' && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}

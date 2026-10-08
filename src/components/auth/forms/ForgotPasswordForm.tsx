@@ -72,7 +72,7 @@ export const ForgotPasswordForm = ({
       <SignInErrorMessage error={loginError} />
       
       {resetEmailSent && (
-        <div className="bg-green-50 p-3 rounded-lg border border-green-100 text-green-700 text-sm">
+        <div className="bg-green-50 p-3 rounded-card border border-green-100 text-green-700 text-sm">
           Check your email for a password reset link. You can close this window.
         </div>
       )}
@@ -82,7 +82,7 @@ export const ForgotPasswordForm = ({
         className={`w-full ${isMobile 
           ? 'h-10 text-sm py-0' 
           : 'h-12 text-base py-0'} 
-          mt-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium
+          mt-3 bg-primary hover:bg-primary-hover text-white rounded-control font-medium
           transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed 
           hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-md hover:shadow-lg`}
         disabled={isLoading || resetEmailSent}

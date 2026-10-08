@@ -17,7 +17,7 @@ export const VideoRecoverySection: React.FC<VideoRecoverySectionProps> = ({
   }
   
   return (
-    <div className="my-4 p-4 bg-warning-bg border border-warning/40 rounded-md">
+    <div className="my-4 p-4 bg-warning-bg border border-warning/40 rounded-control">
       <h3 className="font-medium text-warning">Having trouble loading content?</h3>
       <p className="text-warning text-sm mb-2">We're encountering some difficulties refreshing the content.</p>
       <button 

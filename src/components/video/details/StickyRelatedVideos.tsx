@@ -64,7 +64,7 @@ export const StickyRelatedVideos = ({ videos, isLoading = false, pageContentRef 
         className="relative"
       >
         <div 
-          className="bg-card/20 rounded-xl p-4 backdrop-blur-sm border border-border/30 flex items-center justify-center"
+          className="bg-card/20 rounded-card p-4 backdrop-blur-sm border border-border/30 flex items-center justify-center"
           style={{ height: calculatedHeight }}
         >
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
@@ -80,7 +80,7 @@ export const StickyRelatedVideos = ({ videos, isLoading = false, pageContentRef 
         className="relative"
       >
         <div 
-          className="bg-card/20 rounded-xl p-6 backdrop-blur-sm border border-border/30 text-center flex items-center justify-center"
+          className="bg-card/20 rounded-card p-6 backdrop-blur-sm border border-border/30 text-center flex items-center justify-center"
           style={{ height: calculatedHeight }}
         >
           <p className="text-muted-foreground text-sm">No other videos found from this channel</p>
@@ -95,7 +95,7 @@ export const StickyRelatedVideos = ({ videos, isLoading = false, pageContentRef 
       className="relative"
     >
       <div 
-        className="bg-card/10 rounded-xl backdrop-blur-sm border border-border/20 overflow-hidden shadow-sm"
+        className="bg-card/10 rounded-card backdrop-blur-sm border border-border/20 overflow-hidden shadow-sm"
         style={{ height: calculatedHeight }}
       >
         <div className="p-4 border-b border-border/20 flex-shrink-0">
@@ -107,7 +107,7 @@ export const StickyRelatedVideos = ({ videos, isLoading = false, pageContentRef 
             {videos.map((video, index) => (
               <div 
                 key={video.id}
-                className="group hover:bg-accent/30 rounded-lg p-2 transition-all duration-200 animate-fade-in"
+                className="group hover:bg-accent/30 rounded-control p-2 transition-all duration-200 animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <VideoCard

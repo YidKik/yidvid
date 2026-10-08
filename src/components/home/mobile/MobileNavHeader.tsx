@@ -34,25 +34,25 @@ export const MobileNavHeader = () => {
         <nav className="flex items-center justify-end gap-2.5">
           <button
             onClick={() => scrollToSection('home-section')}
-            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-control"
           >
             Home
           </button>
           <button
             onClick={() => scrollToSection('about-section')}
-            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-control"
           >
             About
           </button>
           <button
             onClick={() => scrollToSection('contact-section')}
-            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-md"
+            className="text-white text-xs font-medium transition-colors bg-transparent border-none p-0 m-0 hover:bg-[#135d66] hover:text-white hover:px-2 hover:py-1 hover:rounded-control"
           >
             Contact
           </button>
           <button
             onClick={handleAuthClick}
-            className="text-white transition-colors bg-transparent border-none p-1 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-md flex items-center justify-center"
+            className="text-white transition-colors bg-transparent border-none p-1 m-0 hover:bg-[#135d66] hover:text-white hover:rounded-control flex items-center justify-center"
             title={session ? 'Sign out' : 'Sign in'}
           >
             {session ? (

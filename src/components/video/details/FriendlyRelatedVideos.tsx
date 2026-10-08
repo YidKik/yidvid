@@ -29,13 +29,13 @@ export const FriendlyRelatedVideos = ({
 
   if (isLoading) {
     return (
-      <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-border">
+      <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-2xl overflow-hidden border border-border">
         {/* Warm gradient glow */}
         <div className="absolute inset-0 hidden pointer-events-none" />
         
         <div className="relative p-6 ">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-brand-soft rounded-2xl">
+            <div className="p-2.5 bg-brand-soft rounded-card">
               <Play className="h-5 w-5 text-brand fill-current" />
             </div>
             <div>
@@ -50,7 +50,7 @@ export const FriendlyRelatedVideos = ({
           <div className={`grid gap-6 ${compact ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
             {[...Array(compact ? 4 : 6)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="aspect-video bg-muted rounded-2xl"></div>
+                <div className="aspect-video bg-muted rounded-card"></div>
                 <div className="mt-3 space-y-2">
                   <div className="h-3 bg-muted rounded-full w-full"></div>
                   <div className="h-2.5 bg-muted rounded-full w-3/4"></div>
@@ -65,13 +65,13 @@ export const FriendlyRelatedVideos = ({
 
   if (!videos || videos.length === 0) {
     return (
-      <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-border">
+      <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-2xl overflow-hidden border border-border">
         {/* Warm gradient glow */}
         <div className="absolute inset-0 hidden pointer-events-none" />
         
         <div className="relative p-6 ">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-brand-soft rounded-2xl">
+            <div className="p-2.5 bg-brand-soft rounded-card">
               <Tv className="h-5 w-5 text-brand" />
             </div>
             <h2 className="text-lg font-bold text-foreground">More from {channelName}</h2>
@@ -80,7 +80,7 @@ export const FriendlyRelatedVideos = ({
         {/* Friendly divider */}
         <div className="h-0.5 bg-gradient-to-r from-transparent via-border to-transparent" />
         <div className="relative p-12 text-center">
-          <div className="w-20 h-20 mx-auto mb-4 bg-brand-soft rounded-full flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto mb-4 bg-brand-soft rounded-card flex items-center justify-center">
             <Tv className="h-10 w-10 text-brand" />
           </div>
           <p className="text-muted-foreground">
@@ -92,7 +92,7 @@ export const FriendlyRelatedVideos = ({
   }
 
   return (
-    <div className="relative bg-card/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-border">
+    <div className="relative bg-card/80 backdrop-blur-md rounded-card shadow-2xl overflow-hidden border border-border">
       {/* Warm gradient glow background */}
       <div className="absolute inset-0 hidden pointer-events-none" />
       
@@ -100,7 +100,7 @@ export const FriendlyRelatedVideos = ({
       <div className="relative p-6 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-brand-soft rounded-2xl">
+            <div className="p-2.5 bg-brand-soft rounded-card">
               <Play className="h-5 w-5 text-brand fill-current" />
             </div>
             <div>
@@ -117,7 +117,7 @@ export const FriendlyRelatedVideos = ({
           {videos[0]?.channel_id && (
             <Link 
               to={`/channel/${videos[0].channel_id}`}
-              className="text-sm font-medium text-brand hover:text-primary-hover transition-colors px-5 py-2.5 bg-muted rounded-full hover:bg-surface-hover"
+              className="text-sm font-medium text-brand hover:text-primary-hover transition-colors px-5 py-2.5 bg-muted rounded-control hover:bg-surface-hover"
             >
               View Channel
             </Link>
@@ -136,7 +136,7 @@ export const FriendlyRelatedVideos = ({
               key={video.id}
               className="group transition-all duration-300 hover:scale-[1.02]"
             >
-              <div className="bg-card/60 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-border">
+              <div className="bg-card/60 backdrop-blur-sm rounded-card overflow-hidden shadow-lg hover:shadow-xl transition-all border border-border">
                 <VideoCard
                   id={video.id}
                   video_id={video.video_id}
@@ -158,7 +158,7 @@ export const FriendlyRelatedVideos = ({
           <div className="mt-8 text-center">
             <Link 
               to={`/channel/${videos[0].channel_id}`}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-card hover:bg-surface-hover rounded-full text-sm font-semibold text-foreground transition-all hover:shadow-lg border border-border"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-card hover:bg-surface-hover rounded-control text-sm font-semibold text-foreground transition-all hover:shadow-lg border border-border"
             >
               <Play className="h-4 w-4 text-brand fill-current" />
               See all {videos.length} videos

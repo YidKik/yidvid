@@ -188,7 +188,7 @@ export const ContactRequestsSection = () => {
               <p className="line-clamp-2">{request.message}</p>
               
               {request.admin_reply && (
-                <div className="bg-muted p-3 rounded-lg">
+                <div className="bg-muted p-3 rounded-card">
                   <p className="text-sm font-medium mb-1">Admin Reply:</p>
                   <p className="text-sm">{request.admin_reply}</p>
                   {request.replied_at && (
@@ -242,7 +242,7 @@ export const ContactRequestsSection = () => {
                         
                         <div>
                           <label className="text-sm font-medium">Message</label>
-                          <div className="bg-muted p-3 rounded-lg mt-1">
+                          <div className="bg-muted p-3 rounded-card mt-1">
                             {selectedRequest.message}
                           </div>
                         </div>
@@ -250,7 +250,7 @@ export const ContactRequestsSection = () => {
                         {selectedRequest.admin_reply && (
                           <div>
                             <label className="text-sm font-medium">Previous Reply</label>
-                            <div className="bg-primary/10 p-3 rounded-lg mt-1">
+                            <div className="bg-primary/10 p-3 rounded-card mt-1">
                               {selectedRequest.admin_reply}
                             </div>
                           </div>

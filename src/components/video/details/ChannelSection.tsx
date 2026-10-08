@@ -137,7 +137,7 @@ export const ChannelSection = ({
                 onClick={handleSubscribeClick}
                 disabled={isLoading}
                 data-subscribed={isSubscribed}
-                className={`video-subscribe-button rounded-full transition-all duration-300 active:scale-95 shadow-sm ${
+                className={`video-subscribe-button rounded-control transition-all duration-300 active:scale-95 shadow-sm ${
                   isMobile ? "px-4 py-2 text-xs" : "px-6 py-2.5 text-sm"
                 } font-semibold`}
               >
@@ -159,7 +159,7 @@ export const ChannelSection = ({
               <Button
                 variant="outline"
                 onClick={() => {}}
-                className={`video-subscribe-button rounded-full transition-all duration-300 active:scale-95 shadow-sm ${
+                className={`video-subscribe-button rounded-control transition-all duration-300 active:scale-95 shadow-sm ${
                   isMobile ? "px-4 py-2 text-xs" : "px-6 py-2.5 text-sm"
                 } font-semibold`}
               >

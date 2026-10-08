@@ -85,7 +85,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
             className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile 
               ? 'w-[92%] max-w-[420px]' 
               : 'w-[460px] max-w-[460px]'
-            } rounded-3xl overflow-hidden p-0 border-none bg-white shadow-2xl`}
+            } rounded-dialog overflow-hidden p-0 border-none bg-white shadow-2xl`}
             style={{
               boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.25)',
               animation: isOpen ? 'authScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)' : undefined,
@@ -94,7 +94,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
             {/* Close button */}
             <button
               onClick={() => onOpenChange(false)}
-              className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100"
+              className="absolute right-4 top-4 z-10 w-8 h-8 rounded-control flex items-center justify-center transition-colors hover:bg-gray-100"
               style={{ color: 'hsl(var(--muted-foreground))' }}
             >
               <X className="h-4 w-4" />
@@ -124,7 +124,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="flex flex-col h-full rounded-3xl overflow-hidden"
+                  className="flex flex-col h-full rounded-dialog overflow-hidden"
                 >
                   <AuthHeader 
                     onBack={handleBack} 

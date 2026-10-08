@@ -373,7 +373,7 @@ export const CustomVideoControls = ({
             {/* Hover / drag timestamp bubble */}
             {!isMobile && (hoverX !== null || isDragging) && duration > 0 && (
               <div
-                className="absolute -top-6 px-2 py-0.5 rounded-md bg-[#1A1A1A]/95 text-white text-[11px] font-semibold tabular-nums pointer-events-none border border-white/10"
+                className="absolute -top-6 px-2 py-0.5 rounded-badge bg-[#1A1A1A]/95 text-white text-[11px] font-semibold tabular-nums pointer-events-none border border-white/10"
                 style={{
                   left: isDragging
                     ? `${progress}%`

@@ -148,7 +148,7 @@ const FeatureDetail: React.FC<{
         <img
           src={feature.details.image}
           alt={feature.title}
-          className="w-full h-32 md:h-48 object-cover rounded-lg"
+          className="w-full h-32 md:h-48 object-cover rounded-card"
         />
 
         <div className="space-y-4">
@@ -197,7 +197,7 @@ export const TishaBavContentPopup: React.FC<WelcomePopupProps> = ({ isOpen, onCl
           {/* Header */}
           <div className="flex items-center justify-between p-4 md:p-6 border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
+              <div className="p-2 bg-primary/10 rounded-control">
                 <HelpCircle className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -213,7 +213,7 @@ export const TishaBavContentPopup: React.FC<WelcomePopupProps> = ({ isOpen, onCl
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={onClose}
-              className="p-2 rounded-full bg-muted hover:bg-surface-hover/80 transition-colors shadow-md"
+              className="p-2 rounded-control bg-muted hover:bg-surface-hover/80 transition-colors shadow-md"
             >
               <X size={20} />
             </motion.button>
@@ -233,7 +233,7 @@ export const TishaBavContentPopup: React.FC<WelcomePopupProps> = ({ isOpen, onCl
                   className="space-y-6"
                 >
                   {/* Site Description */}
-                  <div className="text-center space-y-4 p-6 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl border border-primary/10">
+                  <div className="text-center space-y-4 p-6 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-card border border-primary/10">
                     <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                       Discover, Stream, Connect
                     </h3>
@@ -262,7 +262,7 @@ export const TishaBavContentPopup: React.FC<WelcomePopupProps> = ({ isOpen, onCl
                           }}
                           whileTap={{ scale: 0.97 }}
                           onClick={() => handleFeatureClick(feature)}
-                          className="p-5 border border-border rounded-xl cursor-pointer bg-gradient-to-br from-background to-muted/10 hover:from-primary/5 hover:to-secondary/5 transition-all duration-300 hover:border-primary/30 shadow-sm"
+                          className="p-5 border border-border rounded-card cursor-pointer bg-gradient-to-br from-background to-muted/10 hover:from-primary/5 hover:to-secondary/5 transition-all duration-300 hover:border-primary/30 shadow-sm"
                         >
                           <div className="space-y-3">
                             <div className="flex items-center gap-3">
@@ -283,7 +283,7 @@ export const TishaBavContentPopup: React.FC<WelcomePopupProps> = ({ isOpen, onCl
                   </div>
 
                   {/* Call to Action */}
-                  <div className="text-center space-y-4 p-6 bg-muted/30 rounded-xl">
+                  <div className="text-center space-y-4 p-6 bg-muted/30 rounded-card">
                     <h3 className="text-lg font-semibold">Ready to Get Started?</h3>
                     <p className="text-muted-foreground">
                       Click on any feature above to learn more about how it works and how it can enhance your experience on YidVid.

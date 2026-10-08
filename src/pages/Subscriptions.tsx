@@ -69,7 +69,7 @@ const Subscriptions = () => {
       <div className="min-h-screen bg-muted dark:bg-background pt-16 pl-0 lg:pl-[200px] pb-24 lg:pb-8 flex flex-col items-center justify-center gap-4 px-4">
         <Users className="w-12 h-12 text-muted-foreground" />
         <p className="text-muted-foreground dark:text-muted-foreground text-center">Please sign in to view your subscriptions.</p>
-        <Button onClick={() => setIsAuthOpen(true)} className="bg-primary hover:bg-primary-hover text-white rounded-full px-6">
+        <Button onClick={() => setIsAuthOpen(true)} className="bg-primary hover:bg-primary-hover text-white rounded-control px-6">
           Sign In
         </Button>
       </div>
@@ -81,7 +81,7 @@ const Subscriptions = () => {
       <div className={cn("max-w-5xl mx-auto", isMobile ? "px-4 pt-4" : "px-8 pt-6")}>
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-primary rounded-xl">
+          <div className="p-2 bg-primary rounded-card">
             <Bell className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -95,7 +95,7 @@ const Subscriptions = () => {
         </div>
 
         {subscriptions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-card rounded-2xl border border-border dark:border-border">
+          <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-card rounded-card border border-border dark:border-border">
             <Users className="w-12 h-12 text-muted-foreground dark:text-muted-foreground mb-3" />
             <h3 className="font-semibold text-foreground dark:text-foreground mb-1">No Subscriptions Yet</h3>
             <p className="text-sm text-muted-foreground dark:text-muted-foreground text-center">
@@ -107,7 +107,7 @@ const Subscriptions = () => {
             {subscriptions.map((sub) => (
               <div
                 key={sub.channel.channel_id}
-                className="flex items-center gap-3 p-3 bg-white dark:bg-card rounded-xl border border-border dark:border-border hover:shadow-sm transition-shadow"
+                className="flex items-center gap-3 p-3 bg-white dark:bg-card rounded-card border border-border dark:border-border hover:shadow-sm transition-shadow"
               >
                 {/* Thumbnail */}
                 <button
@@ -148,7 +148,7 @@ const Subscriptions = () => {
                   size="sm"
                   onClick={() => handleUnsubscribe(sub.channel.channel_id)}
                   disabled={processingId === sub.channel.channel_id}
-                  className="shrink-0 text-xs rounded-lg border-border dark:border-border text-muted-foreground dark:text-muted-foreground hover:text-brand hover:border-brand/30"
+                  className="shrink-0 text-xs rounded-card border-border dark:border-border text-muted-foreground dark:text-muted-foreground hover:text-brand hover:border-brand/30"
                 >
                   {processingId === sub.channel.channel_id ? (
                     <Loader2 className="w-3 h-3 animate-spin" />

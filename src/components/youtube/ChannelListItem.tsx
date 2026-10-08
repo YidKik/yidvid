@@ -17,7 +17,7 @@ export const ChannelListItem = ({ channel, isHidden, onToggle }: ChannelListItem
   const isMobile = useIsMobile();
   
   return (
-    <div className="flex items-center justify-between p-3 md:p-4 rounded-2xl border border-primary/30 bg-gradient-to-r from-card to-primary/5 hover:bg-primary/10 transition-all duration-300 hover:shadow-md hover:border-primary/40">
+    <div className="flex items-center justify-between p-3 md:p-4 rounded-card border border-primary/30 bg-gradient-to-r from-card to-primary/5 hover:bg-primary/10 transition-all duration-300 hover:shadow-md hover:border-primary/40">
       <div className="flex items-center gap-3 min-w-0">
         <Avatar className="h-8 w-8 md:h-12 md:w-12 border-2 border-primary/30 flex-shrink-0 shadow-sm">
           <AvatarImage

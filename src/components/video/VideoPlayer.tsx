@@ -134,7 +134,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
               <button
                 type="button"
                 onClick={() => { setIsStalled(false); player.play(); }}
-                className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="rounded-control bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 Play
               </button>
@@ -143,7 +143,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
               <button
                 type="button"
                 onClick={handleRetry}
-                className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="rounded-control bg-primary px-4 py-2 text-sm font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 Retry
               </button>
@@ -152,7 +152,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
               href={`https://www.youtube.com/watch?v=${videoId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              className="rounded-control bg-white px-4 py-2 text-sm font-semibold text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             >
               Open on YouTube
             </a>

@@ -106,16 +106,16 @@ export default function CategoriesPage() {
         </div>
 
         <Tabs defaultValue="videos" className="space-y-8">
-          <TabsList className="bg-muted p-1 rounded-full w-full sm:w-auto flex justify-center gap-2">
+          <TabsList className="bg-muted p-1 rounded-control w-full sm:w-auto flex justify-center gap-2">
             <TabsTrigger 
               value="videos" 
-              className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
+              className="rounded-control px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
             >
               Videos
             </TabsTrigger>
             <TabsTrigger 
               value="channels" 
-              className="rounded-full px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
+              className="rounded-control px-8 py-2.5 data-[state=active]:shadow-lg transition-all duration-200"
             >
               Channels
             </TabsTrigger>

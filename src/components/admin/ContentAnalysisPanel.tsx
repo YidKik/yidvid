@@ -397,7 +397,7 @@ export const ContentAnalysisPanel = () => {
           </div>
 
           {/* AI System Status */}
-          <div className="border rounded-lg p-4 mb-6">
+          <div className="border rounded-card p-4 mb-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold">AI Filtering System Status</h3>
               <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
@@ -413,7 +413,7 @@ export const ContentAnalysisPanel = () => {
               <p>⚠️ <strong>Ambiguous content requires manual review</strong></p>
               
               {stats.pending > 100 && (
-                <div className="mt-3 p-3 bg-warning-bg dark:bg-yellow-900/20 rounded-lg border border-warning/40 dark:border-yellow-800">
+                <div className="mt-3 p-3 bg-warning-bg dark:bg-yellow-900/20 rounded-card border border-warning/40 dark:border-yellow-800">
                   <p className="text-warning dark:text-yellow-200 font-medium">
                     ⚠️ <strong>{stats.pending.toLocaleString()} videos are stuck in pending status</strong>
                   </p>

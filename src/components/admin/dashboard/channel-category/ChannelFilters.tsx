@@ -57,7 +57,7 @@ export const ChannelFilters = ({
           </SelectContent>
         </Select>
 
-        <div className="flex border rounded-md">
+        <div className="flex border rounded-control">
           <Button
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             size="sm"

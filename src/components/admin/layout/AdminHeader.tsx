@@ -28,7 +28,7 @@ export const AdminHeader = ({ pageTitle, profile }: AdminHeaderProps) => {
 
       <div className="flex items-center gap-4">
         {/* Notification bell */}
-        <button className="relative p-2 rounded-lg hover:bg-[hsl(220,14%,96%)] transition-colors">
+        <button className="relative p-2 rounded-control hover:bg-[hsl(220,14%,96%)] transition-colors">
           <Bell className="w-5 h-5 text-[hsl(220,10%,45%)]" />
           {(unreadCount ?? 0) > 0 && (
             <Badge className="absolute -top-0.5 -right-0.5 h-[18px] min-w-[18px] px-1 text-[10px] bg-[hsl(0,72%,51%)] text-white border-2 border-white">
@@ -45,7 +45,7 @@ export const AdminHeader = ({ pageTitle, profile }: AdminHeaderProps) => {
             </p>
             <p className="text-xs text-[hsl(220,10%,55%)]">Administrator</p>
           </div>
-          <div className="w-9 h-9 rounded-full bg-[hsl(250,80%,60%)] flex items-center justify-center text-white font-semibold text-sm">
+          <div className="w-9 h-9 rounded-control bg-[hsl(250,80%,60%)] flex items-center justify-center text-white font-semibold text-sm">
             {(profile?.display_name || profile?.email || "A")[0].toUpperCase()}
           </div>
         </div>

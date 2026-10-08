@@ -19,21 +19,21 @@ export const MobileActionsSection = () => {
       className="mt-8 space-y-3 mb-8"
     >
       <Button 
-        className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-control"
         onClick={() => setIsContactOpen(true)}
       >
         Send feedback
       </Button>
       
       <Button 
-        className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-control"
         onClick={() => setIsContactOpen(true)}
       >
         Contact us
       </Button>
       
       <Button 
-        className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-full"
+        className="w-full py-4 text-base text-[#e3fef7] border border-[#ddf9f2] hover:bg-[#135d66]/90 rounded-control"
         onClick={() => setIsRequestChannelOpen(true)}
       >
         Request channel

@@ -75,7 +75,7 @@ const About = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                className={`${isMobile ? 'p-4' : 'p-6'} rounded-2xl bg-white dark:bg-card border border-border dark:border-border text-center shadow-sm hover:shadow-md transition-shadow duration-300 hover:border-brand dark:hover:border-brand`}
+                className={`${isMobile ? 'p-4' : 'p-6'} rounded-card bg-white dark:bg-card border border-border dark:border-border text-center shadow-sm hover:shadow-md transition-shadow duration-300 hover:border-brand dark:hover:border-brand`}
               >
                 <feature.icon 
                   className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} mb-4 mx-auto`}
@@ -98,7 +98,7 @@ const About = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-2xl bg-white dark:bg-card border-2 border-brand/30 dark:border-brand/20 max-w-3xl mx-auto mb-10 shadow-sm`}
+            className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-card bg-white dark:bg-card border-2 border-brand/30 dark:border-brand/20 max-w-3xl mx-auto mb-10 shadow-sm`}
           >
             <h2 
               className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4 text-foreground dark:text-foreground`}
@@ -125,7 +125,7 @@ const About = () => {
           >
             <button
               onClick={() => setShowTerms(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
               style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <FileText className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />
@@ -133,7 +133,7 @@ const About = () => {
             </button>
             <button
               onClick={() => setShowPrivacy(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
               style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <ScrollText className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />
@@ -141,7 +141,7 @@ const About = () => {
             </button>
             <button
               onClick={() => setShowContact(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-full bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
+              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
               style={{ fontFamily: "'Quicksand', sans-serif" }}
             >
               <MessageSquare className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />

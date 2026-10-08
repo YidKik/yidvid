@@ -169,7 +169,7 @@ const ShortsViewer = () => {
           <p className="text-lg mb-4">No shorts available</p>
           <button
             onClick={() => navigate("/videos")}
-            className="px-6 py-2 bg-primary text-primary-foreground rounded-full text-sm font-semibold hover:brightness-95 transition"
+            className="px-6 py-2 bg-primary text-primary-foreground rounded-control text-sm font-semibold hover:brightness-95 transition"
           >
             Back to Videos
           </button>

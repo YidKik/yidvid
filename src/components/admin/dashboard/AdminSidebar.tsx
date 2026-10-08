@@ -77,7 +77,7 @@ export const AdminSidebar = ({ activeTab, onTabChange }: AdminSidebarProps) => {
               exit={{ opacity: 0 }}
               className="flex items-center gap-3"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-600 rounded-control flex items-center justify-center">
                 <Settings className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -109,7 +109,7 @@ export const AdminSidebar = ({ activeTab, onTabChange }: AdminSidebarProps) => {
               onClick={() => onTabChange(item.value)}
               whileHover={{ x: 4 }}
               className={`
-                w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                w-full flex items-center gap-3 px-4 py-3 rounded-control transition-all
                 ${isActive 
                   ? 'bg-gradient-to-r from-primary to-purple-600 text-white shadow-lg shadow-primary/30' 
                   : 'text-gray-400 hover:bg-gray-700/50 hover:text-white'
@@ -146,7 +146,7 @@ export const AdminSidebar = ({ activeTab, onTabChange }: AdminSidebarProps) => {
       {/* Footer */}
       <div className="p-4 border-t border-gray-700">
         {!collapsed && (
-          <div className="bg-gray-800 rounded-lg p-3 text-xs text-gray-400">
+          <div className="bg-gray-800 rounded-card p-3 text-xs text-gray-400">
             <p className="font-medium text-white mb-1">Quick Tip</p>
             <p>Use the sidebar to navigate between different admin sections</p>
           </div>

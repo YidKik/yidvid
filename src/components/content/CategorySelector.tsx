@@ -51,7 +51,7 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
       <div className="w-full flex justify-center mb-4">
         <motion.button
           onClick={() => setIsHidden(false)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-full border border-primary/30 transition-all duration-300"
+          className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-control border border-primary/30 transition-all duration-300"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -84,7 +84,7 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
         {/* Hide button */}
         <motion.button
           onClick={() => setIsHidden(true)}
-          className="absolute -top-3 -right-3 w-7 h-7 bg-primary hover:bg-primary-hover text-primary-foreground rounded-full flex items-center justify-center transition-all duration-200 z-30 shadow-lg border-2 border-primary/20"
+          className="absolute -top-3 -right-3 w-7 h-7 bg-primary hover:bg-primary-hover text-primary-foreground rounded-control flex items-center justify-center transition-all duration-200 z-30 shadow-lg border-2 border-primary/20"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
@@ -95,7 +95,7 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
             className={cn(
-              "relative rounded-2xl font-medium transition-all duration-300 ease-in-out flex-shrink-0 border",
+              "relative rounded-card font-medium transition-all duration-300 ease-in-out flex-shrink-0 border",
               "focus:outline-none whitespace-nowrap",
               isMobile 
                 ? "px-2 py-1 text-xs" 
@@ -110,7 +110,7 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
             <span className="relative z-10 font-medium">{category.label}</span>
             {selectedCategory === category.id && (
               <motion.div
-                className="absolute inset-0 bg-primary rounded-2xl shadow-lg"
+                className="absolute inset-0 bg-primary rounded-card shadow-lg"
                 layoutId="activeCategory"
                 initial={false}
                 transition={{

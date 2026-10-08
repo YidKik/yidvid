@@ -81,7 +81,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-14 left-0 right-0 z-40 bg-white dark:bg-card rounded-t-2xl border-t border-border dark:border-border shadow-2xl"
+            className="fixed bottom-14 left-0 right-0 z-40 bg-white dark:bg-card rounded-t-card border-t border-border dark:border-border shadow-2xl"
           >
             <div className="w-12 h-1 bg-surface-active dark:bg-[#555] rounded-full mx-auto mt-3" />
             <div className="p-4 pb-2">
@@ -95,7 +95,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
                       key={item.path}
                       onClick={() => handleSheetItemClick(item.path, true)}
                       className={cn(
-                        "flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-xs font-medium transition-all",
+                        "flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-control text-xs font-medium transition-all",
                         active ? "bg-[#FFF0F0] dark:bg-[#3a2020] text-brand" : "bg-muted dark:bg-secondary text-muted-foreground dark:text-muted-foreground hover:bg-[#EFEFEF] dark:hover:bg-secondary",
                         !isAuthenticated && "opacity-40"
                       )}

@@ -99,7 +99,7 @@ export const SettingsActivity = () => {
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : !isAuthenticated ? (
-        <div className="py-10 text-center rounded-xl border border-border dark:border-border bg-muted dark:bg-background">
+        <div className="py-10 text-center rounded-card border border-border dark:border-border bg-muted dark:bg-background">
           <Play className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
           <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Sign in to see your stats</p>
         </div>
@@ -111,10 +111,10 @@ export const SettingsActivity = () => {
           {statItems.map((item) => (
             <div
               key={item.label}
-              className="flex items-center gap-3 p-3.5 rounded-xl border border-border dark:border-border bg-muted dark:bg-background"
+              className="flex items-center gap-3 p-3.5 rounded-card border border-border dark:border-border bg-muted dark:bg-background"
             >
               <div
-                className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0"
+                className="flex items-center justify-center w-9 h-9 rounded-control shrink-0"
                 style={{ backgroundColor: `${item.accent}15` }}
               >
                 <item.icon className="h-4 w-4" style={{ color: item.accent }} />

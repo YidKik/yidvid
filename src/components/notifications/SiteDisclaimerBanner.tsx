@@ -27,7 +27,7 @@ export const SiteDisclaimerBanner = () => {
   }
 
   return (
-    <Card className="mx-auto max-w-5xl mb-4 bg-gradient-to-r from-gray-900 to-black border border-gray-800 shadow-md rounded-xl overflow-hidden">
+    <Card className="mx-auto max-w-5xl mb-4 bg-gradient-to-r from-gray-900 to-black border border-gray-800 shadow-md rounded-card overflow-hidden">
       <div className="p-4">
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-brand flex-shrink-0 mt-0.5" />
@@ -48,7 +48,7 @@ export const SiteDisclaimerBanner = () => {
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
-                  <div className="pt-2 pb-1 text-xs space-y-2 text-gray-300 bg-gray-800/50 p-3 rounded-lg mt-2">
+                  <div className="pt-2 pb-1 text-xs space-y-2 text-gray-300 bg-gray-800/50 p-3 rounded-card mt-2">
                     <p>
                       <strong>Site Layout:</strong> We're optimizing the interface for both desktop and mobile to ensure a seamless experience across all devices.
                     </p>
@@ -73,7 +73,7 @@ export const SiteDisclaimerBanner = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white bg-black/50 hover:bg-black/70 backdrop-blur-sm border border-gray-700 px-4 h-8 text-xs rounded-full shadow-sm"
+                className="text-white bg-black/50 hover:bg-black/70 backdrop-blur-sm border border-gray-700 px-4 h-8 text-xs rounded-control shadow-sm"
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 {isExpanded ? (
@@ -91,7 +91,7 @@ export const SiteDisclaimerBanner = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs h-8 px-4 bg-gradient-to-r from-brand to-brand hover:from-red-700 hover:to-brand border-none text-white rounded-full shadow-sm backdrop-blur-sm"
+                className="text-xs h-8 px-4 bg-gradient-to-r from-brand to-brand hover:from-red-700 hover:to-brand border-none text-white rounded-control shadow-sm backdrop-blur-sm"
                 onClick={handleDismiss}
               >
                 Got it, thanks!

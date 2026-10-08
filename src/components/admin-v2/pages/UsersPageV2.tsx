@@ -159,7 +159,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
       <div className="grid grid-cols-3 gap-4">
         <Card className="bg-[#12131a] border-[#1e2028]">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-indigo-500/10">
+            <div className="p-2 rounded-control bg-indigo-500/10">
               <Users className="h-5 w-5 text-indigo-400" />
             </div>
             <div>
@@ -170,7 +170,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
         </Card>
         <Card className="bg-[#12131a] border-[#1e2028]">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10">
+            <div className="p-2 rounded-control bg-amber-500/10">
               <ShieldCheck className="h-5 w-5 text-amber-400" />
             </div>
             <div>
@@ -181,7 +181,7 @@ export const UsersPageV2 = ({ currentUserId }: UsersPageV2Props) => {
         </Card>
         <Card className="bg-[#12131a] border-[#1e2028]">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-cyan-500/10">
+            <div className="p-2 rounded-control bg-cyan-500/10">
               <Users className="h-5 w-5 text-cyan-400" />
             </div>
             <div>

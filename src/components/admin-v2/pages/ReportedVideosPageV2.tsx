@@ -207,16 +207,16 @@ export const ReportedVideosPageV2 = () => {
       <div className="flex flex-col min-w-0 flex-1">
         {/* Stats row */}
         <div className="flex items-center gap-4 mb-4 shrink-0">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#13141b] border border-[#1e2028]">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-control bg-[#13141b] border border-[#1e2028]">
             <Flag className="w-3.5 h-3.5 text-red-400" />
             <span className="text-xs font-medium text-[#c4c7d4]">{reports?.length || 0} total reports</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#13141b] border border-[#1e2028]">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-control bg-[#13141b] border border-[#1e2028]">
             <Eye className="w-3.5 h-3.5 text-[#818cf8]" />
             <span className="text-xs font-medium text-[#c4c7d4]">{grouped.length} videos reported</span>
           </div>
           {grouped.filter(g => g.reportCount >= 3).length > 0 && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-brand/20">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-control bg-primary/10 border border-brand/20">
               <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
               <span className="text-xs font-medium text-red-400">
                 {grouped.filter(g => g.reportCount >= 3).length} high priority
@@ -237,11 +237,11 @@ export const ReportedVideosPageV2 = () => {
         </div>
 
         {/* List */}
-        <div className="rounded-xl border border-[#1e2028] bg-[#0f1117] overflow-hidden flex-1 min-h-0">
+        <div className="rounded-card border border-[#1e2028] bg-[#0f1117] overflow-hidden flex-1 min-h-0">
           {isLoading ? (
             <div className="p-6 space-y-3">
               {[...Array(6)].map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full bg-[#1a1c25] rounded-lg" />
+                <Skeleton key={i} className="h-16 w-full bg-[#1a1c25] rounded-control" />
               ))}
             </div>
           ) : filtered.length === 0 ? (
@@ -258,7 +258,7 @@ export const ReportedVideosPageV2 = () => {
                     <button
                       key={group.videoDbId}
                       onClick={() => setSelectedVideoId(isActive ? null : group.videoDbId)}
-                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left transition-all ${
+                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-control text-left transition-all ${
                         isActive
                           ? "bg-[#6366f1]/10 border border-[#6366f1]/20"
                           : "hover:bg-[#1a1c25] border border-transparent"
@@ -306,7 +306,7 @@ export const ReportedVideosPageV2 = () => {
       </div>
 
       {/* Right: detail panel */}
-      <div className="w-[420px] shrink-0 rounded-xl border border-[#1e2028] bg-[#0f1117] flex flex-col overflow-hidden">
+      <div className="w-[420px] shrink-0 rounded-card border border-[#1e2028] bg-[#0f1117] flex flex-col overflow-hidden">
         {selected ? (
           <>
             {/* Panel header */}
@@ -327,7 +327,7 @@ export const ReportedVideosPageV2 = () => {
                   <p className="text-[10px] uppercase tracking-wider text-[#565b6e] font-semibold mb-3">Video</p>
                   
                   {selected.isDeleted && (
-                    <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mb-3">
+                    <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-control bg-emerald-500/10 border border-emerald-500/20 mb-3">
                       <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
                       <p className="text-xs font-medium text-emerald-400">This video has been deleted from the site</p>
                     </div>
@@ -338,11 +338,11 @@ export const ReportedVideosPageV2 = () => {
                       <img
                         src={selected.thumbnail}
                         alt=""
-                        className={`w-full h-40 rounded-lg object-cover ${selected.isDeleted ? 'opacity-40 grayscale' : ''}`}
+                        className={`w-full h-40 rounded-card object-cover ${selected.isDeleted ? 'opacity-40 grayscale' : ''}`}
                       />
                       {selected.isDeleted && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="bg-black/60 rounded-lg px-4 py-2">
+                          <div className="bg-black/60 rounded-control px-4 py-2">
                             <p className="text-xs font-semibold text-emerald-400">Video Removed</p>
                           </div>
                         </div>
@@ -350,15 +350,15 @@ export const ReportedVideosPageV2 = () => {
                     </div>
                   )}
                   <div className="space-y-2.5">
-                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                    <div className="bg-[#13141b] rounded-card p-3.5 border border-[#1e2028]">
                       <p className="text-[10px] text-[#565b6e] mb-1">Title</p>
                       <p className="text-sm font-medium text-[#c4c7d4]">{selected.videoTitle}</p>
                     </div>
-                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028]">
+                    <div className="bg-[#13141b] rounded-card p-3.5 border border-[#1e2028]">
                       <p className="text-[10px] text-[#565b6e] mb-1">Channel</p>
                       <p className="text-sm text-[#c4c7d4]">{selected.channelName}</p>
                     </div>
-                    <div className="bg-[#13141b] rounded-lg p-3.5 border border-[#1e2028] flex items-center justify-between">
+                    <div className="bg-[#13141b] rounded-card p-3.5 border border-[#1e2028] flex items-center justify-between">
                       <div>
                         <p className="text-[10px] text-[#565b6e] mb-1">Report Count</p>
                         {severityBadge(selected.reportCount)}
@@ -387,12 +387,12 @@ export const ReportedVideosPageV2 = () => {
                       return (
                         <div
                           key={report.id}
-                          className="bg-[#13141b] rounded-lg border border-[#1e2028] overflow-hidden"
+                          className="bg-[#13141b] rounded-card border border-[#1e2028] overflow-hidden"
                         >
                           {/* Reporter header */}
                           <div className="px-3.5 py-2.5 border-b border-[#1e2028]/50 flex items-center justify-between">
                             <div className="flex items-center gap-2 min-w-0">
-                              <div className="w-6 h-6 rounded-full bg-[#6366f1]/15 flex items-center justify-center shrink-0">
+                              <div className="w-6 h-6 rounded-control bg-[#6366f1]/15 flex items-center justify-center shrink-0">
                                 <User className="w-3 h-3 text-[#818cf8]" />
                               </div>
                               <div className="min-w-0">
@@ -438,7 +438,7 @@ export const ReportedVideosPageV2 = () => {
                             </div>
 
                             {/* Report message */}
-                            <div className="mt-1.5 bg-[#0d0e14] rounded-md p-2.5 border border-[#1a1c25]">
+                            <div className="mt-1.5 bg-[#0d0e14] rounded-control p-2.5 border border-[#1a1c25]">
                               <div className="flex items-start gap-2">
                                 <MessageSquare className="w-3 h-3 text-[#565b6e] mt-0.5 shrink-0" />
                                 <p className="text-xs text-[#8b8fa3] leading-relaxed">{report.message}</p>
@@ -468,7 +468,7 @@ export const ReportedVideosPageV2 = () => {
                     )}
 
                     {selected.isDeleted ? (
-                      <div className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+                      <div className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-control bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
                         <CheckCircle className="w-3.5 h-3.5" />
                         Video Already Deleted
                       </div>
@@ -513,7 +513,7 @@ export const ReportedVideosPageV2 = () => {
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-[#565b6e] px-6">
-            <div className="w-12 h-12 rounded-xl bg-[#1a1c25] flex items-center justify-center mb-4">
+            <div className="w-12 h-12 rounded-card bg-[#1a1c25] flex items-center justify-center mb-4">
               <Flag className="w-5 h-5 opacity-50" />
             </div>
             <p className="text-sm font-medium text-[#8b8fa3] mb-1">No video selected</p>

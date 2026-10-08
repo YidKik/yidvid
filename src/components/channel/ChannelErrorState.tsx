@@ -22,7 +22,7 @@ export const ChannelErrorState = ({
   return (
     <div className="container mx-auto p-4 mt-16">
       <BackButton />
-      <div className="flex flex-col items-center justify-center min-h-[300px] p-6 border border-gray-200 rounded-lg bg-white/50 shadow-sm">
+      <div className="flex flex-col items-center justify-center min-h-[300px] p-6 border border-gray-200 rounded-card bg-white/50 shadow-sm">
         <VideoPlaceholder size="medium" />
         <h2 className="text-xl font-semibold text-destructive mt-6">Channel not found</h2>
         <p className="text-muted-foreground mt-2 text-center max-w-md">

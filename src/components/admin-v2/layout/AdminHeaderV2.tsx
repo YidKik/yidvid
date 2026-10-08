@@ -231,11 +231,11 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
         {/* Notification bell */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative p-2 rounded-lg hover:bg-[#1a1c25] transition-colors"
+          className="relative p-2 rounded-control hover:bg-[#1a1c25] transition-colors"
         >
           <Bell className="w-[18px] h-[18px] text-[#8b8fa3]" />
           {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold ring-2 ring-[#0f1117] animate-pulse px-1">
+            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-badge bg-primary text-white text-[10px] font-bold ring-2 ring-[#0f1117] animate-pulse px-1">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}
@@ -249,7 +249,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
             </p>
             <p className="text-[10px] text-[#565b6e]">Administrator</p>
           </div>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-semibold text-xs">
+          <div className="w-8 h-8 rounded-control bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] flex items-center justify-center text-white font-semibold text-xs">
             {(profile?.display_name || profile?.email || "A")[0].toUpperCase()}
           </div>
         </div>
@@ -265,13 +265,13 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
 
           <div
             ref={popupRef}
-            className="fixed z-[9999] w-[96vw] max-w-[1800px] bg-[#0d0e14] border border-[#2a2d3a] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed z-[9999] w-[96vw] max-w-[1800px] bg-[#0d0e14] border border-[#2a2d3a] rounded-dialog shadow-2xl flex flex-col overflow-hidden"
             style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", maxHeight: "92vh" }}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-8 py-6 border-b border-[#1e2028] shrink-0 bg-[#0f1017]">
               <div className="flex items-center gap-4">
-                <div className="p-2.5 rounded-xl bg-[#6366f1]/15">
+                <div className="p-2.5 rounded-card bg-[#6366f1]/15">
                   <Bell className="w-6 h-6 text-[#818cf8]" />
                 </div>
                 <div>
@@ -285,13 +285,13 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllAsRead}
-                    className="flex items-center gap-1.5 text-xs text-[#818cf8] hover:text-[#a5b4fc] transition-colors font-semibold px-4 py-2 rounded-lg hover:bg-[#818cf8]/10"
+                    className="flex items-center gap-1.5 text-xs text-[#818cf8] hover:text-[#a5b4fc] transition-colors font-semibold px-4 py-2 rounded-control hover:bg-[#818cf8]/10"
                   >
                     <CheckCheck className="w-4 h-4" />
                     Mark all as read
                   </button>
                 )}
-                <button onClick={() => setIsOpen(false)} className="p-2.5 rounded-xl hover:bg-white/5 text-[#565b6e] hover:text-[#8b8fa3] transition-colors">
+                <button onClick={() => setIsOpen(false)} className="p-2.5 rounded-control hover:bg-white/5 text-[#565b6e] hover:text-[#8b8fa3] transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -317,12 +317,12 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
                       return (
                         <div
                           key={type}
-                          className={`bg-[#13141b] border ${items.length > 0 ? cfg.border : 'border-[#1e2028]'} rounded-xl flex flex-col min-h-[450px] transition-all ${items.length > 0 ? 'ring-1 ring-inset ring-white/[0.03]' : ''}`}
+                          className={`bg-[#13141b] border ${items.length > 0 ? cfg.border : 'border-[#1e2028]'} rounded-card flex flex-col min-h-[450px] transition-all ${items.length > 0 ? 'ring-1 ring-inset ring-white/[0.03]' : ''}`}
                         >
                           {/* Column header */}
                           <div className="flex items-center justify-between px-4 py-4 border-b border-[#1e2028]/60">
                             <div className="flex items-center gap-2.5">
-                              <div className={`p-1.5 rounded-lg ${cfg.bg}`}>
+                              <div className={`p-1.5 rounded-control ${cfg.bg}`}>
                                 <Icon className={`w-4 h-4 ${cfg.color}`} />
                               </div>
                               <span className="text-[11px] font-bold text-[#c4c7d4] uppercase tracking-wider">
@@ -330,7 +330,7 @@ export const AdminHeaderV2 = ({ pageTitle, pageDescription, profile, onTabChange
                               </span>
                             </div>
                             {items.length > 0 && (
-                              <span className={`text-[11px] font-bold ${cfg.color} ${cfg.bg} rounded-full px-2.5 py-0.5 leading-none`}>
+                              <span className={`text-[11px] font-bold ${cfg.color} ${cfg.bg} rounded-badge px-2.5 py-0.5 leading-none`}>
                                 {items.length}
                               </span>
                             )}

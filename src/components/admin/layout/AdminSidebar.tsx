@@ -47,7 +47,7 @@ export const AdminSidebar = ({
       <div className="h-16 flex items-center px-4 border-b border-[hsl(220,15%,20%)] gap-3">
         {!collapsed && (
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-[hsl(250,80%,60%)] flex items-center justify-center text-white font-bold text-sm shrink-0">
+            <div className="w-8 h-8 rounded-control bg-[hsl(250,80%,60%)] flex items-center justify-center text-white font-bold text-sm shrink-0">
               A
             </div>
             <span className="font-semibold text-white text-sm whitespace-nowrap">
@@ -57,7 +57,7 @@ export const AdminSidebar = ({
         )}
         <button
           onClick={onToggleCollapse}
-          className="ml-auto p-1.5 rounded-md hover:bg-[hsl(220,15%,22%)] text-[hsl(220,10%,60%)] hover:text-white transition-colors"
+          className="ml-auto p-1.5 rounded-control hover:bg-[hsl(220,15%,22%)] text-[hsl(220,10%,60%)] hover:text-white transition-colors"
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
@@ -74,7 +74,7 @@ export const AdminSidebar = ({
               key={item.id}
               onClick={() => onTabChange(item.id)}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-control text-sm font-medium transition-colors",
                 isActive
                   ? "bg-[hsl(250,80%,60%)] text-white"
                   : "hover:bg-[hsl(220,15%,20%)] hover:text-white"

@@ -184,8 +184,8 @@ export const FriendlyVideoActionBar = ({
   ];
 
   const pillBtn = compact
-    ? "h-7 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
-    : "h-9 px-4 rounded-full text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground";
+    ? "h-7 px-2.5 rounded-control text-[11px] font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground"
+    : "h-9 px-4 rounded-control text-sm font-medium transition-all duration-150 bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:text-foreground";
 
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
 
@@ -243,7 +243,7 @@ export const FriendlyVideoActionBar = ({
               onClick={handleSubscribeClick}
               disabled={isSubLoading}
               data-subscribed={isSubscribed ? "true" : "false"}
-              className={`${compact ? 'h-6 px-2.5 text-[10px]' : 'h-8 px-4 text-sm'} video-subscribe-button rounded-full font-semibold transition-all ml-0.5`}
+              className={`${compact ? 'h-6 px-2.5 text-[10px]' : 'h-8 px-4 text-sm'} video-subscribe-button rounded-control font-semibold transition-all ml-0.5`}
             >
               {isSubLoading ? (
                 <span className="opacity-70">...</span>
@@ -279,7 +279,7 @@ export const FriendlyVideoActionBar = ({
                 Share
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-white border border-border rounded-2xl overflow-hidden shadow-xl [&>button]:hidden">
+            <DialogContent className="sm:max-w-[340px] max-[768px]:max-w-[calc(100%-2rem)] max-[768px]:max-h-[70vh] p-0 bg-white border border-border rounded-dialog overflow-hidden shadow-xl [&>button]:hidden">
               <div className="flex items-center justify-between px-5 py-3.5 max-[768px]:px-4 max-[768px]:py-2.5 border-b border-border">
                 <h3 className="text-sm font-bold text-foreground tracking-tight">Share</h3>
                 <button onClick={() => setShareOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
@@ -290,8 +290,8 @@ export const FriendlyVideoActionBar = ({
                 {shareOptions.map((option) => (
                   <button key={option.name}
                     onClick={() => { option.action(); setShareOpen(false); }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-hover transition-colors duration-150 group">
-                    <div className="h-9 w-9 rounded-full bg-muted group-hover:bg-white border border-border flex items-center justify-center flex-shrink-0">
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-control hover:bg-surface-hover transition-colors duration-150 group">
+                    <div className="h-9 w-9 rounded-control bg-muted group-hover:bg-white border border-border flex items-center justify-center flex-shrink-0">
                       <option.icon className={`h-4 w-4 ${option.color}`} />
                     </div>
                     <span className="text-sm font-medium text-foreground">{option.name}</span>
@@ -300,7 +300,7 @@ export const FriendlyVideoActionBar = ({
               </div>
               <div className="px-5 pb-4">
                 <button onClick={() => setShareOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary hover:brightness-90 text-white text-sm font-semibold transition-all duration-200">
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-control bg-primary hover:brightness-90 text-white text-sm font-semibold transition-all duration-200">
                   <X className="h-4 w-4" /> Close
                 </button>
               </div>
@@ -310,16 +310,16 @@ export const FriendlyVideoActionBar = ({
           {/* 3-dot menu: Report, Favorite, Watch Later, Playlist */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className={`${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-full bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
+              <Button variant="ghost" size="icon" className={`${compact ? 'h-7 w-7' : 'h-9 w-9'} rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-muted-foreground dark:text-muted-foreground`}>
                 <MoreVertical className={iconSize} />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 rounded-xl bg-white shadow-lg border border-border p-1">
-              <DropdownMenuItem onClick={handleToggleFavorite} className="rounded-lg cursor-pointer gap-3 py-2.5 px-3">
+            <DropdownMenuContent align="end" className="w-52 rounded-card bg-white shadow-lg border border-border p-1">
+              <DropdownMenuItem onClick={handleToggleFavorite} className="rounded-control cursor-pointer gap-3 py-2.5 px-3">
                 <Heart className={cn("h-4 w-4", isFavorite && "fill-brand text-brand")} />
                 <span className="text-sm">{isFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleToggleWatchLater} className="rounded-lg cursor-pointer gap-3 py-2.5 px-3">
+              <DropdownMenuItem onClick={handleToggleWatchLater} className="rounded-control cursor-pointer gap-3 py-2.5 px-3">
                 <Clock className={cn("h-4 w-4", isWatchLaterSaved && "fill-current")} />
                 <span className="text-sm">{isWatchLaterSaved ? "Remove from Watch Later" : "Watch Later"}</span>
               </DropdownMenuItem>
@@ -331,7 +331,7 @@ export const FriendlyVideoActionBar = ({
                   }
                   setPlaylistDialogOpen(true);
                 }} 
-                className="rounded-lg cursor-pointer gap-3 py-2.5 px-3"
+                className="rounded-control cursor-pointer gap-3 py-2.5 px-3"
               >
                 <ListPlus className="h-4 w-4" />
                 <span className="text-sm">Add to Playlist</span>
@@ -346,7 +346,7 @@ export const FriendlyVideoActionBar = ({
 
       {/* Playlist Dialog */}
       <Dialog open={playlistDialogOpen} onOpenChange={setPlaylistDialogOpen}>
-        <DialogContent className="sm:max-w-[400px] bg-white rounded-2xl">
+        <DialogContent className="sm:max-w-[400px] bg-white rounded-dialog">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">Add to Playlist</DialogTitle>
           </DialogHeader>
@@ -354,7 +354,7 @@ export const FriendlyVideoActionBar = ({
             {playlists && playlists.length > 0 ? (
               playlists.map((playlist) => (
                 <button key={playlist.id} onClick={() => handleAddToPlaylist(playlist.id)}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-control hover:bg-gray-100 transition-colors text-left">
                   <ListPlus className="w-4 h-4 text-muted-foreground" />
                   <span className="truncate">{playlist.title}</span>
                 </button>
@@ -367,11 +367,11 @@ export const FriendlyVideoActionBar = ({
             <p className="text-sm font-medium mb-2">Create new playlist</p>
             <div className="flex gap-2">
               <Input placeholder="Playlist name" value={newPlaylistName}
-                onChange={(e) => setNewPlaylistName(e.target.value)} className="rounded-lg"
+                onChange={(e) => setNewPlaylistName(e.target.value)} className="rounded-control"
                 onKeyDown={(e) => e.key === "Enter" && handleCreateAndAddToPlaylist()} />
               <Button size="icon" onClick={handleCreateAndAddToPlaylist}
                 disabled={!newPlaylistName.trim()}
-                className="shrink-0 rounded-lg bg-primary hover:brightness-90">
+                className="shrink-0 rounded-control bg-primary hover:brightness-90">
                 <Plus className="w-4 h-4" />
               </Button>
             </div>

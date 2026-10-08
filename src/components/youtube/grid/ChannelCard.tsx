@@ -24,7 +24,7 @@ export const ChannelCard = ({
       to={`/channel/${channel_id}`}
       className={cn(
         "block opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]",
-        "relative group rounded-xl overflow-hidden transition-all duration-300",
+        "relative group rounded-card overflow-hidden transition-all duration-300",
         "hover:scale-[1.05] text-center p-4 md:p-6",
         "bg-white backdrop-blur-sm mx-auto w-full",
         "shadow-[0_-1px_3px_0_rgba(0,0,0,0.05),0_4px_6px_-1px_rgba(0,0,0,0.1)]",

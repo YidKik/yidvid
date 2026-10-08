@@ -49,7 +49,7 @@ export const CategoryCard = ({ icon, label, id, isCustomImage = false }: Categor
         }
       }}
       whileTap={{ scale: 0.98 }}
-      className={`rounded-xl cursor-pointer transition-all duration-300 ${
+      className={`rounded-card cursor-pointer transition-all duration-300 ${
         isMobile 
           ? 'h-[50px] p-0.5 shadow-sm' 
           : 'h-[90px] p-3 shadow-md'

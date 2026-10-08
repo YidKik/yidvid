@@ -31,11 +31,11 @@ export const ChannelFilteredList = ({
   return (
     <div className={`relative transition-all duration-300 ${isLocked ? 'pointer-events-none' : ''}`}>
       {isLocked && (
-        <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 rounded-2xl" />
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 rounded-card" />
       )}
       
       <div className="my-4">
-        <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl border border-primary/20 shadow-sm">
+        <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-card border border-primary/20 shadow-sm">
           <Search className="h-5 w-5 text-primary flex-shrink-0" />
           <ChannelSearch value={searchQuery} onChange={setSearchQuery} />
         </div>
@@ -58,7 +58,7 @@ export const ChannelFilteredList = ({
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center bg-gradient-to-br from-secondary/20 to-primary/10 rounded-2xl border border-primary/20">
+          <div className="p-8 text-center bg-gradient-to-br from-secondary/20 to-primary/10 rounded-card border border-primary/20">
             <Search className="h-12 w-12 text-primary/50 mx-auto mb-3" />
             <p className="text-primary font-medium mb-1">
               {searchQuery ? "No channels found" : "No channels available"}

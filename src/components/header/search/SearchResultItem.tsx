@@ -50,7 +50,7 @@ export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResult
           src={video.thumbnail}
           alt={cleanVideoTitle(video.title)}
           className={`
-            object-cover rounded-lg flex-shrink-0
+            object-cover rounded-card flex-shrink-0
             ${isMobile ? 'w-16 h-12' : 'w-20 h-14'}
           `}
           onError={(e) => {
@@ -97,7 +97,7 @@ export const SearchResultItem = ({ type, item, onClick, isMobile }: SearchResult
       `}
     >
       <div className={`
-        rounded-full bg-red-100 flex items-center justify-center flex-shrink-0
+        rounded-control bg-red-100 flex items-center justify-center flex-shrink-0
         ${isMobile ? 'w-12 h-12' : 'w-14 h-14'}
       `}>
         {channel.thumbnail_url ? (

@@ -12,7 +12,7 @@ export const SignInErrorMessage: React.FC<SignInErrorMessageProps> = ({ error })
   if (!error) return null;
   
   return (
-    <div className={`${isMobile ? 'text-xs' : 'text-sm'} text-brand font-medium p-2 bg-red-50 rounded-lg border border-red-100`}>
+    <div className={`${isMobile ? 'text-xs' : 'text-sm'} text-brand font-medium p-2 bg-red-50 rounded-card border border-red-100`}>
       {error}
     </div>
   );

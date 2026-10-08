@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
 const Card = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div className={`rounded-xl border border-[#1e2028] bg-[#12131a] ${className}`}>{children}</div>
+  <div className={`rounded-card border border-[#1e2028] bg-[#12131a] ${className}`}>{children}</div>
 );
 
 const fmt = (n: number) =>
@@ -30,7 +30,7 @@ const KPI = ({
         <p className="text-2xl font-bold text-white">{typeof value === "number" ? fmt(value) : value}</p>
         {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
       </div>
-      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent}`}>
+      <div className={`w-9 h-9 rounded-control flex items-center justify-center ${accent}`}>
         <Icon className="w-4.5 h-4.5 text-white" />
       </div>
     </div>
@@ -200,7 +200,7 @@ export const AnalyticsPageV2 = () => {
           <button
             key={p}
             onClick={() => setPeriod(p)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-control text-sm font-medium transition-colors ${
               period === p ? "bg-indigo-600 text-white" : "text-gray-400 hover:text-white hover:bg-[#1e2028]"
             }`}
           >

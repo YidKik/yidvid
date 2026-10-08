@@ -89,7 +89,7 @@ export const VideoActionBar = ({ videoId, youtubeVideoId, compact = false }: Vid
         variant="ghost"
         size="sm"
         onClick={handleLike}
-        className={`${buttonClass} rounded-full transition-colors ${
+        className={`${buttonClass} rounded-control transition-colors ${
           isLiked ? "text-primary bg-primary/10" : "text-foreground hover:bg-primary/10 hover:text-primary"
         }`}
       >
@@ -102,7 +102,7 @@ export const VideoActionBar = ({ videoId, youtubeVideoId, compact = false }: Vid
         variant="ghost"
         size="sm"
         onClick={handleDislike}
-        className={`${buttonClass} rounded-full transition-colors ${
+        className={`${buttonClass} rounded-control transition-colors ${
           isDisliked ? "text-foreground bg-muted" : "text-foreground hover:bg-surface-hover"
         }`}
       >
@@ -114,7 +114,7 @@ export const VideoActionBar = ({ videoId, youtubeVideoId, compact = false }: Vid
         variant="ghost"
         size="sm"
         onClick={handleShare}
-        className={`${buttonClass} rounded-full hover:bg-surface-hover text-foreground`}
+        className={`${buttonClass} rounded-control hover:bg-surface-hover text-foreground`}
       >
         <Share2 className={iconClass} />
         {!compact && <span>Share</span>}

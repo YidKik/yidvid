@@ -11,7 +11,7 @@ interface WelcomeNameFieldProps {
 
 export const WelcomeNameField = ({ welcomeName, setWelcomeName, handleSave }: WelcomeNameFieldProps) => {
   return (
-    <div className="p-3 bg-muted rounded-lg">
+    <div className="p-3 bg-muted rounded-card">
       <div className="space-y-2">
         <Label htmlFor="welcomeName">Welcome Page Name</Label>
         <div className="flex gap-2">

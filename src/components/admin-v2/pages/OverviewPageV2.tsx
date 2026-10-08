@@ -228,7 +228,7 @@ export const OverviewPageV2 = () => {
                 </div>
                 <div className="h-2 bg-[#1a1c25] rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full transition-all duration-500"
+                    className="h-full rounded-control transition-all duration-500"
                     style={{
                       width: `${quotaPct}%`,
                       backgroundColor:
@@ -286,10 +286,10 @@ const KpiCard = ({
   color: string;
   accent?: boolean;
 }) => (
-  <div className="bg-[#13151c] border border-[#1e2028] rounded-xl p-4 hover:border-[#2a2d3a] transition-colors">
+  <div className="bg-[#13151c] border border-[#1e2028] rounded-card p-4 hover:border-[#2a2d3a] transition-colors">
     <div className="flex items-center gap-2 mb-3">
       <div
-        className="w-8 h-8 rounded-lg flex items-center justify-center"
+        className="w-8 h-8 rounded-control flex items-center justify-center"
         style={{ backgroundColor: `${color}15` }}
       >
         <Icon className="w-4 h-4" style={{ color }} />
@@ -315,7 +315,7 @@ const DarkCard = ({
   icon: any;
   children: React.ReactNode;
 }) => (
-  <div className="bg-[#13151c] border border-[#1e2028] rounded-xl p-5">
+  <div className="bg-[#13151c] border border-[#1e2028] rounded-card p-5">
     <div className="flex items-center gap-2 mb-4">
       <Icon className="w-4 h-4 text-[#6366f1]" />
       <h3 className="text-[13px] font-semibold text-[#c4c7d4]">{title}</h3>
@@ -325,7 +325,7 @@ const DarkCard = ({
 );
 
 const MiniStat = ({ label, value, color }: { label: string; value: number; color: string }) => (
-  <div className="bg-[#0f1117] rounded-lg p-3 border border-[#1e2028]">
+  <div className="bg-[#0f1117] rounded-card p-3 border border-[#1e2028]">
     <div className="flex items-center gap-2 mb-1">
       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
       <span className="text-[10px] text-[#565b6e] uppercase tracking-wider">{label}</span>
@@ -345,7 +345,7 @@ const StatusPill = ({ status }: { status: string }) => {
 
   return (
     <span
-      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+      className={`text-[10px] font-medium px-2 py-0.5 rounded-badge ${
         styles[status] || "bg-[#1e2028] text-[#8b8fa3]"
       }`}
     >

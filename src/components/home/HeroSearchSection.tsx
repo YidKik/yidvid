@@ -89,11 +89,11 @@ const HeroSearchSection = () => {
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
-          className={`absolute top-1/4 left-1/4 ${isMobile ? 'w-48 h-48' : 'w-96 h-96'} rounded-full blur-3xl opacity-[0.07]`}
+          className={`absolute top-1/4 left-1/4 ${isMobile ? 'w-48 h-48' : 'w-96 h-96'} rounded-control blur-3xl opacity-[0.07]`}
           style={{ backgroundColor: 'hsl(var(--primary))' }}
         />
         <div 
-          className={`absolute bottom-1/4 right-1/4 ${isMobile ? 'w-40 h-40' : 'w-80 h-80'} rounded-full blur-3xl opacity-[0.05]`}
+          className={`absolute bottom-1/4 right-1/4 ${isMobile ? 'w-40 h-40' : 'w-80 h-80'} rounded-control blur-3xl opacity-[0.05]`}
           style={{ backgroundColor: 'hsl(var(--primary))' }}
         />
       </div>
@@ -135,7 +135,7 @@ const HeroSearchSection = () => {
           transition={{ delay: 0.6 }}
         >
           <div 
-            className={`relative flex items-center rounded-full shadow-xl overflow-hidden border-2 transition-all duration-300 focus-within:shadow-2xl border-border focus-within:border-brand bg-white`}
+            className={`relative flex items-center rounded-control shadow-xl overflow-hidden border-2 transition-all duration-300 focus-within:shadow-2xl border-border focus-within:border-brand bg-white`}
           >
             <Search 
               className={`absolute ${isMobile ? 'left-3 w-4 h-4' : 'left-5 w-6 h-6'} z-10`}
@@ -180,7 +180,7 @@ const HeroSearchSection = () => {
             </div>
             <motion.button
               type="submit"
-              className={`absolute right-2 z-20 flex items-center gap-1.5 ${isMobile ? 'px-3 py-2 text-xs' : isTablet ? 'px-4 py-2.5 text-sm' : 'px-6 py-3'} rounded-full font-bold transition-colors cursor-pointer bg-primary text-white`}
+              className={`absolute right-2 z-20 flex items-center gap-1.5 ${isMobile ? 'px-3 py-2 text-xs' : isTablet ? 'px-4 py-2.5 text-sm' : 'px-6 py-3'} rounded-control font-bold transition-colors cursor-pointer bg-primary text-white`}
               style={{ fontFamily: "'Quicksand', sans-serif" }}
               whileHover={{ filter: 'brightness(0.9)' }}
               whileTap={{ scale: 0.95 }}
@@ -200,7 +200,7 @@ const HeroSearchSection = () => {
         >
           <motion.button
             onClick={() => navigate('/videos')}
-            className={`group flex items-center gap-2 ${isMobile ? 'px-5 py-3 text-sm' : isTablet ? 'px-6 py-3' : 'px-8 py-4'} rounded-full font-semibold transition-all duration-300 bg-white border border-border`}
+            className={`group flex items-center gap-2 ${isMobile ? 'px-5 py-3 text-sm' : isTablet ? 'px-6 py-3' : 'px-8 py-4'} rounded-control font-semibold transition-all duration-300 bg-white border border-border`}
             style={{ 
               fontFamily: "'Quicksand', sans-serif",
               color: 'hsl(var(--foreground))',

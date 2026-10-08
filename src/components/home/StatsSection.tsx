@@ -18,7 +18,7 @@ export const StatsSection = () => {
     <section className="container mx-auto px-6 py-24 space-y-8">
       <div className="grid grid-cols-2 gap-8 max-w-4xl mx-auto">
         <motion.div 
-          className="h-80 rounded-3xl border border-[#77b0aa]/30 bg-gradient-to-br from-[#003c43] to-[#0a2e33] flex flex-col items-center justify-center p-8 shadow-lg shadow-black/20"
+          className="h-80 rounded-card border border-[#77b0aa]/30 bg-gradient-to-br from-[#003c43] to-[#0a2e33] flex flex-col items-center justify-center p-8 shadow-lg shadow-black/20"
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -34,7 +34,7 @@ export const StatsSection = () => {
         </motion.div>
         
         <motion.div 
-          className="h-80 rounded-3xl border border-[#77b0aa]/30 bg-gradient-to-br from-[#003c43] to-[#0a2e33] flex flex-col items-center justify-center p-8 shadow-lg shadow-black/20"
+          className="h-80 rounded-card border border-[#77b0aa]/30 bg-gradient-to-br from-[#003c43] to-[#0a2e33] flex flex-col items-center justify-center p-8 shadow-lg shadow-black/20"
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -53,7 +53,7 @@ export const StatsSection = () => {
       <div className="flex justify-between space-x-8 max-w-4xl mx-auto">
         <motion.button 
           onClick={() => handleAuthClick('signup')}
-          className="group w-[calc(50%-1rem)] h-72 flex flex-col items-center justify-center gap-4 rounded-3xl border border-[#77b0aa]/30 bg-gradient-to-br from-[#135d66]/50 to-transparent text-[#ddf9f2] text-2xl font-medium hover:border-[#ddf9f2]/50 transition-all duration-300 shadow-lg shadow-black/10"
+          className="group w-[calc(50%-1rem)] h-72 flex flex-col items-center justify-center gap-4 rounded-card border border-[#77b0aa]/30 bg-gradient-to-br from-[#135d66]/50 to-transparent text-[#ddf9f2] text-2xl font-medium hover:border-[#ddf9f2]/50 transition-all duration-300 shadow-lg shadow-black/10"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -63,7 +63,7 @@ export const StatsSection = () => {
 
         <motion.button 
           onClick={() => handleAuthClick('signin')}
-          className="group w-[calc(50%-1rem)] h-72 flex flex-col items-center justify-center gap-4 rounded-3xl border border-[#77b0aa]/30 bg-gradient-to-br from-[#135d66]/50 to-transparent text-[#ddf9f2] text-2xl font-medium hover:border-[#ddf9f2]/50 transition-all duration-300 shadow-lg shadow-black/10"
+          className="group w-[calc(50%-1rem)] h-72 flex flex-col items-center justify-center gap-4 rounded-card border border-[#77b0aa]/30 bg-gradient-to-br from-[#135d66]/50 to-transparent text-[#ddf9f2] text-2xl font-medium hover:border-[#ddf9f2]/50 transition-all duration-300 shadow-lg shadow-black/10"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >

@@ -85,7 +85,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant="outline"
           onClick={handleLike}
-          className={`group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
+          className={`group relative rounded-control p-2 md:p-3 transition-all duration-300 active:scale-90 border ${
             isLiked 
               ? "bg-card border-brand hover:bg-surface-hover" 
               : "bg-card border-border hover:bg-surface-hover hover:border-brand"
@@ -105,7 +105,7 @@ export const VideoInteractions = ({ videoId }: VideoInteractionsProps) => {
         <Button
           variant="outline"
           onClick={handleShare}
-          className="group relative rounded-full p-2 md:p-3 transition-all duration-300 active:scale-90 border bg-card border-border hover:bg-surface-hover hover:border-brand"
+          className="group relative rounded-control p-2 md:p-3 transition-all duration-300 active:scale-90 border bg-card border-border hover:bg-surface-hover hover:border-brand"
         >
           <Share className="w-5 h-5 md:w-6 md:h-6 transition-all duration-300 stroke-2 text-muted-foreground group-hover:text-brand group-hover:stroke-brand group-hover:scale-110" />
         </Button>

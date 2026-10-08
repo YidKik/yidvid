@@ -31,7 +31,7 @@ export const ChannelShortsSection = ({ shorts, isLoading }: ChannelShortsSection
             style={{ animation: `fadeIn 0.6s ease-out ${0.3 + index * 0.05}s forwards`, maxWidth: isMobile ? undefined : '180px' }}
             onClick={() => navigate(`/shorts/${short.video_id}`)}
           >
-            <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '9/16' }}>
+            <div className="relative w-full overflow-hidden rounded-card" style={{ aspectRatio: '9/16' }}>
               <img
                 src={short.thumbnail}
                 alt={cleanVideoTitle(short.title)}

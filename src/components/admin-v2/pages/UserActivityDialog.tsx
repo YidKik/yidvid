@@ -200,7 +200,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
     <div className="flex items-center gap-2 mb-3">
       <Icon className={`w-4 h-4 ${color}`} />
       <h3 className="text-sm font-semibold text-[#c4c7d4]">{label}</h3>
-      <span className="text-[10px] font-bold text-[#565b6e] bg-[#1a1c25] rounded-full px-2 py-0.5 ml-auto">{count}</span>
+      <span className="text-[10px] font-bold text-[#565b6e] bg-[#1a1c25] rounded-badge px-2 py-0.5 ml-auto">{count}</span>
     </div>
   );
 
@@ -212,7 +212,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
             <User className="w-4 h-4 text-[#818cf8]" />
             Activity Overview — {userName}
             {sessionData?.isLive && (
-              <span className="flex items-center gap-1.5 ml-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2.5 py-0.5">
+              <span className="flex items-center gap-1.5 ml-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-badge px-2.5 py-0.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 Online Now
               </span>
@@ -224,7 +224,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
           <div className="p-6">
             {isLoading ? (
               <div className="grid grid-cols-2 gap-4">
-                {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-32 bg-[#1a1c25] rounded-xl" />)}
+                {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-32 bg-[#1a1c25] rounded-card" />)}
               </div>
             ) : (
               <>
@@ -252,7 +252,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
                       color: sessionData?.isLive ? "text-emerald-400" : "text-[#565b6e]",
                     },
                   ].map(stat => (
-                    <div key={stat.label} className="bg-[#0f1117] rounded-xl p-3.5 border border-[#1e2028] text-center">
+                    <div key={stat.label} className="bg-[#0f1117] rounded-card p-3.5 border border-[#1e2028] text-center">
                       <stat.icon className={`w-4 h-4 mx-auto mb-1.5 ${stat.color}`} />
                       <p className="text-lg font-bold text-white">{stat.value}</p>
                       <p className="text-[10px] text-[#565b6e] mt-0.5">{stat.label}</p>
@@ -261,7 +261,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
                 </div>
 
                 {/* Last active / live info */}
-                <div className="flex items-center gap-2 bg-[#0f1117] rounded-lg px-4 py-2.5 border border-[#1e2028] mb-6">
+                <div className="flex items-center gap-2 bg-[#0f1117] rounded-control px-4 py-2.5 border border-[#1e2028] mb-6">
                   {sessionData?.isLive ? (
                     <>
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
@@ -296,7 +296,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
                 {/* Two-column grid of sections */}
                 <div className="grid grid-cols-2 gap-5">
                   {/* Watch History */}
-                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4">
+                  <div className="bg-[#0f1117] rounded-card border border-[#1e2028] p-4">
                     <SectionHeader icon={Play} label="Watch History" count={videoStats?.totalWatched || 0} color="text-violet-400" />
                     {videoStats?.recentVideos?.length ? (
                       <div className="space-y-0 divide-y divide-[#1e2028]/60 max-h-[260px] overflow-y-auto pr-1">
@@ -333,7 +333,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
                   </div>
 
                   {/* Subscriptions */}
-                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4">
+                  <div className="bg-[#0f1117] rounded-card border border-[#1e2028] p-4">
                     <SectionHeader icon={Tv} label="Subscriptions" count={subscriptions?.length || 0} color="text-blue-400" />
                     {subscriptions?.length ? (
                       <div className="space-y-0 divide-y divide-[#1e2028]/60 max-h-[260px] overflow-y-auto pr-1">
@@ -355,7 +355,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
                   </div>
 
                   {/* Comments */}
-                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4">
+                  <div className="bg-[#0f1117] rounded-card border border-[#1e2028] p-4">
                     <SectionHeader icon={MessageSquare} label="Comments" count={comments?.length || 0} color="text-emerald-400" />
                     {comments?.length ? (
                       <div className="space-y-0 divide-y divide-[#1e2028]/60 max-h-[260px] overflow-y-auto pr-1">
@@ -374,7 +374,7 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
                   </div>
 
                   {/* Channel Requests */}
-                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4">
+                  <div className="bg-[#0f1117] rounded-card border border-[#1e2028] p-4">
                     <SectionHeader icon={GitPullRequest} label="Channel Requests" count={channelRequests?.length || 0} color="text-sky-400" />
                     {channelRequests?.length ? (
                       <div className="space-y-0 divide-y divide-[#1e2028]/60 max-h-[260px] overflow-y-auto pr-1">
@@ -398,12 +398,12 @@ export const UserActivityDialog = ({ open, onOpenChange, userId, userName }: Use
                   </div>
 
                   {/* Contact Requests - full width */}
-                  <div className="bg-[#0f1117] rounded-xl border border-[#1e2028] p-4 col-span-2">
+                  <div className="bg-[#0f1117] rounded-card border border-[#1e2028] p-4 col-span-2">
                     <SectionHeader icon={Mail} label="Contact Requests" count={contactRequests?.length || 0} color="text-amber-400" />
                     {contactRequests?.length ? (
                       <div className="grid grid-cols-2 gap-3">
                         {contactRequests.map((r: any) => (
-                          <div key={r.id} className="bg-[#13141b] rounded-lg p-3 border border-[#1e2028]/50">
+                          <div key={r.id} className="bg-[#13141b] rounded-card p-3 border border-[#1e2028]/50">
                             <div className="flex items-center gap-2 mb-1.5">
                               <Badge className={`text-[10px] ${statusColor(r.status)}`}>{r.status}</Badge>
                               <span className="text-[10px] text-[#4a4e5e]">

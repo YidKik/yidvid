@@ -17,7 +17,7 @@ export const ChannelList = ({ channels, onRemoveChannel, onManageVideos }: Chann
         {channels.map((channel) => (
           <div
             key={channel.id}
-            className="flex items-center justify-between p-4 bg-card rounded-lg shadow hover:shadow-md transition-shadow"
+            className="flex items-center justify-between p-4 bg-card rounded-card shadow hover:shadow-md transition-shadow"
           >
             <div className="flex items-center gap-4">
               {channel.thumbnail_url && (
