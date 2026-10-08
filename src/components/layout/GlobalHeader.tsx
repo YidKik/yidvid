@@ -291,7 +291,7 @@ export const GlobalHeader = () => {
                 <Button
                   onClick={() => setIsAuthOpen(true)}
                   size={isMobile ? "sm" : "default"}
-                  className={`rounded-control gap-1.5 font-medium hover:brightness-90 transition-all bg-primary text-white ${
+                  className={`touch-hit rounded-control gap-1.5 font-medium hover:brightness-90 transition-all bg-primary text-white ${
                     isMobile ? 'h-7 px-2.5 text-[11px]' : ''
                   }`}
                   style={{ fontFamily: "'Quicksand', sans-serif" }}
