@@ -98,7 +98,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
             className={cn(
               compact ? "h-6 w-6" : "h-8 w-8",
               "rounded-full transition-colors duration-200",
-              variant === "overlay" && "bg-[#1A1A1A] hover:bg-primary text-white hover:text-foreground",
+              variant === "overlay" && "bg-[#1A1A1A] hover:bg-primary text-white",
               variant === "icon" && "hover:bg-surface-hover",
               className
             )}
