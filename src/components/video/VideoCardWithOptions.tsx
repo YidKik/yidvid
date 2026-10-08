@@ -90,19 +90,18 @@ export const VideoCardWithOptions = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className={`w-full h-full bg-primary flex items-center justify-center ${isMobile ? 'text-xs' : 'text-[6px] md:text-xs lg:text-xs xl:text-xs'} font-bold text-white`}>
+                  <div className={`w-full h-full bg-primary flex items-center justify-center ${isMobile ? 'text-xs' : 'text-xs lg:text-xs xl:text-xs'} font-bold text-white`}>
                     {channelName.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-              <p className={`${isMobile ? 'text-xs' : 'text-xs md:text-xs lg:text-xs xl:text-xs'} text-muted-foreground truncate`}>
+              <p className={`type-meta text-muted-foreground truncate`}>
                 {channelName}
               </p>
             </div>
           )}
           <p className={`${
-            isMobile ? 'text-xs mt-0 min-h-[12px]' 
-            : 'text-xs md:text-xs lg:text-xs xl:text-xs mt-0 md:mt-0.5 xl:mt-1.5 min-h-[10px] md:min-h-[12px] xl:min-h-[16px]'
+            'type-meta mt-0.5'
           } text-muted-foreground`}>
             {views?.toLocaleString() || 0} views • {formattedDate}
           </p>
