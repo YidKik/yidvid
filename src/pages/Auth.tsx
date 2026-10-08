@@ -98,7 +98,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
               style={{ color: 'hsl(var(--muted-foreground))' }}
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">Close dialog</span>
             </button>
 
             <AnimatePresence mode="wait">

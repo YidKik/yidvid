@@ -35,7 +35,7 @@ export const TermsOfServiceDialog: React.FC<TermsOfServiceDialogProps> = ({
             className="absolute right-2 top-2 z-10 w-11 h-11 rounded-control flex items-center justify-center transition-colors hover:bg-surface-hover "
           >
             <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">Close dialog</span>
           </button>
 
           {/* Header */}

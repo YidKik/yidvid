@@ -124,7 +124,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
               style={{ color: 'hsl(var(--muted-foreground))' }}
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">Close dialog</span>
             </button>
 
             <div className={`${isMobile ? 'px-4 pt-4 pb-3' : 'px-6 pt-6 pb-4'}`} style={{ borderBottom: '1px solid #E5E5E5' }}>
