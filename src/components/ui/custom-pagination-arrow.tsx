@@ -33,14 +33,14 @@ export const CustomPaginationArrow = ({
           ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
         style={{ 
           fontFamily: "'Quicksand', 'Rubik', sans-serif",
-          borderColor: 'hsl(50, 100%, 50%)'
+          borderColor: 'hsl(var(--brand))'
         }}
       >
         {direction === "left" && (
           <ChevronLeft 
             className="w-5 h-5 flex-shrink-0" 
             strokeWidth={2.5}
-            style={{ color: 'hsl(50, 100%, 45%)' }}
+            style={{ color: 'hsl(var(--brand))' }}
           />
         )}
         
@@ -49,7 +49,7 @@ export const CustomPaginationArrow = ({
           className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-bold
             transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] opacity-0
             group-hover:max-w-28 group-hover:opacity-100 group-hover:mx-1.5"
-          style={{ color: 'hsl(50, 100%, 40%)' }}
+          style={{ color: 'hsl(var(--brand))' }}
         >
           {label}
         </span>
@@ -58,7 +58,7 @@ export const CustomPaginationArrow = ({
           <ChevronRight 
             className="w-5 h-5 flex-shrink-0" 
             strokeWidth={2.5}
-            style={{ color: 'hsl(50, 100%, 45%)' }}
+            style={{ color: 'hsl(var(--brand))' }}
           />
         )}
       </div>
