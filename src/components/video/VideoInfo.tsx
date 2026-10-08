@@ -187,9 +187,9 @@ export const VideoInfo = ({
                 aria-label={isExpanded ? "Show less" : "Show more"}
               >
                 {isExpanded ? (
-                  <ChevronDown className="h-5 w-5 text-gray-500 hover:text-gray-700 transition-colors" />
+                  <ChevronDown className="h-5 w-5 text-muted-foreground hover:text-gray-700 transition-colors" />
                 ) : (
-                  <ChevronRight className="h-5 w-5 text-gray-500 hover:text-gray-700 transition-colors" />
+                  <ChevronRight className="h-5 w-5 text-muted-foreground hover:text-gray-700 transition-colors" />
                 )}
               </button>
             )}

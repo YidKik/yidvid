@@ -36,7 +36,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
 
   // Match the header icon button styling
   const isFilled = isVideosPage || isSearchPage;
-  const buttonClass = `h-9 w-9 rounded-full ${isFilled ? '' : 'bg-[#222222] hover:bg-[#333333] text-white'}`;
+  const buttonClass = `h-9 w-9 rounded-full ${isFilled ? '' : 'bg-secondary hover:bg-surface-active text-white'}`;
 
   return (
     <>
@@ -74,7 +74,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
               >
                 <div className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-friendly font-semibold text-gray-900 dark:text-white">Categories</h2>
+                    <h2 className="text-xl font-friendly font-semibold text-foreground dark:text-white">Categories</h2>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -98,7 +98,7 @@ export const CategoryToggle = ({ selectedCategory, onCategoryChange }: CategoryT
                           "hover:bg-red-50 hover:text-brand dark:hover:bg-red-900/20",
                           selectedCategory === category.id
                             ? "bg-primary text-white shadow-md"
-                            : "text-gray-700 dark:text-gray-300 hover:shadow-sm"
+                            : "text-foreground dark:text-gray-300 hover:shadow-sm"
                         )}
                         whileHover={{ x: 4 }}
                         whileTap={{ scale: 0.98 }}

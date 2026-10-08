@@ -170,13 +170,13 @@ const ChannelDetails = () => {
         <div className="p-4 lg:p-6">
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-              <EyeOff className="w-10 h-10 text-gray-400" />
+              <EyeOff className="w-10 h-10 text-muted-foreground" />
             </div>
             <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3">Channel Hidden</h2>
             <p className="text-muted-foreground dark:text-muted-foreground mb-4 max-w-md">
               You've chosen to hide this channel from your feed. Videos from this channel won't appear in your recommendations or search results.
             </p>
-            <p className="text-xs text-muted-foreground dark:text-[#777] mb-6 max-w-sm">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-6 max-w-sm">
               To change this, go to the <span className="font-semibold text-brand">Settings</span> page → <span className="font-semibold">Content</span> tab and toggle the channel back on.
             </p>
             <Button

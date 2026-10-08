@@ -54,7 +54,7 @@ export const SearchResults = ({
     `} style={{ maxHeight: '80vh' }}>
       {isLoading && (
         <div className={`
-          flex items-center justify-center text-gray-500
+          flex items-center justify-center text-muted-foreground
           ${isMobile ? 'py-3' : 'py-4'}
         `}>
           <div className="flex items-center space-x-2">
@@ -70,7 +70,7 @@ export const SearchResults = ({
           {searchResults.videos && searchResults.videos.length > 0 && (
             <div>
               <div className={`
-                flex items-center space-x-2 text-gray-600 font-medium border-b border-red-100
+                flex items-center space-x-2 text-muted-foreground font-medium border-b border-red-100
                 ${isMobile ? 'px-3 py-2 text-sm' : 'px-4 py-3 text-base'}
               `}>
                 <Play className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
@@ -95,7 +95,7 @@ export const SearchResults = ({
           {searchResults.channels && searchResults.channels.length > 0 && (
             <div>
               <div className={`
-                flex items-center space-x-2 text-gray-600 font-medium border-b border-red-100
+                flex items-center space-x-2 text-muted-foreground font-medium border-b border-red-100
                 ${isMobile ? 'px-3 py-2 text-sm' : 'px-4 py-3 text-base'}
               `}>
                 <Users className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
@@ -120,15 +120,15 @@ export const SearchResults = ({
 
       {!isLoading && searchQuery.trim() && !hasResults && (
         <div className={`
-          text-center text-gray-500
+          text-center text-muted-foreground
           ${isMobile ? 'py-6' : 'py-8'}
         `}>
           <Search className="h-8 w-8 mx-auto mb-2 text-gray-300" />
           <p className={isMobile ? 'text-sm' : 'text-base'}>No results found for "{searchQuery}"</p>
-          <p className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-sm'}`}>
+          <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>
             Try searching with different keywords
           </p>
-          <div className="mt-2 text-xs text-gray-400">
+          <div className="mt-2 text-xs text-muted-foreground">
             Debug: Videos({searchResults?.videos?.length || 0}), Channels({searchResults?.channels?.length || 0})
           </div>
         </div>
@@ -137,7 +137,7 @@ export const SearchResults = ({
       {/* Press Enter hint */}
       {searchQuery.trim() && (
         <div className={`
-          text-center text-gray-400 border-t border-red-100
+          text-center text-muted-foreground border-t border-red-100
           ${isMobile ? 'py-2 px-3 text-xs' : 'py-3 px-4 text-sm'}
         `}>
           Press Enter to see all results

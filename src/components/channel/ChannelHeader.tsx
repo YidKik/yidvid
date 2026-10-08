@@ -101,7 +101,7 @@ export const ChannelHeader = ({
     <div className="mb-6 md:mb-8 animate-fade-in">
       <div className="flex flex-col items-center text-center gap-3">
         {/* Avatar */}
-        <Avatar className="w-20 h-20 md:w-24 md:h-24 ring-2 ring-[#E5E5E5] dark:ring-[#333]">
+        <Avatar className="w-20 h-20 md:w-24 md:h-24 ring-2 ring-border dark:ring-[#333]">
           <AvatarImage
             src={channel.thumbnail_url}
             alt={channel.title}
@@ -120,7 +120,7 @@ export const ChannelHeader = ({
         </Avatar>
 
         {/* Channel name */}
-        <h1 className="text-xl md:text-2xl font-bold text-foreground dark:!text-[#e8e8e8]">
+        <h1 className="text-xl md:text-2xl font-bold text-foreground dark:!text-foreground">
           {channel.title}
         </h1>
 
@@ -138,7 +138,7 @@ export const ChannelHeader = ({
             className={`h-9 text-xs md:text-sm px-5 rounded-full font-semibold transition-all duration-200 ${
               displaySubscribed && subscriptionStateKnown
                 ? "bg-primary hover:brightness-90 text-white border-0"
-                : "border border-[#ccc] dark:border-[#555] text-foreground dark:!text-[#e8e8e8] hover:bg-surface-hover dark:hover:bg-secondary"
+                : "border border-input-border dark:border-border text-foreground dark:!text-foreground hover:bg-surface-hover dark:hover:bg-secondary"
             }`}
             aria-label={displaySubscribed && subscriptionStateKnown ? "Unsubscribe" : "Subscribe"}
           >
@@ -156,7 +156,7 @@ export const ChannelHeader = ({
 
           <button
             onClick={() => setShareOpen(true)}
-            className="h-9 px-4 rounded-full bg-muted dark:bg-secondary hover:bg-[#E5E5E5] dark:hover:bg-secondary text-foreground dark:!text-[#e8e8e8] transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium"
+            className="h-9 px-4 rounded-full bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium"
           >
             <Share2 className="w-3.5 h-3.5" />
             Share
@@ -171,14 +171,14 @@ export const ChannelHeader = ({
           {channel.description && (
             <Dialog>
               <DialogTrigger asChild>
-                <button className="h-9 px-4 rounded-full bg-muted dark:bg-secondary hover:bg-[#E5E5E5] dark:hover:bg-secondary text-foreground dark:!text-[#e8e8e8] transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium">
+                <button className="h-9 px-4 rounded-full bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium">
                   <Info className="w-3.5 h-3.5" />
                   Description
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-lg bg-white dark:bg-card border border-gray-200 dark:border-border rounded-3xl shadow-xl [&>button]:opacity-100 [&>button]:text-black [&>button]:dark:text-white [&>button]:rounded-full [&>button]:w-8 [&>button]:h-8 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button]:hover:bg-gray-100 [&>button]:dark:hover:bg-secondary [&>button]:transition-colors">
                 <DialogHeader>
-                  <DialogTitle className="text-foreground dark:!text-[#e8e8e8]">About {channel.title}</DialogTitle>
+                  <DialogTitle className="text-foreground dark:!text-foreground">About {channel.title}</DialogTitle>
                 </DialogHeader>
                 <p className="text-sm text-muted-foreground dark:!text-muted-foreground leading-relaxed whitespace-pre-line">
                   {channel.description}

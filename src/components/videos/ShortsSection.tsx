@@ -59,7 +59,7 @@ export const ShortsSection = () => {
     <section className={`${isMobile ? 'py-4 -mx-3 px-3' : 'py-6 -mx-6 px-6'} rounded-3xl`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+        <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
             Shorts
           </h2>
 
@@ -69,7 +69,7 @@ export const ShortsSection = () => {
             disabled={!canScrollPrev}
             className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
               canScrollPrev
-                ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110'
+                ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
             }`}
           >
@@ -80,7 +80,7 @@ export const ShortsSection = () => {
             disabled={!canScrollNext}
             className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
               canScrollNext
-                ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110'
+                ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
             }`}
           >

@@ -105,7 +105,7 @@ export function ReportVideoDialog({ videoId, compact = false }: ReportVideoDialo
         <Button 
           variant="ghost" 
           size="sm" 
-          className={`rounded-full transition-all duration-200 bg-muted hover:bg-[#E5E5E5] text-muted-foreground hover:text-foreground ${
+          className={`rounded-full transition-all duration-200 bg-muted hover:bg-surface-active text-muted-foreground hover:text-foreground ${
             compact ? "h-8 px-3" : "h-9 px-4"
           }`}
         >

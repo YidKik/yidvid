@@ -127,7 +127,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
     return (
       <section className={`mb-10 ${isMobile ? 'py-6 -mx-3 px-3' : 'py-10 -mx-6 px-6'} bg-gray-50 dark:bg-gray-900/30 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
             Most Viewed Channels
           </h2>
         </div>
@@ -209,7 +209,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
               <div className="flex items-center gap-4">
                 <button
                   onClick={handleBackClick}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200 shadow-sm"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
@@ -218,7 +218,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
                   All Channels
                 </h2>
               </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-muted-foreground dark:text-gray-400">
                 {allSortedChannels.length} channels
               </span>
             </div>
@@ -246,7 +246,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wide">
                 Most Viewed Channels
               </h2>
               
@@ -256,7 +256,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
                   disabled={!canScrollPrev}
                   className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
                     canScrollPrev 
-                      ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110' 
+                      ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                   }`}
                 >
@@ -267,7 +267,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
                   disabled={!canScrollNext}
                   className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
                     canScrollNext 
-                      ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:scale-110' 
+                      ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                   }`}
                 >

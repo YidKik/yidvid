@@ -22,8 +22,8 @@ export const NotificationItem = ({ notification, onNotificationClick }: Notifica
     <div
       key={notification.id}
       className={`
-        p-3 sm:p-5 hover:bg-[#333333] cursor-pointer transition-colors duration-200 
-        border-b border-[#333333] animate-fade-in
+        p-3 sm:p-5 hover:bg-surface-hover cursor-pointer transition-colors duration-200 
+        border-b border-border animate-fade-in
         ${isMobile ? 'active:bg-[#444444]' : ''}
       `}
       onClick={() => {

@@ -65,23 +65,23 @@ export const SiteMaintenancePopup: React.FC<SiteMaintenancePopupProps> = ({ isOp
 
               {/* Title */}
               <div className="space-y-1.5 md:space-y-2">
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground dark:text-white">
                   Welcome to YidVid!
                 </h2>
-                <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 font-medium">
+                <p className="text-base md:text-lg text-foreground dark:text-gray-300 font-medium">
                   Your destination for quality video content
                 </p>
               </div>
 
               {/* Message */}
               <div className="space-y-3 md:space-y-4 bg-white/80 dark:bg-black/20 rounded-xl p-4 md:p-5 border border-border/50">
-                <p className="text-sm md:text-base leading-relaxed text-gray-900 dark:text-gray-100 font-medium">
+                <p className="text-sm md:text-base leading-relaxed text-foreground dark:text-gray-100 font-medium">
                   Thank you for visiting! We're excited to have you here as we continue building and enhancing your experience.
                 </p>
-                <p className="text-xs md:text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                <p className="text-xs md:text-sm leading-relaxed text-foreground dark:text-gray-300">
                   Our platform is actively growing with new features, improved video organization, and enhanced browsing capabilities. While we're making ongoing improvements, you can explore our curated collection of channels and videos right away.
                 </p>
-                <p className="text-xs md:text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                <p className="text-xs md:text-sm leading-relaxed text-foreground dark:text-gray-300">
                   Stay tuned for exciting updates coming soon!
                 </p>
               </div>

@@ -55,7 +55,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         toastOptions={{
           classNames: {
             toast: 'group toast',
-            closeButton: 'text-gray-400 hover:text-gray-700',
+            closeButton: 'text-muted-foreground hover:text-gray-700',
           },
           duration: 3000,
         }}

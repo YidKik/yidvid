@@ -16,7 +16,7 @@ export const NonAdminContent = ({ onEnterPin }: NonAdminContentProps) => {
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-white">Admin Access Required</h3>
-          <p className="text-sm text-gray-400 leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Enter your admin PIN to unlock the dashboard and manage the site.
           </p>
         </div>

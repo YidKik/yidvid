@@ -87,15 +87,15 @@ export const SupportSection = () => {
     <div style={{ fontFamily: "'Quicksand', 'Rubik', sans-serif" }}>
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
         <HelpCircle size={18} className="text-brand" />
-        <h2 className="text-lg font-bold text-gray-900">Help & Support</h2>
+        <h2 className="text-lg font-bold text-foreground">Help & Support</h2>
       </div>
       
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <MessageSquare size={14} className="text-gray-500" />
-          <h3 className="text-sm font-semibold text-gray-800">Contact Us</h3>
+          <MessageSquare size={14} className="text-muted-foreground" />
+          <h3 className="text-sm font-semibold text-foreground">Contact Us</h3>
         </div>
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="text-xs text-muted-foreground mb-4">
           Need help or have suggestions? Send us a message and we'll get back to you.
         </p>
         <ContactForm form={form} onSubmit={onSubmit} />

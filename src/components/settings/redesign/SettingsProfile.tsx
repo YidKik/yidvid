@@ -169,7 +169,7 @@ export const SettingsProfile = () => {
   if (!displayProfile) {
     return (
       <div className="text-center py-12">
-        <User className="w-12 h-12 text-[#ccc] mx-auto mb-3" />
+        <User className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
         <p className="text-muted-foreground dark:text-muted-foreground font-medium">Sign in to view your profile</p>
       </div>
     );

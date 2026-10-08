@@ -55,8 +55,8 @@ export const ForgotPasswordForm = ({
   return (
     <form onSubmit={handleForgotPassword} className={`space-y-${isMobile ? '3' : '4'}`}>
       <div className="mb-2">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">Reset Password</h3>
-        <p className="text-sm text-gray-500">
+        <h3 className="text-lg font-semibold text-foreground mb-2">Reset Password</h3>
+        <p className="text-sm text-muted-foreground">
           Enter your email and we'll send you a link to reset your password.
         </p>
       </div>

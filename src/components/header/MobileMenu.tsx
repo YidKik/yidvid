@@ -27,14 +27,14 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
       <nav className="py-2 px-4 space-y-2">
         <Link 
           to="/"
-          className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-900"
+          className="flex items-center gap-2 py-2 text-muted-foreground hover:text-gray-900"
           onClick={onClose}
         >
           Home
         </Link>
         <button
           onClick={handleContactClick}
-          className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-900 w-full text-left"
+          className="flex items-center gap-2 py-2 text-muted-foreground hover:text-gray-900 w-full text-left"
         >
           Contact Us
         </button>

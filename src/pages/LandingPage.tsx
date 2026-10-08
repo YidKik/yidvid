@@ -113,14 +113,14 @@ const LandingPage = () => {
           <motion.h2
             variants={itemVariants}
             className={`${isMobile ? 'text-2xl mb-2' : isTablet ? 'text-3xl mb-3' : 'text-4xl md:text-5xl mb-4'} font-extrabold text-center`}
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#1A1A1A', letterSpacing: '-0.02em' }}
+            style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(var(--foreground))', letterSpacing: '-0.02em' }}
           >
             Built for <span style={{ color: 'hsl(var(--brand))' }}>You</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
             className={`text-center ${isMobile ? 'mb-6 text-sm' : isTablet ? 'mb-8 text-sm' : 'mb-12'} max-w-xl mx-auto`}
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
+            style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(var(--muted-foreground))' }}
           >
             Everything you need for quality Jewish entertainment, all in one place.
           </motion.p>
@@ -158,7 +158,7 @@ const LandingPage = () => {
                 </h3>
                 <p 
                   className={isMobile ? 'text-xs leading-snug' : isTablet ? 'text-xs' : ''}
-                  style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
+                  style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(var(--muted-foreground))' }}
                 >
                   {feature.description}
                 </p>
@@ -180,14 +180,14 @@ const LandingPage = () => {
           <motion.h2
             variants={itemVariants}
             className={`${isMobile ? 'text-2xl mb-2' : isTablet ? 'text-3xl mb-3' : 'text-4xl md:text-5xl mb-4'} font-bold text-center`}
-            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: '#1A1A1A' }}
+            style={{ fontFamily: "'Nunito', 'Poppins', sans-serif", color: 'hsl(var(--foreground))' }}
           >
             Find What You <span style={{ color: 'hsl(var(--brand))' }}>Love</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
             className={`text-center ${isMobile ? 'mb-6 text-sm' : isTablet ? 'mb-8 text-sm' : 'mb-12'} max-w-xl mx-auto`}
-            style={{ fontFamily: "'Quicksand', sans-serif", color: '#666666' }}
+            style={{ fontFamily: "'Quicksand', sans-serif", color: 'hsl(var(--muted-foreground))' }}
           >
             Jump straight to your favorite content
           </motion.p>
@@ -204,7 +204,7 @@ const LandingPage = () => {
                 className={`group relative flex flex-col items-center ${isMobile ? 'gap-1.5 px-3 py-4' : isTablet ? 'gap-2 px-4 py-5' : 'gap-3 px-6 py-8'} rounded-2xl font-semibold transition-all duration-500 overflow-hidden bg-white border border-border`}
                 style={{ 
                   fontFamily: "'Quicksand', sans-serif",
-                  color: '#1A1A1A',
+                  color: 'hsl(var(--foreground))',
                   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)'
                 }}
                 whileHover={{ 
@@ -265,7 +265,7 @@ const LandingPage = () => {
               className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 py-3 text-sm' : isTablet ? 'px-7 py-4 text-sm' : 'px-10 py-5'} font-bold rounded-2xl overflow-hidden bg-white border border-border`}
               style={{ 
                 fontFamily: "'Quicksand', sans-serif",
-                color: '#1A1A1A',
+                color: 'hsl(var(--foreground))',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
               }}
               whileHover={{ 

@@ -83,7 +83,7 @@ export const MobileBottomNav = ({ isAuthenticated = false }: MobileBottomNavProp
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed bottom-14 left-0 right-0 z-40 bg-white dark:bg-card rounded-t-2xl border-t border-border dark:border-border shadow-2xl"
           >
-            <div className="w-12 h-1 bg-[#E5E5E5] dark:bg-[#555] rounded-full mx-auto mt-3" />
+            <div className="w-12 h-1 bg-surface-active dark:bg-[#555] rounded-full mx-auto mt-3" />
             <div className="p-4 pb-2">
               <h3 className="text-sm font-bold text-foreground dark:text-foreground mb-3 px-1" style={{ fontFamily: "'Quicksand', sans-serif" }}>Library</h3>
               <div className="grid grid-cols-3 gap-2 pb-2">

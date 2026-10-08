@@ -94,7 +94,7 @@ const Favorites = () => {
                   <img src={item.video?.thumbnail} alt={cleanVideoTitle(item.video?.title)} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <div className="w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                      <Play className="w-5 h-5 lg:w-6 lg:h-6 text-foreground fill-[#1A1A1A] ml-0.5" />
+                      <Play className="w-5 h-5 lg:w-6 lg:h-6 text-foreground fill-foreground ml-0.5" />
                     </div>
                   </div>
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>

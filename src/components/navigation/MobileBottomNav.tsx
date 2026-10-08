@@ -45,7 +45,7 @@ export const MobileBottomNav = ({
             className="h-10 w-10 hover:bg-gray-100/60 rounded-full"
             onClick={handleSettingsClick}
           >
-            <Settings className="h-5 w-5 text-gray-600" />
+            <Settings className="h-5 w-5 text-muted-foreground" />
           </Button>
         )}
       </div>

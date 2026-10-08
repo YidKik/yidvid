@@ -34,15 +34,15 @@ export const AppearanceSection = ({
       {/* Section Header */}
       <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-200">
         <Palette size={18} className="text-brand" />
-        <h2 className="text-lg font-bold text-gray-900">Appearance</h2>
+        <h2 className="text-lg font-bold text-foreground">Appearance</h2>
       </div>
       
       <div>
         <div className="flex items-center gap-2 mb-3">
           <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-          <h3 className="text-sm font-semibold text-gray-800">Theme Colors</h3>
+          <h3 className="text-sm font-semibold text-foreground">Theme Colors</h3>
         </div>
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="text-xs text-muted-foreground mb-4">
           Customize your viewing experience with personalized colors.
         </p>
         <ColorSettings 

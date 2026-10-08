@@ -17,8 +17,8 @@ export const ActivitySection = () => {
           <TrendingUp size={16} className="text-brand" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Activity & History</h2>
-          <p className="text-xs text-gray-500">Track your viewing activity and stats</p>
+          <h2 className="text-lg font-bold text-foreground">Activity & History</h2>
+          <p className="text-xs text-muted-foreground">Track your viewing activity and stats</p>
         </div>
       </div>
       
@@ -27,7 +27,7 @@ export const ActivitySection = () => {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <BarChart3 size={14} className="text-brand" />
-            <h3 className="text-sm font-semibold text-gray-800">Your Stats</h3>
+            <h3 className="text-sm font-semibold text-foreground">Your Stats</h3>
           </div>
           <UserAnalyticsSection />
         </div>
@@ -36,7 +36,7 @@ export const ActivitySection = () => {
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 mb-3">
             <History size={14} className="text-brand" />
-            <h3 className="text-sm font-semibold text-gray-800">Watch History</h3>
+            <h3 className="text-sm font-semibold text-foreground">Watch History</h3>
           </div>
           <VideoHistorySection />
         </div>

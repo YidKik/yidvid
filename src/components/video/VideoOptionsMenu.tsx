@@ -110,7 +110,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
         <DropdownMenuContent 
           align="end" 
           className={cn(
-            "bg-white dark:bg-[#282828] border border-border dark:border-[#3a3a3a] shadow-xl z-50 p-1",
+            "bg-white dark:bg-secondary border border-border dark:border-border shadow-xl z-50 p-1",
             compact ? "w-36 rounded-lg" : "w-48 rounded-xl"
           )}
           onClick={(e) => e.stopPropagation()}
@@ -148,7 +148,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
               <span>Add to Playlist</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className={cn(
-              "bg-white dark:bg-[#282828] border border-border dark:border-[#3a3a3a] shadow-xl p-1",
+              "bg-white dark:bg-secondary border border-border dark:border-border shadow-xl p-1",
               compact ? "w-40 rounded-lg" : "w-44 rounded-xl"
             )}>
               {playlists && playlists.length > 0 ? (

@@ -121,7 +121,7 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
             <button
               onClick={() => onOpenChange(false)}
               className="absolute right-4 top-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100"
-              style={{ color: '#666' }}
+              style={{ color: 'hsl(var(--muted-foreground))' }}
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
@@ -130,11 +130,11 @@ export const ContactDialog = ({ open, onOpenChange }: ContactDialogProps) => {
             <div className={`${isMobile ? 'px-4 pt-4 pb-3' : 'px-6 pt-6 pb-4'}`} style={{ borderBottom: '1px solid #E5E5E5' }}>
               <div className="flex items-center gap-3 pr-10">
                 <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center`} style={{ backgroundColor: 'hsl(var(--primary))' }}>
-                  <Send className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'}`} style={{ color: '#222' }} />
+                  <Send className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'}`} style={{ color: 'hsl(var(--foreground))' }} />
                 </div>
                 <div>
-                  <h2 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold tracking-tight`} style={{ color: '#222' }}>Contact Us</h2>
-                  <p className={`${isMobile ? 'text-[10px]' : 'text-xs'}`} style={{ color: '#999' }}>We'd love to hear from you</p>
+                  <h2 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold tracking-tight`} style={{ color: 'hsl(var(--foreground))' }}>Contact Us</h2>
+                  <p className={`${isMobile ? 'text-[10px]' : 'text-xs'}`} style={{ color: 'hsl(var(--muted-foreground))' }}>We'd love to hear from you</p>
                 </div>
               </div>
             </div>

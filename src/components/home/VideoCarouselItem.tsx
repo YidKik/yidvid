@@ -41,7 +41,7 @@ export const VideoCarouselItem = ({ video, onClick }: VideoCarouselItemProps) =>
             animate={{ opacity: isHovered ? 1 : 0 }}
           >
             <motion.div 
-              className="bg-white/90 text-gray-900 px-4 py-2 rounded-full font-medium"
+              className="bg-white/90 text-foreground px-4 py-2 rounded-full font-medium"
               initial={{ scale: 0.8 }}
               animate={{ scale: isHovered ? 1 : 0.8 }}
               transition={{ type: "spring", stiffness: 200 }}

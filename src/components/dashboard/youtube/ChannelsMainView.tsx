@@ -37,7 +37,7 @@ export const ChannelsMainView: React.FC<ChannelsMainViewProps> = ({
               />
             ))
           ) : (
-            <div className="p-6 text-center text-gray-500">
+            <div className="p-6 text-center text-muted-foreground">
               No channels found. Try adjusting your search or add a new channel.
             </div>
           )}

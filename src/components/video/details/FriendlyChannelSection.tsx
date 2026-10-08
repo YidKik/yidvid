@@ -128,7 +128,7 @@ export const FriendlyChannelSection = ({
               disabled={isLoading}
               className={`${compact ? 'h-7 px-3 text-xs' : 'h-9 px-4 text-sm'} rounded-full font-semibold transition-all ${
                 isSubscribed 
-                  ? "bg-muted text-foreground hover:bg-[#E5E5E5]" 
+                  ? "bg-muted text-foreground hover:bg-surface-active" 
                   : "bg-primary text-white hover:brightness-90"
               }`}
             >
@@ -177,7 +177,7 @@ export const FriendlyChannelSection = ({
         </div>
       ) : channelVideos.length > 0 ? (
         <div>
-          <div className="h-px bg-[#E5E5E5] mb-4" />
+          <div className="h-px bg-surface-active mb-4" />
           <div className={`flex items-center justify-between ${compact ? 'mb-2' : 'mb-3'}`}>
             <p className={`${compact ? 'text-[11px]' : 'text-sm'} font-semibold text-foreground`}>
               More from {channelName}

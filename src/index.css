@@ -6,12 +6,12 @@
 :root {
   /* Keep a single, theme-driven source of truth for text/background colors.
      Using prefers-color-scheme here caused "white on white" in some preview environments. */
-  --search-text: #606060;
+  
   --video-subscribe-idle-bg: 0 0% 100%;
-  --video-subscribe-idle-bg-hover: 0 0% 96%;
-  --video-subscribe-idle-fg: 0 0% 8%;
-  --video-subscribe-active-bg: 0 0% 8%;
-  --video-subscribe-active-bg-hover: 0 0% 16%;
+  --video-subscribe-idle-bg-hover: 216 24% 96%;
+  --video-subscribe-idle-fg: 215 28% 13%;
+  --video-subscribe-active-bg: 215 28% 13%;
+  --video-subscribe-active-bg-hover: 216 18% 34%;
   --video-subscribe-active-fg: 0 0% 100%;
 }
 
@@ -61,20 +61,21 @@ body {
 }
 
 .video-subscribe-button:hover {
-  background-color: hsl(0 0% 90%) !important;
+  background-color: hsl(var(--surface-hover)) !important;
   color: hsl(var(--video-subscribe-idle-fg)) !important;
 }
 
+.dark button.video-subscribe-button,
 .dark .video-subscribe-button {
-  background-color: #ffffff !important;
-  color: #1A1A1A !important;
-  border-color: #ffffff !important;
+  background-color: hsl(var(--foreground)) !important;
+  color: hsl(var(--background)) !important;
+  border-color: hsl(var(--foreground)) !important;
 }
 
 .dark .video-subscribe-button:hover {
-  background-color: #d4d4d4 !important;
-  color: #1A1A1A !important;
-  border-color: #d4d4d4 !important;
+  background-color: hsl(var(--icon)) !important;
+  color: hsl(var(--background)) !important;
+  border-color: hsl(var(--icon)) !important;
 }
 
 .video-subscribe-button[data-subscribed="true"] {
@@ -89,16 +90,17 @@ body {
   color: hsl(var(--video-subscribe-active-fg)) !important;
 }
 
+.dark button.video-subscribe-button[data-subscribed="true"],
 .dark .video-subscribe-button[data-subscribed="true"] {
-  background-color: #333333 !important;
-  border-color: #333333 !important;
-  color: #ffffff !important;
+  background-color: hsl(var(--surface-active)) !important;
+  border-color: hsl(var(--surface-active)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .dark .video-subscribe-button[data-subscribed="true"]:hover {
-  background-color: #444444 !important;
-  border-color: #444444 !important;
-  color: #ffffff !important;
+  background-color: hsl(var(--input-border)) !important;
+  border-color: hsl(var(--input-border)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Custom scrollbar */
@@ -196,7 +198,7 @@ body {
   font-size: 0.8125rem !important;
 }
 .dark [data-sonner-toast] [data-title] {
-  color: #e8e8e8 !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 [data-sonner-toast] [data-description] {
@@ -204,7 +206,7 @@ body {
   font-size: 0.75rem !important;
 }
 .dark [data-sonner-toast] [data-description] {
-  color: #999 !important;
+  color: hsl(var(--muted-foreground)) !important;
 }
 
 [data-sonner-toast] [data-icon] {
@@ -214,8 +216,8 @@ body {
 /* Close button - more visible */
 [data-sonner-toast] [data-close-button] {
   opacity: 0.6 !important;
-  border: 1px solid #d4d4d4 !important;
-  background: #f5f5f5 !important;
+  border: 1px solid hsl(var(--input-border)) !important;
+  background: hsl(var(--muted)) !important;
   border-radius: 50% !important;
   width: 20px !important;
   height: 20px !important;
@@ -225,14 +227,14 @@ body {
 }
 [data-sonner-toast] [data-close-button]:hover {
   opacity: 1 !important;
-  background: #e5e5e5 !important;
+  background: hsl(var(--surface-hover)) !important;
 }
 .dark [data-sonner-toast] [data-close-button] {
-  background: #2a2a2a !important;
-  border-color: #444 !important;
+  background: hsl(var(--secondary)) !important;
+  border-color: hsl(var(--input-border)) !important;
 }
 .dark [data-sonner-toast] [data-close-button]:hover {
-  background: #333 !important;
+  background: hsl(var(--surface-active)) !important;
 }
 
 /* Mobile toast adjustments */
@@ -257,25 +259,6 @@ body {
 }
 
 
-/* Import components CSS */
-@import './styles/components/buttons.css';
-
-/* Import desktop specific styles */
-@import './styles/desktop.css';
-
-/* Import mobile responsive fixes */
-@import './styles/mobile/responsive.css';
-
-/* Homepage specific override for ALL devices */
-html.home-page,
-body.home-page {
-  background-color: #003c43 !important;
-  color: #e3fef7;
-}
-
-.home-page {
-  background-color: #003c43 !important;
-}
 
 /* ===== Global Dark Mode Overrides ===== */
 /* Catch-all for pages using bg-white */
@@ -513,4 +496,22 @@ body.home-page {
 /* Per-block automatic bidi for mixed Hebrew/Yiddish/English titles (interface stays LTR) */
 h1, h2, h3, h4, .line-clamp-1, .line-clamp-2, .line-clamp-3, [dir="auto"] {
   unicode-bidi: plaintext;
+}
+
+/* Keep subscribe button label readable against its own fill in dark mode */
+.dark .video-subscribe-button * { color: inherit !important; }
+
+/* Shared visible keyboard focus indicator (brand ring with offset) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="slider"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
 }

@@ -86,8 +86,8 @@ export const ChannelRequestsSection = () => {
           <div className="flex items-start justify-between">
             <div>
               <h3 className="font-medium">{request.channel_name}</h3>
-              <p className="text-sm text-gray-500">{request.profiles?.email}</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">{request.profiles?.email}</p>
+              <p className="text-sm text-muted-foreground">
                 Requested: {new Date(request.created_at).toLocaleDateString()}
               </p>
             </div>

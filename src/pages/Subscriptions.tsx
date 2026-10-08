@@ -67,7 +67,7 @@ const Subscriptions = () => {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-muted dark:bg-background pt-16 pl-0 lg:pl-[200px] pb-24 lg:pb-8 flex flex-col items-center justify-center gap-4 px-4">
-        <Users className="w-12 h-12 text-[#ccc]" />
+        <Users className="w-12 h-12 text-muted-foreground" />
         <p className="text-muted-foreground dark:text-muted-foreground text-center">Please sign in to view your subscriptions.</p>
         <Button onClick={() => setIsAuthOpen(true)} className="bg-primary hover:bg-primary-hover text-white rounded-full px-6">
           Sign In
@@ -88,7 +88,7 @@ const Subscriptions = () => {
             <h1 className={cn("font-bold text-foreground dark:text-foreground", isMobile ? "text-xl" : "text-2xl")}>
               Subscriptions
             </h1>
-            <p className="text-xs text-muted-foreground dark:text-[#777]">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground">
               {subscriptions.length} channel{subscriptions.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -96,9 +96,9 @@ const Subscriptions = () => {
 
         {subscriptions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-card rounded-2xl border border-border dark:border-border">
-            <Users className="w-12 h-12 text-[#ccc] dark:text-[#555] mb-3" />
+            <Users className="w-12 h-12 text-muted-foreground dark:text-muted-foreground mb-3" />
             <h3 className="font-semibold text-foreground dark:text-foreground mb-1">No Subscriptions Yet</h3>
-            <p className="text-sm text-muted-foreground dark:text-[#777] text-center">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground text-center">
               Subscribe to channels to get notified of new videos.
             </p>
           </div>
@@ -136,7 +136,7 @@ const Subscriptions = () => {
                     {sub.channel.title}
                   </h3>
                   {sub.channel.description && (
-                    <p className="text-xs text-muted-foreground dark:text-[#777] line-clamp-1 mt-0.5">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground line-clamp-1 mt-0.5">
                       {sub.channel.description}
                     </p>
                   )}
