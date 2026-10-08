@@ -77,10 +77,7 @@ export const VideoCardWithOptions = ({
         
         {/* Video Info - scales with viewport */}
         <div className={isMobile ? 'mt-1' : 'mt-1 md:mt-1.5 xl:mt-3'}>
-          <h3 dir="auto" className={`${
-            isMobile ? 'text-[12px] leading-tight min-h-[30px]' 
-            : 'text-[10px] md:text-[11px] lg:text-[11px] xl:text-sm min-h-[24px] md:min-h-[28px] xl:min-h-[38px]'
-          } font-semibold font-friendly text-foreground line-clamp-2 leading-snug`}>
+          <h3 dir="auto" title={cleanVideoTitle(title)} className="type-card-title text-foreground line-clamp-2 min-h-[44px] md:min-h-[48px]">
             {cleanVideoTitle(title)}
           </h3>
           {!hideChannelInfo && (

@@ -112,14 +112,14 @@ const LandingPage = () => {
         >
           <motion.h2
             variants={itemVariants}
-            className={`${isMobile ? 'text-2xl mb-2' : isTablet ? 'text-3xl mb-3' : 'text-4xl md:text-5xl mb-4'} font-extrabold text-center`}
-            style={{ color: 'hsl(var(--foreground))', letterSpacing: '-0.02em' }}
+            className="type-h2 mb-2 md:mb-3 text-center"
+            style={{ color: 'hsl(var(--foreground))' }}
           >
             Built for <span style={{ color: 'hsl(var(--brand))' }}>You</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
-            className={`text-center ${isMobile ? 'mb-6 text-sm' : isTablet ? 'mb-8 text-sm' : 'mb-12'} max-w-xl mx-auto`}
+            className="type-body text-center mb-6 md:mb-8 lg:mb-12 max-w-xl mx-auto"
             style={{ color: 'hsl(var(--muted-foreground))' }}
           >
             Everything you need for quality Jewish entertainment, all in one place.
@@ -179,14 +179,14 @@ const LandingPage = () => {
         >
           <motion.h2
             variants={itemVariants}
-            className={`${isMobile ? 'text-2xl mb-2' : isTablet ? 'text-3xl mb-3' : 'text-4xl md:text-5xl mb-4'} font-bold text-center`}
+            className="type-h2 mb-2 md:mb-3 text-center"
             style={{ color: 'hsl(var(--foreground))' }}
           >
             Find What You <span style={{ color: 'hsl(var(--brand))' }}>Love</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
-            className={`text-center ${isMobile ? 'mb-6 text-sm' : isTablet ? 'mb-8 text-sm' : 'mb-12'} max-w-xl mx-auto`}
+            className="type-body text-center mb-6 md:mb-8 lg:mb-12 max-w-xl mx-auto"
             style={{ color: 'hsl(var(--muted-foreground))' }}
           >
             Jump straight to your favorite content

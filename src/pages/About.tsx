@@ -29,7 +29,7 @@ const About = () => {
             className="text-center mb-12"
           >
             <h1 
-              className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold mb-4 text-foreground dark:text-foreground`}
+              className={`type-h1 mb-4 text-foreground dark:text-foreground`}
             >
               About YidVid
             </h1>
@@ -98,7 +98,7 @@ const About = () => {
             className={`text-center ${isMobile ? 'p-5' : 'p-8'} rounded-card bg-white dark:bg-card border-2 border-brand/30 dark:border-brand/20 max-w-3xl mx-auto mb-10 shadow-sm`}
           >
             <h2 
-              className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4 text-foreground dark:text-foreground`}
+              className={`type-h2 mb-4 text-foreground dark:text-foreground`}
             >
               Our Mission
             </h2>
