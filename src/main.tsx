@@ -51,8 +51,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </BrowserRouter>
       <Toaster 
         position="bottom-right"
-        offset={16}
-        mobileOffset={{ bottom: "calc(var(--bottomnav-h) + 8px)" }}
         closeButton={true}
         toastOptions={{
           classNames: {
