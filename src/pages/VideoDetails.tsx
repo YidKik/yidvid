@@ -202,7 +202,7 @@ const VideoDetails = () => {
                         </p>
                         <button 
                           onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                          className="touch-target inline-flex items-center justify-center h-9 px-5 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
+                          className="touch-target inline-flex items-center justify-center h-11 px-5 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
                         >
                           Sign In
                         </button>
@@ -284,7 +284,7 @@ const VideoDetails = () => {
                       </p>
                       <button 
                         onClick={() => document.dispatchEvent(new CustomEvent('openAuthDialog'))}
-                        className="inline-block px-4 py-1.5 bg-primary text-white rounded-control text-xs font-medium hover:brightness-90 transition-all"
+                        className="inline-flex items-center justify-center h-11 px-5 bg-primary text-white rounded-control text-sm font-medium hover:brightness-90 transition-all"
                       >
                         Sign In
                       </button>
