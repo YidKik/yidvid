@@ -132,7 +132,7 @@ const LandingPage = () => {
                 variants={itemVariants}
                 className={`group relative rounded-2xl ${isMobile ? 'p-3 text-center flex flex-col items-center' : isTablet ? 'p-4 text-center flex flex-col items-center' : 'p-6'} border-2 transition-all duration-300 hover:shadow-lg cursor-pointer bg-white`}
                 style={{
-                  borderColor: 'hsl(var(--primary))'
+                  borderColor: 'hsl(var(--border))'
                 }}
                 initial="rest"
                 whileHover="hover"
