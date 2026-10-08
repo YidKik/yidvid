@@ -142,7 +142,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
   return (
     <section 
       ref={sectionRef}
-      className={`mb-8 ${isMobile ? 'py-5 -mx-3 px-3' : 'py-8 -mx-6 px-6'} bg-white dark:bg-gray-900/50 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`mb-8 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-white dark:bg-gray-900/50 ${showAllVideos ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="sync">
         {showAllVideos ? (
@@ -231,7 +231,7 @@ export const TrendingSection = ({ videos }: TrendingSectionProps) => {
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-muted-foreground dark:text-gray-400 uppercase">
+              <h2 className="type-h2 text-foreground">
                 Trending Videos
               </h2>
               

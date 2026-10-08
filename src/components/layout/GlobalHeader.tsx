@@ -170,7 +170,7 @@ export const GlobalHeader = () => {
                   <button
                     type="submit"
                     aria-label="Search"
-                    className={`shrink-0 ${isMobile ? "h-10 w-11" : "h-10 px-4"} rounded-r-control border-l border-border dark:border-border hover:bg-surface-active dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
+                    className={`shrink-0 ${isMobile ? "h-11 w-11" : "h-10 px-4"} rounded-r-control border-l border-border dark:border-border hover:bg-surface-active dark:hover:bg-secondary transition-colors flex items-center justify-center bg-white dark:bg-card`}
                   >
                     <Search className={`${isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-muted-foreground dark:text-muted-foreground`} />
                   </button>
