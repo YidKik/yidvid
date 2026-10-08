@@ -487,7 +487,7 @@ export const CustomVideoControls = ({
                   e.stopPropagation();
                   setSpeedOpen(!speedOpen);
                 }}
-                className="transition-all text-[11px] font-bold px-2.5 py-1 rounded-full border"
+                className="transition-all text-[11px] font-bold px-2.5 py-1 rounded-control border"
                 style={{
                   borderColor: speedOpen ? ACCENT : "rgba(255,255,255,0.28)",
                   color: speedOpen ? ACCENT : "rgba(255,255,255,0.9)",
