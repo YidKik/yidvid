@@ -102,7 +102,7 @@ const LandingPage = () => {
       <HeroSearchSection />
 
       {/* Features Section */}
-      <section className={`${isMobile ? 'py-10 px-4' : isTablet ? 'py-14 px-5' : 'py-20 px-6'} bg-muted`}>
+      <section className={`${isMobile ? 'py-12 px-4' : isTablet ? 'py-12 px-4' : 'py-20 px-6'} bg-muted`}>
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -169,7 +169,7 @@ const LandingPage = () => {
       </section>
 
       {/* Quick Access Section */}
-      <section className={`${isMobile ? 'py-10 px-4' : isTablet ? 'py-14 px-5' : 'py-20 px-6'}`}>
+      <section className={`${isMobile ? 'py-12 px-4' : isTablet ? 'py-12 px-4' : 'py-20 px-6'}`}>
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -195,13 +195,13 @@ const LandingPage = () => {
           {/* Category Buttons */}
           <motion.div
             variants={itemVariants}
-            className={`grid ${isMobile ? 'grid-cols-2 gap-3 mb-8' : isTablet ? 'grid-cols-3 gap-4 mb-10' : 'grid-cols-2 md:grid-cols-3 gap-5 mb-12'}`}
+            className={`grid ${isMobile ? 'grid-cols-2 gap-3 mb-8' : isTablet ? 'grid-cols-3 gap-4 mb-12' : 'grid-cols-2 md:grid-cols-3 gap-4 mb-12'}`}
           >
             {categories.map((category) => (
               <motion.button
                 key={category.label}
                 onClick={() => navigate(category.path)}
-                className={`group relative flex flex-col items-center ${isMobile ? 'gap-1.5 px-3 py-4' : isTablet ? 'gap-2 px-4 py-5' : 'gap-3 px-6 py-8'} rounded-card font-semibold transition-all duration-500 overflow-hidden bg-white border border-border`}
+                className={`group relative flex flex-col items-center ${isMobile ? 'gap-2 px-3 py-4' : isTablet ? 'gap-2 px-4 py-4' : 'gap-3 px-6 py-8'} rounded-card font-semibold transition-all duration-500 overflow-hidden bg-white border border-border`}
                 style={{ 
                   color: 'hsl(var(--foreground))',
                   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)'
@@ -239,11 +239,11 @@ const LandingPage = () => {
           {/* Secondary CTAs */}
           <motion.div
             variants={itemVariants}
-            className={`flex flex-col items-center justify-center ${isMobile ? 'gap-3 pb-20' : 'sm:flex-row gap-5'}`}
+            className={`flex flex-col items-center justify-center ${isMobile ? 'gap-3 pb-20' : 'sm:flex-row gap-4'}`}
           >
             <motion.button
               onClick={() => navigate('/videos')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 text-sm' : isTablet ? 'px-7 text-sm' : 'px-8'} h-11 font-bold rounded-control overflow-hidden bg-primary text-white`}
+              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 text-sm' : isTablet ? 'px-8 text-sm' : 'px-8'} h-11 font-bold rounded-control overflow-hidden bg-primary text-white`}
               style={{ 
                 boxShadow: '0 6px 25px rgba(255, 0, 0, 0.3)'
               }}
@@ -260,7 +260,7 @@ const LandingPage = () => {
 
             <motion.button
               onClick={() => navigate('/videos?view=channels')}
-              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 text-sm' : isTablet ? 'px-7 text-sm' : 'px-8'} h-11 font-bold rounded-control overflow-hidden bg-white border border-border`}
+              className={`group relative flex items-center justify-center gap-2 ${isMobile ? 'px-6 text-sm' : isTablet ? 'px-8 text-sm' : 'px-8'} h-11 font-bold rounded-control overflow-hidden bg-white border border-border`}
               style={{ 
                 color: 'hsl(var(--foreground))',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'

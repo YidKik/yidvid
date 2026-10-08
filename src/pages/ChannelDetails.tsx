@@ -166,7 +166,7 @@ const ChannelDetails = () => {
   // Show hidden channel message if user has hidden this channel
   if (isHidden && isAuthenticated) {
     return (
-      <div className="w-full min-h-screen bg-white text-black pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+      <div className="w-full min-h-screen bg-white text-black pt-12 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
         <div className="p-4 lg:p-6">
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-card flex items-center justify-center mb-6">
@@ -210,7 +210,7 @@ const ChannelDetails = () => {
   const hasVideosError = !!videosError;
 
   return (
-    <div className="w-full min-h-screen bg-white text-black pt-14 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
+    <div className="w-full min-h-screen bg-white text-black pt-12 pl-0 lg:pl-[200px] pb-20 lg:pb-0 transition-all duration-300">
       <div className="p-4 lg:p-6">
         
         <ChannelHeader
@@ -226,7 +226,7 @@ const ChannelDetails = () => {
           <div className="flex gap-1 mb-6 border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setActiveTab('videos')}
-              className={`px-5 py-2.5 text-sm font-medium transition-all relative ${
+              className={`px-4 py-3 text-sm font-medium transition-all relative ${
                 activeTab === 'videos'
                   ? 'text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
@@ -239,14 +239,14 @@ const ChannelDetails = () => {
             </button>
             <button
               onClick={() => setActiveTab('shorts')}
-              className={`px-5 py-2.5 text-sm font-medium transition-all relative flex items-center gap-1.5 ${
+              className={`px-4 py-3 text-sm font-medium transition-all relative flex items-center gap-2 ${
                 activeTab === 'shorts'
                   ? 'text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Shorts
-              <span className="text-xs bg-primary text-white px-1.5 py-0.5 rounded-badge font-medium">{shorts.length}</span>
+              <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-badge font-medium">{shorts.length}</span>
               {activeTab === 'shorts' && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}

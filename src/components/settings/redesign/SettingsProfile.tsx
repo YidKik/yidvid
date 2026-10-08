@@ -224,7 +224,7 @@ export const SettingsProfile = () => {
               Are you sure you want to remove your profile picture? Your initials will be shown instead.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex flex-col gap-2.5 sm:flex-col pt-3">
+          <DialogFooter className="flex flex-col gap-3 sm:flex-col pt-3">
             <Button
               onClick={() => removeAvatar.mutate()}
               disabled={removeAvatar.isPending}
@@ -255,7 +255,7 @@ export const SettingsProfile = () => {
       {/* Video Digest Email Preferences */}
       <div className="mb-8 p-4 rounded-card bg-muted dark:bg-background border border-border dark:border-border">
         <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <Bell className="h-4 w-4 text-brand" />
             <div>
               <p className="text-sm font-semibold text-foreground dark:text-foreground">Video digest emails</p>
@@ -270,9 +270,9 @@ export const SettingsProfile = () => {
         </div>
         {videoEmailsEnabled && (
           <div className="mt-3 pt-3 border-t border-border dark:border-border">
-            <p className="text-xs text-muted-foreground mb-2.5">How often would you like to receive digests?</p>
-            <div className="space-y-2.5">
-              <label className="flex items-center gap-2.5 cursor-pointer">
+            <p className="text-xs text-muted-foreground mb-3">How often would you like to receive digests?</p>
+            <div className="space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   checked={digestFrequency === "daily"}
                   onCheckedChange={(checked) => {
@@ -282,7 +282,7 @@ export const SettingsProfile = () => {
                 <span className="text-sm text-foreground dark:text-foreground font-medium">Daily</span>
                 <span className="text-xs text-muted-foreground">— Receive a summary every morning</span>
               </label>
-              <label className="flex items-center gap-2.5 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   checked={digestFrequency === "weekly"}
                   onCheckedChange={(checked) => {
@@ -298,7 +298,7 @@ export const SettingsProfile = () => {
       </div>
 
       {/* Actions */}
-      <div className="border-t border-border dark:border-border pt-5 space-y-3">
+      <div className="border-t border-border dark:border-border pt-4 space-y-3">
         <Button
           onClick={signOut}
           variant="outline"
@@ -347,7 +347,7 @@ export const SettingsProfile = () => {
 
 function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 px-3 rounded-control bg-muted dark:bg-background border border-border dark:border-border">
+    <div className="flex items-center gap-3 py-3 px-3 rounded-control bg-muted dark:bg-background border border-border dark:border-border">
       <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="text-xs text-muted-foreground font-medium">{label}</p>

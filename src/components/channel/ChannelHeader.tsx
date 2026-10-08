@@ -135,7 +135,7 @@ export const ChannelHeader = ({
             variant={displaySubscribed && subscriptionStateKnown ? "default" : "outline"}
             onClick={handleSubscribeClick}
             disabled={buttonLoading}
-            className={`h-9 text-xs md:text-sm px-5 rounded-control font-semibold transition-all duration-200 ${
+            className={`h-9 text-xs md:text-sm px-4 rounded-control font-semibold transition-all duration-200 ${
               displaySubscribed && subscriptionStateKnown
                 ? "bg-primary hover:brightness-90 text-white border-0"
                 : "border border-input-border dark:border-border text-foreground dark:!text-foreground hover:bg-surface-hover dark:hover:bg-secondary"
@@ -146,7 +146,7 @@ export const ChannelHeader = ({
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : displaySubscribed && subscriptionStateKnown ? (
               <>
-                <Check className="w-3.5 h-3.5 mr-1.5" />
+                <Check className="w-3.5 h-3.5 mr-2" />
                 Subscribed
               </>
             ) : (
@@ -156,7 +156,7 @@ export const ChannelHeader = ({
 
           <button
             onClick={() => setShareOpen(true)}
-            className="h-9 px-4 rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium"
+            className="h-9 px-4 rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-2 text-xs md:text-sm font-medium"
           >
             <Share2 className="w-3.5 h-3.5" />
             Share
@@ -171,7 +171,7 @@ export const ChannelHeader = ({
           {channel.description && (
             <Dialog>
               <DialogTrigger asChild>
-                <button className="h-9 px-4 rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-1.5 text-xs md:text-sm font-medium">
+                <button className="h-9 px-4 rounded-control bg-muted dark:bg-secondary hover:bg-surface-active dark:hover:bg-secondary text-foreground dark:!text-foreground transition-colors flex items-center gap-2 text-xs md:text-sm font-medium">
                   <Info className="w-3.5 h-3.5" />
                   Description
                 </button>

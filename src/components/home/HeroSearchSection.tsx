@@ -85,7 +85,7 @@ const HeroSearchSection = () => {
   };
 
   return (
-    <section className={`relative ${isMobile ? 'min-h-[60vh] px-4 pt-20 pb-10' : isTablet ? 'min-h-[65vh] px-5 pt-24 pb-14' : 'min-h-[80vh] px-6 pt-32 pb-20'} flex flex-col items-center justify-center`}>
+    <section className={`relative ${isMobile ? 'min-h-[60vh] px-4 pt-20 pb-10' : isTablet ? 'min-h-[65vh] px-4 pt-24 pb-14' : 'min-h-[80vh] px-6 pt-32 pb-20'} flex flex-col items-center justify-center`}>
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
@@ -104,11 +104,11 @@ const HeroSearchSection = () => {
         transition={{ duration: 0.8 }}
         className="relative z-10 text-center max-w-4xl mx-auto w-full"
       >
-        <AnimatedPlayLogo className={`${isMobile ? 'w-32 h-32 mb-6' : isTablet ? 'w-48 h-48 mb-8' : 'w-56 h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 mb-10'} mx-auto`} />
+        <AnimatedPlayLogo className={`${isMobile ? 'w-32 h-32 mb-6' : isTablet ? 'w-48 h-48 mb-8' : 'w-56 h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 mb-12'} mx-auto`} />
 
         {/* Typing Text */}
         <motion.div
-          className={isMobile ? 'mb-6' : isTablet ? 'mb-8' : 'mb-10'}
+          className={isMobile ? 'mb-6' : isTablet ? 'mb-8' : 'mb-12'}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
@@ -149,14 +149,14 @@ const HeroSearchSection = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onClick={handleInputClick}
-                className={`w-full ${isMobile ? 'py-2.5 pl-9 pr-16 text-sm' : isTablet ? 'py-4 pl-12 pr-28 text-base' : 'py-5 pl-14 pr-36 text-lg'} outline-none bg-transparent cursor-text`}
+                className={`w-full ${isMobile ? 'py-3 pl-9 pr-16 text-sm' : isTablet ? 'py-4 pl-12 pr-28 text-base' : 'py-4 pl-12 pr-36 text-lg'} outline-none bg-transparent cursor-text`}
                 style={{ 
                   color: 'hsl(var(--foreground))'
                 }}
               />
               {/* Animated placeholder */}
               {!searchQuery && !isLoading && suggestions.length > 0 && (
-                <div className={`absolute inset-0 flex items-center ${isMobile ? 'pl-10 pr-20' : isTablet ? 'pl-12 pr-28' : 'pl-14 pr-36'} pointer-events-none`}>
+                <div className={`absolute inset-0 flex items-center ${isMobile ? 'pl-12 pr-20' : isTablet ? 'pl-12 pr-28' : 'pl-12 pr-36'} pointer-events-none`}>
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={currentSuggestionIndex}
@@ -178,7 +178,7 @@ const HeroSearchSection = () => {
             </div>
             <motion.button
               type="submit"
-              className={`absolute right-2 z-20 flex items-center gap-1.5 ${isMobile ? 'px-3 py-2 text-xs' : isTablet ? 'px-4 py-2.5 text-sm' : 'px-6 py-3'} rounded-control font-bold transition-colors cursor-pointer bg-primary text-white`}
+              className={`absolute right-2 z-20 flex items-center gap-2 ${isMobile ? 'px-3 py-2 text-xs' : isTablet ? 'px-4 py-3 text-sm' : 'px-6 py-3'} rounded-control font-bold transition-colors cursor-pointer bg-primary text-white`}
               whileHover={{ filter: 'brightness(0.9)' }}
               whileTap={{ scale: 0.95 }}
             >
@@ -190,14 +190,14 @@ const HeroSearchSection = () => {
 
         {/* Browse videos button */}
         <motion.div
-          className={`${isMobile ? 'mt-5' : 'mt-8'} flex justify-center`}
+          className={`${isMobile ? 'mt-4' : 'mt-8'} flex justify-center`}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9, duration: 0.5 }}
         >
           <motion.button
             onClick={() => navigate('/videos')}
-            className={`group flex items-center gap-2 ${isMobile ? 'px-5 py-3 text-sm' : isTablet ? 'px-6 py-3' : 'px-8 py-4'} rounded-control font-semibold transition-all duration-300 bg-white border border-border`}
+            className={`group flex items-center gap-2 ${isMobile ? 'px-4 py-3 text-sm' : isTablet ? 'px-6 py-3' : 'px-8 py-4'} rounded-control font-semibold transition-all duration-300 bg-white border border-border`}
             style={{ 
               color: 'hsl(var(--foreground))',
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'

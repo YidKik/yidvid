@@ -32,7 +32,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted dark:bg-background pt-14 pl-0 lg:pl-[200px] pb-24 lg:pb-8 transition-all duration-300">
+    <div className="min-h-screen bg-muted dark:bg-background pt-12 pl-0 lg:pl-[200px] pb-24 lg:pb-8 transition-all duration-300">
       <div className={cn(
         "max-w-5xl mx-auto",
         isMobile ? "px-4 pt-4" : "px-8 pt-6"
@@ -68,10 +68,10 @@ const Settings = () => {
                   key={item.id}
                   onClick={() => setActiveSection(item.id)}
                   className={cn(
-                    "flex items-center gap-2.5 font-semibold transition-all duration-200 whitespace-nowrap",
+                    "flex items-center gap-3 font-semibold transition-all duration-200 whitespace-nowrap",
                     isMobile
                       ? "px-4 py-2 text-xs rounded-control border"
-                      : "px-4 py-2.5 text-sm rounded-control w-full text-left",
+                      : "px-4 py-3 text-sm rounded-control w-full text-left",
                     isActive
                       ? isMobile
                         ? "bg-primary text-white border-brand"

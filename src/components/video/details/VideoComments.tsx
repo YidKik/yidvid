@@ -81,7 +81,7 @@ export const VideoComments = ({ videoId }: VideoCommentsProps) => {
       <div className="space-y-3">
         {comments && comments.length > 0 ? (
           <>
-            <div className={`flex items-center gap-1.5 ${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground px-1`}>
+            <div className={`flex items-center gap-2 ${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground px-1`}>
               <MessageSquare className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
               <span>{comments.length} comment{comments.length !== 1 ? 's' : ''}</span>
             </div>

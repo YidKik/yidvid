@@ -45,7 +45,7 @@ export const SettingsContent = () => {
               variant="outline"
               size="sm"
               onClick={isLocked ? () => setShowLockDialog(true) : handleLock}
-              className="h-8 rounded-card text-xs font-semibold gap-1.5 border-border dark:border-border"
+              className="h-8 rounded-card text-xs font-semibold gap-2 border-border dark:border-border"
             >
               {isLocked ? <Lock className="h-3.5 w-3.5 text-brand" /> : <Unlock className="h-3.5 w-3.5 text-green-600" />}
               {isLocked ? "Locked" : "Lock"}
@@ -55,7 +55,7 @@ export const SettingsContent = () => {
               variant="outline"
               size="sm"
               onClick={() => setShowSetPinDialog(true)}
-              className="h-8 rounded-card text-xs font-semibold gap-1.5 border-border dark:border-border"
+              className="h-8 rounded-card text-xs font-semibold gap-2 border-border dark:border-border"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
               Set PIN
@@ -104,7 +104,7 @@ export const SettingsContent = () => {
               <div
                 key={channel.channel_id}
                 className={cn(
-                  "flex items-center gap-3 py-2.5 px-3 rounded-control transition-colors",
+                  "flex items-center gap-3 py-3 px-3 rounded-control transition-colors",
                   isHidden
                     ? "bg-muted dark:bg-background opacity-60"
                     : "hover:bg-surface-hover dark:hover:bg-background"
