@@ -100,7 +100,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
               className={`flex-none group ${isMobile ? 'w-[85%]' : isTablet ? 'w-[calc(50%-10px)]' : 'w-[calc(33.333%-14px)]'}`}
             >
               {/* Featured Card - Solid yellow border always */}
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-brand">
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-border">
                 <img
                   src={video.thumbnail}
                   alt={cleanVideoTitle(video.title)}
