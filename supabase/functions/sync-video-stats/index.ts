@@ -88,13 +88,16 @@ Deno.serve(async (req) => {
 
   // Acquire lease atomically
   const nowIso = new Date().toISOString();
+  const leaseUntil = new Date(Date.now() + LEASE_MS + Math.floor(Math.random() * 1000)).toISOString();
   const lease = await supabase.from("youtube_stats_sync_runs")
-    .update({ lease_until: new Date(Date.now() + LEASE_MS).toISOString(), status: "running", last_error: null })
+    .update({ lease_until: leaseUntil, status: "running", last_error: null })
     .eq("id", run.id)
-    .or(`lease_until.is.null,lease_until.lt.${nowIso}`)
-    .select().maybeSingle();
-  if (!lease.data) return json({ message: "Run already in progress", runId: run.id, leaseError: lease.error?.message ?? null }, 409);
-  run = lease.data;
+    .or(`lease_until.is.null,lease_until.lt.${nowIso}`);
+  const { data: check } = await supabase.from("youtube_stats_sync_runs").select("*").eq("id", run.id).single();
+  if (lease.error || !check || new Date(check.lease_until).getTime() !== new Date(leaseUntil).getTime()) {
+    return json({ message: "Run already in progress", runId: run.id, leaseError: lease.error?.message ?? null }, 409);
+  }
+  run = check;
 
   const body = await req.clone().json().catch(() => ({}));
   if (body?.debugSync === true) {
