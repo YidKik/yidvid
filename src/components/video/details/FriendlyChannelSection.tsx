@@ -185,7 +185,7 @@ export const FriendlyChannelSection = ({
             {channelId && (
               <Link 
                 to={`/channel/${channelId}`}
-                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="mobile-channel-view-all text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 View all
               </Link>
