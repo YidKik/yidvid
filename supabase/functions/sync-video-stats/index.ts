@@ -96,6 +96,11 @@ Deno.serve(async (req) => {
   if (!lease.data) return json({ message: "Run already in progress", runId: run.id }, 409);
   run = lease.data;
 
+  const body = await req.clone().json().catch(() => ({}));
+  if (body?.debugSync === true) {
+    const r = await runChunk(run, runDate, req, 1);
+    return json({ debug: r });
+  }
   // Work runs in the background so callers (cron) get an immediate reply.
   // @ts-ignore EdgeRuntime is provided by Supabase
   EdgeRuntime.waitUntil(runChunk(run, runDate, req).catch(async (e) => {
@@ -105,7 +110,8 @@ Deno.serve(async (req) => {
   return json({ message: "Chunk started", runId: run.id, processed: run.processed });
 });
 
-async function runChunk(run: any, runDate: string, req: Request) {
+async function runChunk(run: any, runDate: string, req: Request, maxBatches = Infinity) {
+  let batches = 0;
   const started = Date.now();
   let cursor: string | null = run.cursor_id;
   const totals = {
@@ -115,7 +121,7 @@ async function runChunk(run: any, runDate: string, req: Request) {
   let status = "running";
   let lastError: string | null = null;
 
-  while (Date.now() - started < CHUNK_MS) {
+  while (Date.now() - started < CHUNK_MS && batches++ < maxBatches) {
     let q = supabase.from("youtube_videos").select("id, video_id").order("id", { ascending: true }).limit(BATCH);
     if (cursor) q = q.gt("id", cursor);
     const { data: rows, error } = await q;
@@ -163,12 +169,14 @@ async function runChunk(run: any, runDate: string, req: Request) {
     finished_at: finished ? new Date().toISOString() : null,
   }).eq("id", run.id);
 
-  if (status === "running") {
+  if (status === "running" && maxBatches === Infinity) {
     // continue in a fresh invocation
     const self = `${Deno.env.get("SUPABASE_URL")}/functions/v1/sync-video-stats`;
     const auth = req.headers.get("Authorization") ?? "";
     // @ts-ignore EdgeRuntime is provided by Supabase
     await fetch(self, { method: "POST", headers: { "Content-Type": "application/json", Authorization: auth, apikey: req.headers.get("apikey") ?? "" }, body: "{}" }).catch((e) => console.error("self-chain failed", e));
   }
+  const summary = { status, ...totals, missing_ids: totals.missing_ids.length, failed_ids: totals.failed_ids.length, lastError };
   console.log(`chunk done status=${status} processed=${totals.processed} updated=${totals.updated} missing=${totals.missing} failed=${totals.failed} err=${lastError}`);
+  return summary;
 }
