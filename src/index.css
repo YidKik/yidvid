@@ -528,6 +528,11 @@ input::placeholder, textarea::placeholder { font-size: 16px; }
 }
 .short-like-pop { animation: short-like-pop 0.4s ease-out; }
 
+/* On short portrait phones, keep the arrow hit boxes above the side-action column. */
+@media (max-width: 767px) and (max-height: 700px) and (orientation: portrait) {
+  .shorts-navigation { top: 72px; transform: none; }
+}
+
 /* Per-block automatic bidi for mixed Hebrew/Yiddish/English titles (interface stays LTR) */
 h1, h2, h3, h4, .line-clamp-1, .line-clamp-2, .line-clamp-3, [dir="auto"] {
   unicode-bidi: plaintext;

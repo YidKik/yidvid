@@ -391,7 +391,7 @@ const ShortsViewer = () => {
         </div>
 
         {/* Navigation arrows */}
-        <div className="absolute right-3 sm:right-4 lg:right-10 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3">
+        <div className="shorts-navigation absolute right-3 sm:right-4 lg:right-10 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3">
           <NavArrow onClick={goPrev} disabled={activeIndex === 0} icon={<ChevronUp className="w-6 h-6" />} label="Previous short" />
           <NavArrow onClick={goNext} disabled={activeIndex >= shorts.length - 1} icon={<ChevronDown className="w-6 h-6" />} label="Next short" />
         </div>

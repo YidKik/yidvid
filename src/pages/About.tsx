@@ -6,6 +6,7 @@ import { ContactDialog } from "@/components/contact/ContactDialog";
 import { TermsOfServiceDialog } from "@/components/auth/TermsOfServiceDialog";
 import { PrivacyPolicyDialog } from "@/components/auth/PrivacyPolicyDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 const About = () => {
   const [showTerms, setShowTerms] = useState(false);
@@ -118,27 +119,27 @@ const About = () => {
             transition={{ delay: 0.6, duration: 0.5 }}
             className="flex items-center justify-center gap-4 max-w-3xl mx-auto flex-wrap"
           >
-            <button
+            <Button variant="ghost"
               onClick={() => setShowTerms(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
+              className="h-11 px-4 sm:px-6 type-label rounded-control bg-muted dark:bg-card border border-border font-semibold hover:border-brand text-foreground"
             >
               <FileText className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />
               Terms & Conditions
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               onClick={() => setShowPrivacy(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
+              className="h-11 px-4 sm:px-6 type-label rounded-control bg-muted dark:bg-card border border-border font-semibold hover:border-brand text-foreground"
             >
               <ScrollText className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />
               Privacy Policy
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               onClick={() => setShowContact(true)}
-              className={`flex items-center gap-2 ${isMobile ? 'px-4 py-2.5 text-xs' : 'px-6 py-3 text-sm'} rounded-control bg-muted dark:bg-card border border-border dark:border-border font-semibold hover:border-brand hover:shadow-sm transition-all text-foreground dark:text-foreground`}
+              className="h-11 px-4 sm:px-6 type-label rounded-control bg-muted dark:bg-card border border-border font-semibold hover:border-brand text-foreground"
             >
               <MessageSquare className="w-4 h-4" style={{ color: 'hsl(var(--brand))' }} />
               Contact Us
-            </button>
+            </Button>
           </motion.div>
         </div>
       </div>

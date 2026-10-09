@@ -57,7 +57,7 @@ const Settings = () => {
           {/* Navigation */}
           <nav className={cn(
             isMobile
-              ? "flex gap-2 overflow-x-auto scrollbar-hide pb-1"
+              ? "flex gap-2 overflow-x-auto scrollbar-hide p-1 -m-1"
               : "flex flex-col gap-1 w-[200px] shrink-0 sticky top-20 self-start"
           )}>
             {navItems.map((item) => {
