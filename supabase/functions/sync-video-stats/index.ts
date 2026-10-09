@@ -111,8 +111,6 @@ Deno.serve(async (req) => {
     if (!rows || rows.length === 0) { status = "completed"; break; }
 
     const ids = [...new Set(rows.map((r) => r.video_id).filter(Boolean))];
-    const before = await supabase.from("youtube_quota_usage").select("units").limit(0); // no-op keepalive
-    void before;
     const out = await fetchStats(ids);
     if (out.kind === "quota") { status = "paused_quota"; lastError = "Quota floor reached or quota exhausted"; break; }
 
