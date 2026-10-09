@@ -172,14 +172,6 @@ export const SettingsProfile = () => {
       <SignedOutProfile />
     );
   }
-  if (false) {
-    return (
-      <div className="text-center py-12">
-        <User className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-        <p className="text-muted-foreground dark:text-muted-foreground font-medium">Sign in to view your profile</p>
-      </div>
-    );
-  }
 
   const username = displayProfile.username || displayProfile.display_name || displayProfile.name || "User";
   const email = displayProfile.email || "";
