@@ -335,17 +335,17 @@ const ShortsViewer = () => {
               <div className="pr-16">
                 <button
                   onClick={() => navigate(`/channel/${currentShort.channel_id}`)}
-                  className="pointer-events-auto flex items-center gap-2 mb-2"
+                  className="pointer-events-auto flex items-center gap-2 min-h-11 -my-2 mb-0 rounded-control focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
-                  <span className="text-white text-xs sm:text-sm font-semibold">
+                  <span dir="auto" className="text-white text-sm font-semibold">
                     {currentShort.channel_name}
                   </span>
                 </button>
-                <h1 className="text-white font-semibold text-sm sm:text-[15px] leading-snug line-clamp-2">
+                <h1 dir="auto" className="text-white font-semibold text-sm sm:text-[15px] leading-snug line-clamp-2">
                   {cleanVideoTitle(currentShort.title)}
                 </h1>
                 {currentShort.views != null && currentShort.views > 0 && (
-                  <p className="mt-1.5 text-xs sm:text-xs text-white/60">
+                  <p className="mt-1.5 text-xs text-white/75">
                     {formatViews(currentShort.views)} views
                   </p>
                 )}
