@@ -4,3 +4,5 @@
 - Form fields render at 16px text on all devices (global rule in src/index.css) — prevents iOS focus zoom.
 
 - Navigation destinations live in src/components/layout/navConfig.ts and feed both the desktop sidebar and the phone/tablet bottom nav; layout offsets use the runtime --sidebar-w var and the .pb-nav utility (--bottomnav-h) — one source for nav entries, active logic and offsets.
+- YouTube view counts come only from the daily `sync-video-stats` edge function (resumable cursor + lease in `youtube_stats_sync_runs`, bulk `bulk_apply_video_stats`); site plays never write `views` — keeps counts authoritative and avoids bumping content ordering.
+- All YouTube API calls must reserve quota via `reserve_youtube_quota` (one shared pool, Pacific-midnight reset); never fall back to another key on quota exhaustion — keys in one Google project share quota.
