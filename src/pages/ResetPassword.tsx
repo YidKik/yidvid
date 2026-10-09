@@ -142,9 +142,9 @@ const ResetPassword = () => {
               </Button>
             </form>
           )}
-          <button type="button" onClick={() => navigate("/videos")} className="mt-4 w-full text-sm font-semibold text-brand hover:underline">
+          <Button variant="link" type="button" onClick={() => navigate("/videos")} className="mobile-recovery-back h-auto p-0 mt-4 w-full text-sm font-semibold text-brand hover:underline">
             Back to YidVid
-          </button>
+          </Button>
         </div>
       </div>
     );

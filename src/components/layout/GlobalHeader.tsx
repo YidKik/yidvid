@@ -91,7 +91,7 @@ export const GlobalHeader = () => {
   if (isHomePage) {
     return (
       <>
-        <div className="fixed top-4 right-4 z-50">
+        <div className="home-account-control fixed top-4 right-4 z-50">
           {isAuthenticated ? (
             <Link
               to="/settings"
@@ -120,7 +120,7 @@ export const GlobalHeader = () => {
   return (
     <>
       <header
-        className="fixed top-0 z-40 bg-white dark:bg-background border-b border-border dark:border-border transition-all duration-300"
+        className="user-global-header fixed top-0 z-40 bg-white dark:bg-background border-b border-border dark:border-border transition-all duration-300"
         style={{ left: isDesktop ? sidebarWidth : 0, right: 0 }}
       >
         <div className={`w-full ${isMobile ? 'px-2' : 'px-3 md:px-6'}`}>
@@ -163,7 +163,8 @@ export const GlobalHeader = () => {
                           setSearchQuery("");
                           setIsSearchOpen(false);
                         }}
-                        className="p-1 rounded-control hover:bg-surface-active dark:hover:bg-secondary transition-colors"
+                        aria-label="Clear search"
+                        className="search-clear-control p-1 rounded-control hover:bg-surface-active dark:hover:bg-secondary transition-colors"
                       >
                         <X className="w-4 h-4 text-muted-foreground dark:text-muted-foreground" />
                       </button>

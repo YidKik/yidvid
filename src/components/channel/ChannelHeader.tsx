@@ -130,7 +130,7 @@ export const ChannelHeader = ({
         </p>
 
         {/* Action buttons row */}
-        <div className="flex items-center gap-2 mt-1">
+        <div className="mobile-channel-actions flex items-center gap-2 mt-1">
           <Button
             variant={displaySubscribed && subscriptionStateKnown ? "default" : "outline"}
             onClick={handleSubscribeClick}

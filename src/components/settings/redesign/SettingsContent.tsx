@@ -32,7 +32,7 @@ export const SettingsContent = () => {
   };
 
   return (
-    <div>
+    <div className="mobile-settings-content">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">

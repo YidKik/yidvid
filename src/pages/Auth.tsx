@@ -82,7 +82,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
 
           {/* Dialog content with smooth custom animation */}
           <DialogPrimitive.Content
-            className={`fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile 
+            className={`mobile-auth-dialog fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] ${isMobile 
               ? 'w-[92%] max-w-[420px]' 
               : 'w-[460px] max-w-[460px]'
             } rounded-dialog overflow-hidden p-0 border-none bg-white shadow-overlay`}
@@ -101,6 +101,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
               <span className="sr-only">Close dialog</span>
             </button>
 
+            <div className="auth-scroll-content">
             <AnimatePresence mode="wait">
               {showOptions ? (
                 <motion.div
@@ -145,6 +146,7 @@ const Auth = ({ isOpen, onOpenChange, initialTab = 'signin' }: AuthProps) => {
                 </motion.div>
               )}
             </AnimatePresence>
+            </div>
           </DialogPrimitive.Content>
         </DialogPrimitive.Portal>
 

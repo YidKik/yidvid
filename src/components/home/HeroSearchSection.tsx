@@ -129,7 +129,7 @@ const HeroSearchSection = () => {
         {/* Search Box */}
         <motion.form
           onSubmit={handleSearch}
-          className="w-full max-w-2xl mx-auto"
+          className="mobile-home-search w-full max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}

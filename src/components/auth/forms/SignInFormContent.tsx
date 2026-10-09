@@ -49,13 +49,13 @@ export const SignInFormContent = ({
       />
       
       <div className="flex justify-end -mt-2">
-        <button
+        <Button variant="link"
           type="button"
           onClick={onForgotPassword}
-          className="text-sm font-semibold text-brand hover:underline focus:outline-none focus-visible:underline"
+          className="mobile-auth-link h-auto p-0 text-sm font-semibold text-brand hover:underline focus:outline-none focus-visible:underline"
         >
           Forgot password?
-        </button>
+        </Button>
       </div>
 
       <SignInErrorMessage error={loginError} />

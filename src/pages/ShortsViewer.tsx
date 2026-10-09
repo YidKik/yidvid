@@ -285,7 +285,7 @@ const ShortsViewer = () => {
         <div className="relative flex items-center justify-center w-full" style={{ height: "100dvh" }}>
           <div
             key={currentShort.video_id}
-            className={`relative bg-black overflow-hidden ${
+            className={`shorts-stage relative bg-black overflow-hidden ${
               direction === "up" ? "short-enter-up" : "short-enter-down"
             } ${
               isMobile
@@ -307,7 +307,7 @@ const ShortsViewer = () => {
               <iframe
                 ref={iframeRef}
                 src={`https://www.youtube.com/embed/${currentShort.video_id}?autoplay=1&loop=1&playlist=${currentShort.video_id}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&color=white&enablejsapi=1`}
-                className="absolute left-0 w-full pointer-events-none"
+                className="shorts-embed absolute left-0 w-full pointer-events-none"
                 style={{ top: "-70px", height: "calc(100% + 140px)" }}
                 allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
                 title={cleanVideoTitle(currentShort.title)}
@@ -331,7 +331,7 @@ const ShortsViewer = () => {
             )}
 
             {/* Bottom info */}
-            <div className="absolute inset-x-0 bottom-0 z-20 pointer-events-none bg-gradient-to-t from-black via-black/60 to-transparent px-4 pt-20 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+            <div className="shorts-info absolute inset-x-0 bottom-0 z-20 pointer-events-none bg-gradient-to-t from-black via-black/60 to-transparent px-4 pt-20 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
               <div className="pr-16">
                 <button
                   onClick={() => navigate(`/channel/${currentShort.channel_id}`)}
@@ -353,7 +353,7 @@ const ShortsViewer = () => {
             </div>
 
             {/* Side actions */}
-            <div className="absolute z-30 right-2.5 sm:right-3 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] flex flex-col items-center gap-4">
+            <div className="shorts-actions absolute z-30 right-2.5 sm:right-3 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] flex flex-col items-center gap-4">
               <button
                 onClick={() => navigate(`/channel/${currentShort.channel_id}`)}
                 aria-label={currentShort.channel_name}
