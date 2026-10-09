@@ -57,7 +57,7 @@ const VideoDetails = () => {
     console.log("VideoDetails page received videoId:", videoId);
     if (viewIncrementedRef.current !== videoId) {
       viewIncrementedRef.current = videoId;
-      incrementView(videoId);
+      // View counts are synced from YouTube daily; YidVid plays are not added.
     }
   }, [videoId, location.pathname, incrementView]);
 
