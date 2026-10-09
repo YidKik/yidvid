@@ -1488,6 +1488,108 @@ export type Database = {
         }
         Relationships: []
       }
+      youtube_quota_usage: {
+        Row: {
+          attempts: number
+          created_at: string
+          id: string
+          key_label: string
+          quota_day_pt: string
+          source: string
+          tracking: string
+          units: number
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          key_label: string
+          quota_day_pt: string
+          source: string
+          tracking?: string
+          units?: number
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          key_label?: string
+          quota_day_pt?: string
+          source?: string
+          tracking?: string
+          units?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      youtube_stats_sync_runs: {
+        Row: {
+          chunks: number
+          created_at: string
+          cursor_id: string | null
+          failed: number
+          failed_ids: string[]
+          finished_at: string | null
+          id: string
+          last_error: string | null
+          lease_until: string | null
+          missing: number
+          missing_ids: string[]
+          processed: number
+          run_date: string
+          started_at: string
+          status: string
+          total_target: number
+          units_used: number
+          updated: number
+          updated_at: string
+        }
+        Insert: {
+          chunks?: number
+          created_at?: string
+          cursor_id?: string | null
+          failed?: number
+          failed_ids?: string[]
+          finished_at?: string | null
+          id?: string
+          last_error?: string | null
+          lease_until?: string | null
+          missing?: number
+          missing_ids?: string[]
+          processed?: number
+          run_date: string
+          started_at?: string
+          status?: string
+          total_target?: number
+          units_used?: number
+          updated?: number
+          updated_at?: string
+        }
+        Update: {
+          chunks?: number
+          created_at?: string
+          cursor_id?: string | null
+          failed?: number
+          failed_ids?: string[]
+          finished_at?: string | null
+          id?: string
+          last_error?: string | null
+          lease_until?: string | null
+          missing?: number
+          missing_ids?: string[]
+          processed?: number
+          run_date?: string
+          started_at?: string
+          status?: string
+          total_target?: number
+          units_used?: number
+          updated?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       youtube_update_logs: {
         Row: {
           channel_id: string
@@ -1531,6 +1633,8 @@ export type Database = {
           is_short: boolean
           last_viewed_at: string | null
           manual_review_required: boolean | null
+          stats_missing_at: string | null
+          stats_synced_at: string | null
           thumbnail: string
           title: string
           updated_at: string
@@ -1556,6 +1660,8 @@ export type Database = {
           is_short?: boolean
           last_viewed_at?: string | null
           manual_review_required?: boolean | null
+          stats_missing_at?: string | null
+          stats_synced_at?: string | null
           thumbnail: string
           title: string
           updated_at: string
@@ -1581,6 +1687,8 @@ export type Database = {
           is_short?: boolean
           last_viewed_at?: string | null
           manual_review_required?: boolean | null
+          stats_missing_at?: string | null
+          stats_synced_at?: string | null
           thumbnail?: string
           title?: string
           updated_at?: string
@@ -1648,6 +1756,10 @@ export type Database = {
         Args: { admin_user_id: string; video_id_param: string }
         Returns: Json
       }
+      bulk_apply_video_stats: {
+        Args: { p_found: Json; p_missing: string[] }
+        Returns: Json
+      }
       check_admin_rate_limit: {
         Args: { operation_type: string }
         Returns: boolean
@@ -1684,6 +1796,16 @@ export type Database = {
       }
       is_admin_user: { Args: { user_id: string }; Returns: boolean }
       is_user_admin: { Args: { user_id: string }; Returns: boolean }
+      next_pacific_midnight: { Args: never; Returns: string }
+      reserve_youtube_quota: {
+        Args: {
+          p_floor?: number
+          p_key_label: string
+          p_source: string
+          p_units: number
+        }
+        Returns: number
+      }
       trigger_youtube_video_fetch: { Args: never; Returns: Json }
       update_video_analysis_status: {
         Args: {
@@ -1694,6 +1816,10 @@ export type Database = {
           p_video_id: string
         }
         Returns: boolean
+      }
+      update_youtube_quota_usage: {
+        Args: { used_units: number }
+        Returns: undefined
       }
     }
     Enums: {
