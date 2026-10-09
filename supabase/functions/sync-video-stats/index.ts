@@ -71,6 +71,8 @@ Deno.serve(async (req) => {
   if (!API_KEY) return json({ error: "YouTube key not configured" }, 500);
 
   const runDate = pacificDate();
+  const reqBody = await req.clone().json().catch(() => ({}));
+  if (Array.isArray(reqBody?.verifyIds)) return verify(reqBody.verifyIds, runDate);
   let { data: run } = await supabase.from("youtube_stats_sync_runs").select("*").eq("run_date", runDate).maybeSingle();
 
   if (run?.status === "completed") return json({ message: "Already completed today", run });
@@ -119,7 +121,8 @@ async function runChunk(run: any, runDate: string, req: Request, maxBatches = In
   let cursor: string | null = run.cursor_id;
   const totals = {
     processed: run.processed, updated: run.updated, missing: run.missing, failed: run.failed,
-    units_used: run.units_used, missing_ids: [...run.missing_ids], failed_ids: [...run.failed_ids],
+    units_used: run.units_used, no_count: run.no_count ?? 0, no_count_ids: [...(run.no_count_ids ?? [])],
+    distinct_processed: run.distinct_processed ?? 0, missing_ids: [...run.missing_ids], failed_ids: [...run.failed_ids],
   };
   let status = "running";
   let lastError: string | null = null;
@@ -136,7 +139,7 @@ async function runChunk(run: any, runDate: string, req: Request, maxBatches = In
     if (out.kind === "quota") { status = "paused_quota"; lastError = "Quota floor reached or quota exhausted"; break; }
 
     if (out.kind === "failed") {
-      totals.failed += ids.length;
+      totals.failed += rows.length;
       if (totals.failed_ids.length < MAX_LOGGED_IDS) totals.failed_ids.push(...ids);
       lastError = out.error;
     } else {
@@ -148,14 +151,19 @@ async function runChunk(run: any, runDate: string, req: Request, maxBatches = In
         lastError = apply.error.message; status = "error"; break; // do not advance cursor
       }
       totals.updated += (apply.data as any)?.updated ?? 0;
-      totals.missing += missing.length;
+      // Returned by YouTube but without a public viewCount (hidden counts): keep old value, record it.
+      const hidden = out.items.filter((i) => i.views === null).map((i) => i.id);
+      totals.no_count += rows.filter((r) => hidden.includes(r.video_id)).length;
+      if (totals.no_count_ids.length < MAX_LOGGED_IDS) totals.no_count_ids.push(...hidden);
+      totals.missing += rows.filter((r) => missing.includes(r.video_id)).length;
       if (totals.missing_ids.length < MAX_LOGGED_IDS) totals.missing_ids.push(...missing);
     }
     // attempts are counted inside reserve_youtube_quota; mirror for the run record
     const { data: u } = await supabase.from("youtube_quota_usage").select("units")
       .eq("source", "sync-video-stats").eq("quota_day_pt", runDate).maybeSingle();
     totals.units_used = u?.units ?? totals.units_used;
-    totals.processed += ids.length;
+    totals.processed += rows.length; // stored records
+    totals.distinct_processed += ids.length; // distinct YouTube IDs per batch
     cursor = rows[rows.length - 1].id;
     if (totals.processed % 1000 === 0) console.log(`progress ${totals.processed}`);
 
@@ -182,4 +190,23 @@ async function runChunk(run: any, runDate: string, req: Request, maxBatches = In
   const summary = { status, ...totals, missing_ids: totals.missing_ids.length, failed_ids: totals.failed_ids.length, lastError };
   console.log(`chunk done status=${status} processed=${totals.processed} updated=${totals.updated} missing=${totals.missing} failed=${totals.failed} err=${lastError}`);
   return summary;
+}
+
+// Tracked spot-check: compare up to 3 stored IDs against videos.list statistics (1 unit, quota-reserved).
+async function verify(rawIds: unknown[], runDate: string) {
+  const ids = [...new Set(rawIds.filter((x): x is string => typeof x === "string" && /^[\w-]{11}$/.test(x)))].slice(0, 3);
+  if (!ids.length) return json({ error: "verifyIds must be 1-3 YouTube IDs" }, 400);
+  const { data: used } = await supabase.from("youtube_quota_usage").select("attempts")
+    .eq("source", "sync-video-stats-verify").eq("quota_day_pt", runDate).maybeSingle();
+  if ((used?.attempts ?? 0) >= 10) return json({ error: "verify limit reached today" }, 429);
+  const { data: dbRows } = await supabase.from("youtube_videos").select("video_id, views, stats_synced_at").in("video_id", ids);
+  if (!dbRows?.length) return json({ error: "IDs not stored" }, 404);
+  const r = await supabase.rpc("reserve_youtube_quota", { p_units: 1, p_key_label: "primary", p_source: "sync-video-stats-verify", p_floor: QUOTA_FLOOR });
+  if (r.error || r.data === -1) return json({ error: "quota unavailable" }, 429);
+  const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${ids.join(",")}&key=${API_KEY}`);
+  if (!res.ok) return json({ error: `youtube ${res.status}` }, 502);
+  const data = await res.json();
+  const api = Object.fromEntries((data.items ?? []).map((i: any) => [i.id, i.statistics?.viewCount ?? null]));
+  return json({ checkedAt: new Date().toISOString(), quotaRemaining: r.data,
+    results: dbRows.map((d) => ({ video_id: d.video_id, db_views: d.views, db_synced_at: d.stats_synced_at, api_viewCount: api[d.video_id] ?? "not returned" })) });
 }
