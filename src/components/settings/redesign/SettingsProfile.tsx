@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
+import { useAuthDialog } from "@/contexts/AuthDialogContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -167,6 +168,11 @@ export const SettingsProfile = () => {
   };
 
   if (!displayProfile) {
+    return (
+      <SignedOutProfile />
+    );
+  }
+  if (false) {
     return (
       <div className="text-center py-12">
         <User className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
@@ -359,4 +365,19 @@ function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+function SignedOutProfile() {
+  const authDialog = useAuthDialog();
+  return (
+    <div className="text-center py-12 px-4">
+      <User className="w-12 h-12 text-muted-foreground mx-auto mb-3" aria-hidden />
+      <p className="type-body text-muted-foreground font-medium">Sign in to view your profile</p>
+      {authDialog && (
+        <Button className="mt-4 h-11 px-6 rounded-control" onClick={() => authDialog.setIsAuthOpen(true)}>
+          Sign In
+        </Button>
+      )}
+    </div>
+  );
 }
