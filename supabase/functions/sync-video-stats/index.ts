@@ -35,11 +35,12 @@ async function fetchStats(ids: string[]): Promise<Outcome> {
     const remaining = await supabase.rpc("reserve_youtube_quota", {
       p_units: 1, p_key_label: "primary", p_source: "sync-video-stats", p_floor: QUOTA_FLOOR,
     });
+    console.log(`reserve attempt=${attempt} remaining=${remaining.data} err=${remaining.error?.message ?? ""}`);
     if (remaining.error) return { kind: "failed", error: `quota rpc: ${remaining.error.message}` };
     if (remaining.data === -1) return { kind: "quota" };
     try {
       const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&maxResults=50&id=${ids.join(",")}&key=${API_KEY}`;
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
       if (res.ok) {
         const data = await res.json();
         return {
@@ -51,6 +52,7 @@ async function fetchStats(ids: string[]): Promise<Outcome> {
         };
       }
       const body = await res.text();
+      console.log(`youtube status ${res.status}`);
       if (res.status === 403 && /quotaExceeded|dailyLimitExceeded|rateLimitExceeded/.test(body)) {
         return { kind: "quota" };
       }
