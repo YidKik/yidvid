@@ -8,6 +8,7 @@
     flex-direction: column;
   }
   .auth-scroll-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  .mobile-auth-dialog::before { content: ""; display: block; height: 52px; flex-shrink: 0; background: hsl(var(--card)); }
   .auth-scroll-content > div { height: auto; overflow: visible; }
   .auth-terms-footer button,
   .mobile-auth-link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; white-space: normal; }
