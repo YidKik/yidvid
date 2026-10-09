@@ -254,7 +254,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
                 <button
                   onClick={scrollPrev}
                   disabled={!canScrollPrev}
-                  className={`w-9 h-9 rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
+                  className={`mobile-channels-arrow w-9 h-9 rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
                     canScrollPrev 
                       ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
@@ -265,7 +265,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
                 <button
                   onClick={scrollNext}
                   disabled={!canScrollNext}
-                  className={`w-9 h-9 rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
+                  className={`mobile-channels-arrow w-9 h-9 rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
                     canScrollNext 
                       ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'

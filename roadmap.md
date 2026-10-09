@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Finish fresh content-route checks at all seven mobile/tablet sizes in both themes; recheck confirmed touch-target fixes and report current build evidence. No backend/admin/publication or authenticated submissions.
+
 - [x] Audit accessible signed-out phone routes and overlays at the seven requested sizes in light/dark; correct confirmed mobile sizing defects and recheck changed screens. Final preview build passed. Coverage excludes the gaps below; no authentication, real submissions, backend/admin changes or publication.
 - [x] Complete focused preview hypothesis checks: Settings keyboard focus, About/legal buttons and dialogs, video framing, Shorts overlap; confirmed frontend-only fixes and final build verified. No backend/admin access or publication.
 - [ ] Verify avatar removal, signed-in library/content, submission success/confirmation states — blocked by the explicit no-authentication/no-submission audit scope.

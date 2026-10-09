@@ -63,7 +63,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
           <button
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className={`w-8 h-8 rounded-control flex items-center justify-center transition-all duration-200 ${
+            className={`mobile-featured-arrow w-8 h-8 rounded-control flex items-center justify-center transition-all duration-200 ${
               canScrollPrev 
                 ? 'bg-muted hover:bg-surface-hover/80 text-foreground' 
                 : 'bg-muted/30 text-muted-foreground cursor-not-allowed'
@@ -77,7 +77,7 @@ export const FeaturedVideoSection = ({ videos }: FeaturedVideoSectionProps) => {
           <button
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className={`w-8 h-8 rounded-control flex items-center justify-center transition-all duration-200 ${
+            className={`mobile-featured-arrow w-8 h-8 rounded-control flex items-center justify-center transition-all duration-200 ${
               canScrollNext 
                 ? 'bg-muted hover:bg-surface-hover/80 text-foreground' 
                 : 'bg-muted/30 text-muted-foreground cursor-not-allowed'

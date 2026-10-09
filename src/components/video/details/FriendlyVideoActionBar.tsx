@@ -207,7 +207,7 @@ export const FriendlyVideoActionBar = ({
         {/* Channel avatar + name + subscribe */}
         <div className={`flex items-center ${compact ? 'gap-2' : 'gap-3'} mr-auto min-w-0`}>
           {channelId ? (
-            <Link to={`/channel/${channelId}`} className="flex-shrink-0">
+            <Link to={`/channel/${channelId}`} className="mobile-video-channel-avatar flex-shrink-0">
               <Avatar className={compact ? "h-6 w-6" : "h-9 w-9"}>
                 <AvatarImage src={channelThumbnail} alt={channelName} />
                 <AvatarFallback className={`bg-primary text-white ${compact ? 'text-xs' : 'text-xs'} font-bold`}>
@@ -228,7 +228,7 @@ export const FriendlyVideoActionBar = ({
             {channelId ? (
               <Link 
                 to={`/channel/${channelId}`}
-                className={`${compact ? 'text-xs' : 'text-sm'} font-semibold text-foreground dark:text-foreground hover:text-foreground dark:hover:text-white transition-colors block truncate leading-tight`}
+                className={`mobile-video-channel-link ${compact ? 'text-xs' : 'text-sm'} font-semibold text-foreground dark:text-foreground hover:text-foreground dark:hover:text-white transition-colors block truncate leading-tight`}
               >
                 {channelName}
               </Link>
