@@ -92,7 +92,7 @@ export default function NotFound() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
           onClick={() => window.history.back()}
-          className="mt-6 text-sm text-muted-foreground hover:text-muted-foreground font-medium flex items-center gap-1.5 transition-colors"
+          className="mt-4 min-h-11 px-3 rounded-control type-label text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring flex items-center gap-2 transition-colors"
         >
           <ArrowLeft size={14} />
           Go back to previous page
