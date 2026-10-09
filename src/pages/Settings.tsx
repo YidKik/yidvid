@@ -67,21 +67,22 @@ const Settings = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveSection(item.id)}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 font-semibold transition-all duration-200 whitespace-nowrap",
+                    "flex items-center gap-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200 whitespace-nowrap",
                     isMobile
-                      ? "px-4 py-2 text-xs rounded-control border"
-                      : "px-4 py-3 text-sm rounded-control w-full text-left",
+                      ? "min-h-11 px-4 type-label rounded-control border"
+                      : "min-h-11 px-4 type-label rounded-control w-full text-left",
                     isActive
                       ? isMobile
-                        ? "bg-primary text-white border-brand"
+                        ? "bg-primary text-primary-foreground border-brand"
                         : "bg-white dark:bg-card text-brand shadow-sm border border-border dark:border-border"
                       : isMobile
                         ? "text-muted-foreground border-border dark:border-border dark:text-muted-foreground hover:bg-white dark:hover:bg-card"
                         : "text-muted-foreground dark:text-muted-foreground hover:bg-white dark:hover:bg-card hover:text-foreground dark:hover:text-foreground border border-transparent"
                   )}
                 >
-                  <Icon size={isMobile ? 14 : 18} />
+                  <Icon size={isMobile ? 16 : 18} aria-hidden />
                   {item.label}
                 </button>
               );

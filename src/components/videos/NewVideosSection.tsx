@@ -255,7 +255,7 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
               <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-4'}`}>
                 <button 
                   onClick={handleViewAllClick}
-                  className={`${isMobile ? 'px-2.5 py-1 text-xs' : isTablet ? 'px-3 py-1 text-xs' : 'px-4 py-1.5 text-xs'} font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-control transition-all duration-200 hover:scale-105 shadow-sm`}
+                  className={`${isMobile || isTablet ? 'h-11 px-4' : 'h-9 px-4'} inline-flex items-center type-label font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-control transition-all duration-200 hover:scale-105 shadow-sm`}
                 >
                   View all
                 </button>
@@ -264,24 +264,24 @@ export const NewVideosSection = ({ videos, autoExpand = false }: NewVideosSectio
                   <button
                     onClick={scrollPrev}
                     disabled={!canScrollPrev}
-                    className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
+                    className={`${isMobile || isTablet ? 'w-11 h-11' : 'w-9 h-9'} rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
                       canScrollPrev 
                         ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                     }`}
                   >
-                    <ChevronLeft className={isMobile ? 'w-3.5 h-3.5' : isTablet ? 'w-4 h-4' : 'w-5 h-5'} />
+                    <ChevronLeft className="w-5 h-5" aria-hidden />
                   </button>
                   <button
                     onClick={scrollNext}
                     disabled={!canScrollNext}
-                    className={`${isMobile ? 'w-6 h-6' : isTablet ? 'w-7 h-7' : 'w-9 h-9'} rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
+                    className={`${isMobile || isTablet ? 'w-11 h-11' : 'w-9 h-9'} rounded-control flex items-center justify-center transition-all duration-300 shadow-sm ${
                       canScrollNext 
                         ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-foreground dark:text-gray-300 hover:scale-110' 
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                     }`}
                   >
-                    <ChevronRight className={isMobile ? 'w-3.5 h-3.5' : isTablet ? 'w-4 h-4' : 'w-5 h-5'} />
+                    <ChevronRight className="w-5 h-5" aria-hidden />
                   </button>
                 </div>
               </div>

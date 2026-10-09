@@ -41,7 +41,7 @@ export const Footer = () => {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setTosDialogOpen(true)}
-                className="text-xs font-medium transition-colors hover:text-brand"
+                className="type-footer font-medium min-h-11 px-1 inline-flex items-center rounded-control transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{ 
                   color: 'hsl(var(--muted-foreground))'
                 }}
@@ -51,7 +51,7 @@ export const Footer = () => {
               <span style={{ color: 'hsl(var(--muted-foreground))' }}>|</span>
               <button 
                 onClick={() => setPrivacyDialogOpen(true)}
-                className="text-xs font-medium transition-colors hover:text-brand"
+                className="type-footer font-medium min-h-11 px-1 inline-flex items-center rounded-control transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{ 
                   color: 'hsl(var(--muted-foreground))'
                 }}
@@ -61,7 +61,7 @@ export const Footer = () => {
               <span style={{ color: 'hsl(var(--muted-foreground))' }}>|</span>
               <button 
                 onClick={() => setContactDialogOpen(true)}
-                className="text-xs font-medium transition-colors hover:text-brand"
+                className="type-footer font-medium min-h-11 px-1 inline-flex items-center rounded-control transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{ 
                   color: 'hsl(var(--muted-foreground))'
                 }}
