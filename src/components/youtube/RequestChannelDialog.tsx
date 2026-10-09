@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -116,28 +117,25 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-white dark:bg-card border border-border dark:border-border shadow-overlay rounded-dialog p-0 overflow-hidden [&>button]:hidden">
-        {/* Header — solid color, no gradient */}
-        <div className="bg-primary p-5 relative">
-          <button 
+      <DialogContent className="sm:max-w-[480px] w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto bg-background dark:bg-card border border-border shadow-overlay rounded-dialog p-0 [&>button]:hidden">
+        <div className="relative flex items-start gap-3 px-6 pt-6 pb-4 border-b border-border">
+          <div className="p-2.5 bg-muted rounded-control shrink-0">
+            <Tv className="h-5 w-5 text-brand" aria-hidden="true" />
+          </div>
+          <div className="min-w-0 pr-12">
+            <DialogTitle className="type-h3 text-foreground">Request a Channel</DialogTitle>
+            <DialogDescription className="type-help text-muted-foreground mt-1">
+              Suggest a channel for our collection of Jewish content.
+            </DialogDescription>
+          </div>
+          <button
+            type="button"
             onClick={() => onOpenChange(false)}
-            className="absolute right-4 top-4 text-foreground/60 hover:text-foreground transition-colors z-10"
+            aria-label="Close"
+            className="absolute right-3 top-3 h-11 w-11 flex items-center justify-center rounded-control text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#1A1A1A]/10 rounded-control">
-              <Tv className="h-5 w-5 text-foreground" />
-            </div>
-            <div>
-              <DialogTitle className="text-lg font-bold text-foreground">
-                Request a Channel
-              </DialogTitle>
-              <p className="text-foreground/70 text-sm mt-0.5">
-                Help us grow our collection of Jewish content
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Form */}
@@ -150,13 +148,13 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
-                      <Tv className="h-4 w-4 text-brand" />
+                      <Tv className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                       Channel Name
                     </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Enter the channel name" 
-                        className="h-11 rounded-card border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
+                        className="h-11 rounded-control border border-input bg-background dark:bg-card transition-colors"
                         {...field} 
                       />
                     </FormControl>
@@ -171,14 +169,14 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
-                      <Link className="h-4 w-4 text-brand" />
+                      <Link className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                       Channel Link
                       <span className="text-xs text-muted-foreground font-normal">(optional)</span>
                     </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="https://youtube.com/@channelname" 
-                        className="h-11 rounded-card border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
+                        className="h-11 rounded-control border border-input bg-background dark:bg-card transition-colors"
                         {...field} 
                       />
                     </FormControl>
@@ -194,7 +192,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-brand" />
+                        <Mail className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                         Your Email
                         <span className="text-xs text-muted-foreground font-normal">(optional)</span>
                       </FormLabel>
@@ -202,7 +200,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
                         <Input 
                           type="email"
                           placeholder="your@email.com" 
-                          className="h-11 rounded-card border border-border dark:border-border focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-white dark:bg-card"
+                          className="h-11 rounded-control border border-input bg-background dark:bg-card transition-colors"
                           {...field} 
                         />
                       </FormControl>
@@ -216,7 +214,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
               )}
 
               {isLoggedIn && (
-                <div className="flex items-center gap-3 p-3 bg-muted dark:bg-card rounded-card border border-border dark:border-border">
+                <div className="flex items-center gap-3 p-3 bg-muted dark:bg-card rounded-control border border-border">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-sm font-medium text-foreground">Submitting as</p>
@@ -233,11 +231,11 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-11 rounded-control bg-primary hover:bg-primary-hover text-primary-foreground font-semibold transition-colors disabled:opacity-50"
+                className="w-full sm:w-auto sm:min-w-[180px] sm:ml-auto sm:flex h-11 rounded-control bg-primary hover:bg-primary-hover text-primary-foreground type-label transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
-                    <div className="h-4 w-4 border-2 border-[#1A1A1A]/30 border-t-[#1A1A1A] rounded-full animate-spin" />
+                    <div className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                     Submitting...
                   </span>
                 ) : (
