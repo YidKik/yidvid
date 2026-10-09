@@ -551,6 +551,11 @@ textarea:focus-visible,
   outline-offset: 2px !important;
 }
 
+/* Composite fields (e.g. header search): one focus indicator on the whole control, none on the inner input */
+.composite-field input:focus,
+.composite-field input:focus-visible { outline: none !important; box-shadow: none !important; }
+.composite-field:focus-within { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
 /* Shared touch-target role: real hit box >=44px on touch/coarse pointers */
 @media (pointer: coarse) {
   .touch-target { min-height: 44px; min-width: 44px; }

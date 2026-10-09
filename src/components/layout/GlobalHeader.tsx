@@ -135,10 +135,10 @@ export const GlobalHeader = () => {
             >
               <form onSubmit={handleSearchSubmit} className="min-w-0">
                 <div 
-                  className={`flex items-center rounded-control border-2 transition-all duration-200 bg-muted dark:bg-[#121212] ${
+                  className={`composite-field flex items-center rounded-control border transition-colors duration-200 ${
                     isSearchOpen 
-                      ? 'border-brand shadow-md bg-white dark:bg-card' 
-                      : 'border-border dark:border-border hover:border-brand hover:bg-white dark:hover:bg-card'
+                      ? 'border-brand bg-white dark:bg-card' 
+                      : 'border-border bg-muted dark:bg-[#121212] hover:border-brand hover:bg-white dark:hover:bg-card'
                   }`}
                 >
                   <div className={`flex items-center flex-1 min-w-0 ${isMobile ? 'pl-2.5 pr-1' : 'pl-4 pr-2'}`}>
