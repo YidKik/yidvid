@@ -94,6 +94,16 @@ Deno.serve(async (req) => {
   if (!lease.data) return json({ message: "Run already in progress", runId: run.id }, 409);
   run = lease.data;
 
+  // Work runs in the background so callers (cron) get an immediate reply.
+  // @ts-ignore EdgeRuntime is provided by Supabase
+  EdgeRuntime.waitUntil(runChunk(run, runDate, req).catch(async (e) => {
+    console.error("chunk crashed", e);
+    await supabase.from("youtube_stats_sync_runs").update({ status: "error", last_error: String(e), lease_until: null }).eq("id", run.id);
+  }));
+  return json({ message: "Chunk started", runId: run.id, processed: run.processed });
+});
+
+async function runChunk(run: any, runDate: string, req: Request) {
   const started = Date.now();
   let cursor: string | null = run.cursor_id;
   const totals = {
@@ -136,6 +146,7 @@ Deno.serve(async (req) => {
     totals.units_used = u?.units ?? totals.units_used;
     totals.processed += ids.length;
     cursor = rows[rows.length - 1].id;
+    if (totals.processed % 1000 === 0) console.log(`progress ${totals.processed}`);
 
     await supabase.from("youtube_stats_sync_runs").update({
       ...totals, cursor_id: cursor, last_error: lastError,
@@ -155,8 +166,7 @@ Deno.serve(async (req) => {
     const self = `${Deno.env.get("SUPABASE_URL")}/functions/v1/sync-video-stats`;
     const auth = req.headers.get("Authorization") ?? "";
     // @ts-ignore EdgeRuntime is provided by Supabase
-    EdgeRuntime.waitUntil(fetch(self, { method: "POST", headers: { "Content-Type": "application/json", Authorization: auth, apikey: req.headers.get("apikey") ?? "" }, body: "{}" }));
+    await fetch(self, { method: "POST", headers: { "Content-Type": "application/json", Authorization: auth, apikey: req.headers.get("apikey") ?? "" }, body: "{}" }).catch((e) => console.error("self-chain failed", e));
   }
-
-  return json({ runId: run.id, status, ...totals, missing_ids: undefined, failed_ids: undefined, lastError });
-});
+  console.log(`chunk done status=${status} processed=${totals.processed} updated=${totals.updated} missing=${totals.missing} failed=${totals.failed} err=${lastError}`);
+}
