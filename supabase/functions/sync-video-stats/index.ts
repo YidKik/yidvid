@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     .eq("id", run.id)
     .or(`lease_until.is.null,lease_until.lt.${nowIso}`)
     .select().maybeSingle();
-  if (!lease.data) return json({ message: "Run already in progress", runId: run.id }, 409);
+  if (!lease.data) return json({ message: "Run already in progress", runId: run.id, leaseError: lease.error?.message ?? null }, 409);
   run = lease.data;
 
   const body = await req.clone().json().catch(() => ({}));
