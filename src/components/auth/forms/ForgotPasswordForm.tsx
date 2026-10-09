@@ -53,7 +53,7 @@ export const ForgotPasswordForm = ({
   };
 
   return (
-    <form onSubmit={handleForgotPassword} className={`space-y-${isMobile ? '3' : '4'}`}>
+    <form onSubmit={handleForgotPassword} className={`forgot-password-form space-y-${isMobile ? '3' : '4'}`}>
       <div className="mb-2">
         <h3 className="text-lg font-semibold text-foreground mb-2">Reset Password</h3>
         <p className="text-sm text-muted-foreground">
@@ -91,13 +91,13 @@ export const ForgotPasswordForm = ({
       </Button>
       
       <div className="text-center mt-4">
-        <button 
+        <Button variant="link"
           type="button" 
           onClick={onBackToSignIn}
-          className="text-sm text-brand hover:text-error"
+          className="mobile-auth-link h-auto p-0 text-sm text-brand hover:text-error"
         >
           Back to Sign In
-        </button>
+        </Button>
       </div>
     </form>
   );

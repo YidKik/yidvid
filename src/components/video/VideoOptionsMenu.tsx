@@ -95,7 +95,9 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Video options"
             className={cn(
+              "mobile-video-options",
               compact ? "h-6 w-6" : "h-8 w-8",
               "rounded-control transition-colors duration-200",
               variant === "overlay" && "bg-[#1A1A1A] hover:bg-primary text-white",
@@ -110,7 +112,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
         <DropdownMenuContent 
           align="end" 
           className={cn(
-            "bg-white dark:bg-secondary border border-border dark:border-border shadow-xl z-50 p-1",
+            "mobile-video-menu bg-white dark:bg-secondary border border-border dark:border-border shadow-xl z-50 p-1",
             compact ? "w-36 rounded-control" : "w-48 rounded-card"
           )}
           onClick={(e) => e.stopPropagation()}
@@ -148,7 +150,7 @@ export const VideoOptionsMenu = ({ videoId, variant = "icon", className, compact
               <span>Add to Playlist</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className={cn(
-              "bg-white dark:bg-secondary border border-border dark:border-border shadow-xl p-1",
+              "mobile-video-menu bg-white dark:bg-secondary border border-border dark:border-border shadow-xl p-1",
               compact ? "w-40 rounded-control" : "w-44 rounded-card"
             )}>
               {playlists && playlists.length > 0 ? (

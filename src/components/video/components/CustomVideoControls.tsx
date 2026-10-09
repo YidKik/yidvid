@@ -236,13 +236,13 @@ export const CustomVideoControls = ({
 
   const showControls = controlsVisible || !isPlaying || isDragging || speedOpen;
   const iconBtn =
-    "flex items-center justify-center rounded-full text-white/90 hover:text-brand hover:bg-white/10 transition-colors";
+    "player-icon-control flex items-center justify-center rounded-circle text-white/90 hover:text-brand hover:bg-white/10 transition-colors";
   const btnSize = isMobile ? "w-8 h-8" : "w-9 h-9";
   const iconSize = isMobile ? "w-4 h-4" : "w-[18px] h-[18px]";
 
   return (
     <div
-      className="absolute inset-0 z-10"
+      className="mobile-player-controls absolute inset-0 z-10"
       onMouseMove={resetHideTimer}
       onMouseLeave={() => {
         if (isPlaying && !speedOpen && !isDragging) setControlsVisible(false);
@@ -291,7 +291,7 @@ export const CustomVideoControls = ({
 
       {/* Bottom control bar */}
       <div
-        className={`absolute bottom-0 left-0 right-0 z-30 transition-all duration-200 ${
+        className={`player-control-bar absolute bottom-0 left-0 right-0 z-30 transition-all duration-200 ${
           showControls
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-2 pointer-events-none"
@@ -468,7 +468,7 @@ export const CustomVideoControls = ({
             </div>
 
             <span
-              className={`text-white/90 ${
+              className={`player-time text-white/90 ${
                 isMobile ? "text-xs ml-1" : "text-xs ml-1.5"
               } font-medium tabular-nums select-none`}
             >
@@ -487,7 +487,7 @@ export const CustomVideoControls = ({
                   e.stopPropagation();
                   setSpeedOpen(!speedOpen);
                 }}
-                className="transition-all text-xs font-bold px-2.5 py-1 rounded-control border"
+                className="player-speed-control transition-all text-xs font-bold px-2.5 py-1 rounded-control border"
                 style={{
                   borderColor: speedOpen ? ACCENT : "rgba(255,255,255,0.28)",
                   color: speedOpen ? ACCENT : "rgba(255,255,255,0.9)",
@@ -501,7 +501,7 @@ export const CustomVideoControls = ({
 
               {speedOpen && (
                 <div
-                  className="absolute bottom-full mb-2 right-0 flex items-center bg-[#1A1A1A] rounded-full px-1 py-1 shadow-xl border border-white/10 gap-0.5"
+                  className="player-speed-options absolute bottom-full mb-2 right-0 flex items-center bg-[#1A1A1A] rounded-circle px-1 py-1 shadow-xl border border-white/10 gap-0.5"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {SPEEDS.map((s) => {

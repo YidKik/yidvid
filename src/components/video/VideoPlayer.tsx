@@ -96,7 +96,7 @@ export const VideoPlayer = ({ videoId, onVideoEnd }: VideoPlayerProps) => {
       <div className="absolute inset-0 overflow-hidden">
         <div
           ref={playerContainerRef}
-          className="absolute pointer-events-none [&_iframe]:!w-full [&_iframe]:!h-full"
+          className="video-embed absolute pointer-events-none [&_iframe]:!w-full [&_iframe]:!h-full"
           style={{
             top: '-60px',
             left: '-2px',

@@ -1,4 +1,5 @@
 @import './styles/theme.css';
+@import './styles/mobile-audit.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -574,4 +575,26 @@ textarea:focus-visible,
 }
 @media (max-width: 1023px) {
   [data-sonner-toaster][data-y-position="bottom"] { bottom: calc(var(--bottomnav-h) + 8px) !important; }
+  /* Fit media to its actual aspect ratio; desktop masking is unchanged. */
+  .video-embed { inset: 0 !important; width: 100% !important; height: 100% !important; }
+  .mobile-player-controls .player-icon-control,
+  .mobile-player-controls .player-speed-control { width: 44px; height: 44px; min-width: 44px; padding: 0; }
+  .mobile-player-controls .player-time { position: absolute; top: 0; right: 12px; margin: 0; font-size: 13px; line-height: 20px; }
+  .mobile-player-controls [role="slider"] { min-height: 44px; display: flex; align-items: center; }
+  .mobile-player-controls .player-speed-options { display: grid; grid-template-columns: repeat(3, 44px); border-radius: var(--radius-control); }
+  .mobile-player-controls .player-speed-options button { width: 44px; height: 44px; font-size: 14px; line-height: 20px; }
+  .mobile-share-dialog { display: flex; flex-direction: column; overflow: hidden; }
+  .mobile-share-dialog > div:first-child { flex-shrink: 0; }
+  .mobile-share-dialog > div:nth-child(2) { min-height: 0; overflow-y: auto; }
+  .mobile-share-dialog > div:last-of-type { flex-shrink: 0; }
+  .shorts-stage { width: min(100vw, 56.25dvh) !important; height: auto !important; aspect-ratio: 9 / 16; max-height: 100dvh; }
+  .shorts-embed { inset: 0 !important; width: 100% !important; height: 100% !important; }
+  .shorts-info h1 { overflow-wrap: anywhere; }
+}
+@media (max-width: 1023px) and (orientation: landscape) {
+  /* Short stages cannot hold a full action column beside two title lines. */
+  .shorts-actions { right: auto; left: calc(100% + 12px); bottom: 16px; }
+  .shorts-stage { overflow: visible; }
+  .shorts-stage > div:first-child { overflow: hidden; }
+  .shorts-info > div { padding-right: 0; }
 }

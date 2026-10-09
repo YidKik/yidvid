@@ -62,7 +62,7 @@ export default function NotFound() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-3 w-full max-w-sm"
+          className="mobile-not-found-actions flex flex-col sm:flex-row gap-3 w-full max-w-sm"
         >
           <Button
             asChild

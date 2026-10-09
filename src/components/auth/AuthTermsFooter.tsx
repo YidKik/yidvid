@@ -11,7 +11,7 @@ export const AuthTermsFooter: React.FC<AuthTermsFooterProps> = ({
 }) => {
   return (
     <div 
-      className="mt-6 pt-4 border-t border-border text-center"
+      className="auth-terms-footer mt-6 pt-4 border-t border-border text-center"
     >
       <p className="type-footer text-muted-foreground">
         By signing in, you agree to our{" "}
