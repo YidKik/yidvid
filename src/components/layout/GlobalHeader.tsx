@@ -152,6 +152,8 @@ export const GlobalHeader = () => {
                       }}
                       onFocus={() => setIsSearchOpen(true)}
                       placeholder="Search videos..."
+                      aria-label="Search videos"
+                      dir="auto"
                       className={`flex-1 min-w-0 w-full bg-transparent border-none outline-none py-2 text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground`}
                     />
                     {searchQuery && (
