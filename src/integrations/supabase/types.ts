@@ -1529,6 +1529,7 @@ export type Database = {
           chunks: number
           created_at: string
           cursor_id: string | null
+          distinct_processed: number
           failed: number
           failed_ids: string[]
           finished_at: string | null
@@ -1537,6 +1538,8 @@ export type Database = {
           lease_until: string | null
           missing: number
           missing_ids: string[]
+          no_count: number
+          no_count_ids: string[]
           processed: number
           run_date: string
           started_at: string
@@ -1550,6 +1553,7 @@ export type Database = {
           chunks?: number
           created_at?: string
           cursor_id?: string | null
+          distinct_processed?: number
           failed?: number
           failed_ids?: string[]
           finished_at?: string | null
@@ -1558,6 +1562,8 @@ export type Database = {
           lease_until?: string | null
           missing?: number
           missing_ids?: string[]
+          no_count?: number
+          no_count_ids?: string[]
           processed?: number
           run_date: string
           started_at?: string
@@ -1571,6 +1577,7 @@ export type Database = {
           chunks?: number
           created_at?: string
           cursor_id?: string | null
+          distinct_processed?: number
           failed?: number
           failed_ids?: string[]
           finished_at?: string | null
@@ -1579,6 +1586,8 @@ export type Database = {
           lease_until?: string | null
           missing?: number
           missing_ids?: string[]
+          no_count?: number
+          no_count_ids?: string[]
           processed?: number
           run_date?: string
           started_at?: string

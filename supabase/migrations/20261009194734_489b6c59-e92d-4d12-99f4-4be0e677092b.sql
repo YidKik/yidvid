@@ -1,0 +1,2 @@
+ALTER TABLE public.youtube_stats_sync_runs ADD COLUMN IF NOT EXISTS no_count integer NOT NULL DEFAULT 0, ADD COLUMN IF NOT EXISTS no_count_ids text[] NOT NULL DEFAULT '{}';
+ALTER TABLE public.youtube_stats_sync_runs ADD COLUMN IF NOT EXISTS distinct_processed integer NOT NULL DEFAULT 0;
