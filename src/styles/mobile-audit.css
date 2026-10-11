@@ -182,7 +182,7 @@
     margin-inline: 0; margin-top: 0; margin-bottom: 20px; padding: 12px;
   }
   html[data-public-ui="true"] .phone-browse-sections > .phone-browse-featured { padding: 0; }
-  html[data-public-ui="true"] .phone-browse-sections h2 { font-size: 16px; line-height: 22px; }
+  html[data-public-ui="true"] .videos-page .phone-browse-sections h2 { font-size: 16px; line-height: 22px; }
   html[data-public-ui="true"] .phone-browse-sections .flex:has(> h2),
   html[data-public-ui="true"] .phone-browse-sections .flex:has(> div > h2) {
     gap: 8px; margin-bottom: 12px;
