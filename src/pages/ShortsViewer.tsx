@@ -399,48 +399,11 @@ const ShortsViewer = () => {
           </div>
         </div>
 
-        {/* Navigation arrows */}
-        <div className="shorts-navigation absolute right-3 sm:right-4 lg:right-10 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3">
-          <NavArrow onClick={goPrev} disabled={activeIndex === 0} icon={<ChevronUp className="w-6 h-6" />} label="Previous short" />
-          <NavArrow onClick={goNext} disabled={activeIndex >= shorts.length - 1} icon={<ChevronDown className="w-6 h-6" />} label="Next short" />
-        </div>
 
       </div>
     </>
   );
 };
-
-const NavArrow = ({
-  onClick,
-  disabled,
-  icon,
-  label,
-}: {
-  onClick: () => void;
-  disabled: boolean;
-  icon: React.ReactNode;
-  label: string;
-}) => (
-  <button
-    type="button"
-    onPointerDown={(e) => e.stopPropagation()}
-    onClick={(e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      onClick();
-    }}
-    disabled={disabled}
-    aria-label={label}
-
-    className={`w-11 h-11 rounded-full flex items-center justify-center transition-all backdrop-blur-md ${
-      disabled
-        ? "bg-white/5 text-white/20 cursor-not-allowed"
-        : "bg-white/10 text-white hover:bg-primary hover:text-black active:scale-95"
-    }`}
-  >
-    {icon}
-  </button>
-);
 
 const SideButton = ({
   icon,
