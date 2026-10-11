@@ -78,7 +78,7 @@ export const DesktopVideoView = ({
   // If viewing channels only, skip all video sections
   if (viewChannels) {
     return (
-      <div className={`${containerPadding} max-w-[1600px] mx-auto`}>
+      <div className={`phone-browse-sections ${containerPadding} max-w-[1600px] mx-auto`}>
         <ChannelsRowSection selectedCategory={selectedCategory} autoExpand={true} />
       </div>
     );
@@ -86,7 +86,7 @@ export const DesktopVideoView = ({
 
   if (selectedCategory !== "all") {
     return (
-      <div className={`space-y-8 ${containerPadding} max-w-[1600px] mx-auto`}>
+      <div className={`phone-browse-sections space-y-8 ${containerPadding} max-w-[1600px] mx-auto`}>
         <CategoryVideosGrid videos={videos} categoryId={selectedCategory} />
         <ChannelsRowSection selectedCategory={selectedCategory} />
       </div>
@@ -94,7 +94,7 @@ export const DesktopVideoView = ({
   }
 
   return (
-    <div className={`${sectionSpacing} ${containerPadding} max-w-[1600px] mx-auto`}>
+    <div className={`phone-browse-sections ${sectionSpacing} ${containerPadding} max-w-[1600px] mx-auto`}>
       {/* Featured Section - Large hero cards */}
       {featuredVideos.length >= 3 && (
         <FeaturedVideoSection videos={featuredVideos} />

@@ -56,7 +56,7 @@ export const ShortsSection = () => {
   };
 
   return (
-    <section className={`${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} rounded-card`}>
+    <section className={`phone-browse-shorts ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} rounded-card`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="type-h2 text-foreground">
