@@ -73,6 +73,46 @@ const ShortsViewer = () => {
     setIsPaused((p) => !p);
   }, [isPaused]);
 
+  // Subscribe to player state events so we can loop the short ourselves
+  // (replaces YouTube's loop/playlist params, which add prev/next buttons)
+  const handleIframeLoad = useCallback(() => {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: "listening", id: 1, channel: "widget" }),
+      "*"
+    );
+  }, []);
+
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (e.origin !== "https://www.youtube.com") return;
+      let data: { event?: string; info?: unknown } | null = null;
+      try {
+        data = JSON.parse(e.data);
+      } catch {
+        return;
+      }
+      const ended =
+        (data?.event === "onStateChange" && data.info === 0) ||
+        (data?.event === "infoDelivery" &&
+          typeof data.info === "object" &&
+          data.info !== null &&
+          (data.info as { playerState?: number }).playerState === 0);
+      if (!ended) return;
+      const win = iframeRef.current?.contentWindow;
+      if (!win) return;
+      win.postMessage(
+        JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }),
+        "*"
+      );
+      win.postMessage(
+        JSON.stringify({ event: "command", func: "playVideo", args: [] }),
+        "*"
+      );
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
   // Close: go back only when there is an in-site history entry, otherwise land on /videos
   const handleClose = useCallback(() => {
     const idx = (window.history.state as { idx?: number } | null)?.idx;
@@ -302,11 +342,13 @@ const ShortsViewer = () => {
                   }
             }
           >
-            {/* Player — oversized and cropped so YouTube's header/footer UI sits outside the frame */}
+            {/* Player — oversized and cropped so YouTube's header/footer UI sits outside the frame.
+                No loop/playlist params: those make YouTube render prev/next skip buttons. */}
             <div className="absolute inset-0 overflow-hidden">
               <iframe
                 ref={iframeRef}
-                src={`https://www.youtube.com/embed/${currentShort.video_id}?autoplay=1&loop=1&playlist=${currentShort.video_id}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&color=white&enablejsapi=1`}
+                src={`https://www.youtube.com/embed/${currentShort.video_id}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&color=white&enablejsapi=1`}
+                onLoad={handleIframeLoad}
                 className="shorts-embed absolute left-0 w-full pointer-events-none"
                 style={{ top: "-70px", height: "calc(100% + 140px)" }}
                 allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
