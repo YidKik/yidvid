@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useShortsNavigation } from "@/hooks/video/useShortsNavigation";
-import { ChevronUp, ChevronDown, X, ThumbsUp, Copy, Play, Pause, Loader2 } from "lucide-react";
+import { X, ThumbsUp, Copy, Play, Pause, Loader2 } from "lucide-react";
 import { Helmet } from "react-helmet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
