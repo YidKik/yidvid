@@ -302,11 +302,13 @@ const ShortsViewer = () => {
                   }
             }
           >
-            {/* Player — oversized and cropped so YouTube's header/footer UI sits outside the frame */}
+            {/* Player — oversized and cropped so YouTube's header/footer UI sits outside the frame.
+                No loop/playlist params: those make YouTube render prev/next skip buttons. */}
             <div className="absolute inset-0 overflow-hidden">
               <iframe
                 ref={iframeRef}
-                src={`https://www.youtube.com/embed/${currentShort.video_id}?autoplay=1&loop=1&playlist=${currentShort.video_id}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&color=white&enablejsapi=1`}
+                src={`https://www.youtube.com/embed/${currentShort.video_id}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&color=white&enablejsapi=1`}
+                onLoad={handleIframeLoad}
                 className="shorts-embed absolute left-0 w-full pointer-events-none"
                 style={{ top: "-70px", height: "calc(100% + 140px)" }}
                 allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
