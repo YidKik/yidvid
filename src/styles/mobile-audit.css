@@ -200,6 +200,21 @@
   }
   html[data-public-ui="true"] .phone-browse-sections button > svg { width: 18px; height: 18px; }
   html[data-public-ui="true"] .phone-browse-sections .flex:has(> button) { gap: 8px; }
+  /* Smaller visible section actions; transparent extensions retain tap space. */
+  html[data-public-ui="true"] .phone-browse-sections :is(.flex:has(> h2), .flex:has(> div > h2)) button {
+    position: relative; height: 30px; min-height: 30px; padding-inline: 8px;
+    font-size: 12px; line-height: 16px;
+  }
+  html[data-public-ui="true"] .phone-browse-sections :is(.flex:has(> h2), .flex:has(> div > h2)) button:has(> svg:only-child) {
+    width: 30px; min-width: 30px; padding: 0;
+  }
+  html[data-public-ui="true"] .phone-browse-sections :is(.flex:has(> h2), .flex:has(> div > h2)) button::after {
+    content: ""; position: absolute; inset: -7px; min-width: 44px;
+  }
+  html[data-public-ui="true"] .phone-browse-sections :is(.flex:has(> h2), .flex:has(> div > h2)) button > svg {
+    width: 16px; height: 16px;
+  }
+  html[data-public-ui="true"] .phone-browse-sections :is(.flex:has(> h2), .flex:has(> div > h2)) .flex:has(> button) { gap: 14px; }
   html[data-public-ui="true"] .phone-browse-videos .overflow-hidden > .flex,
   html[data-public-ui="true"] .phone-browse-sections section:has(.phone-video-card) .overflow-hidden > .flex { gap: 12px; }
   html[data-public-ui="true"] .phone-browse-sections .phone-video-card h3 {
