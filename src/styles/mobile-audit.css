@@ -229,6 +229,33 @@
   }
   html[data-public-ui="true"] .phone-browse-channels .overflow-hidden { padding-block: 4px; }
   html[data-public-ui="true"] .phone-browse-channels .flex.justify-center.mt-8 { margin-top: 16px; }
+
+  /* Compact phone header: smaller visible search/theme/sign-in; transparent extensions keep tap space. */
+  html[data-public-ui="true"] .user-global-header > div { height: 48px; min-height: 48px; padding-inline: 12px; }
+  html[data-public-ui="true"] .user-global-header > div > div { height: 48px; gap: 8px; }
+  html[data-public-ui="true"] .user-global-header svg { width: 16px; height: 16px; }
+  html[data-public-ui="true"] .user-global-header .composite-field { height: 36px; }
+  html[data-public-ui="true"] .user-global-header .composite-field > div { padding-left: 10px; padding-right: 4px; }
+  html[data-public-ui="true"] .user-global-header .composite-field svg { width: 15px; height: 15px; margin-right: 6px; }
+  html[data-public-ui="true"] .user-global-header input {
+    height: 34px; min-height: 34px; padding: 0 4px 0 0; font-size: 16px;
+  }
+  html[data-public-ui="true"] .user-global-header input::placeholder { font-size: 14px; }
+  html[data-public-ui="true"] .user-global-header .composite-field > button[type="submit"] {
+    width: 36px; min-width: 36px; height: 34px; min-height: 34px; padding: 0;
+  }
+  html[data-public-ui="true"] .user-global-header .composite-field > button[type="submit"] svg { margin-right: 0; }
+  html[data-public-ui="true"] .user-global-header .search-clear-control { width: 28px; height: 28px; min-width: 28px; min-height: 28px; padding: 0; }
+  html[data-public-ui="true"] .user-global-header > div > div > div:last-child { gap: 8px; }
+  html[data-public-ui="true"] .user-global-header > div > div > div:last-child > :is(button, a) {
+    position: relative; width: 36px; height: 36px; min-width: 36px; min-height: 36px; padding: 0;
+    border-width: 1px; font-size: 13px;
+  }
+  html[data-public-ui="true"] .user-global-header > div > div > div:last-child > :is(button, a)::after {
+    content: ""; position: absolute; inset: -4px;
+  }
+  html[data-public-ui="true"] :is(.pt-14, .pt-16),
+  html[data-public-ui="true"] .phone-video-detail { padding-top: calc(48px + env(safe-area-inset-top, 0px)); }
 }
 @media (max-width: 359px) {
   html[data-public-ui="true"] { --phone-gutter: 12px; }
