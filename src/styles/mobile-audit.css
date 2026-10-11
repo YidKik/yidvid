@@ -237,7 +237,7 @@
   html[data-public-ui="true"] .user-global-header .composite-field { height: 36px; }
   html[data-public-ui="true"] .user-global-header .composite-field > div { padding-left: 10px; padding-right: 4px; }
   html[data-public-ui="true"] .user-global-header .composite-field svg { width: 15px; height: 15px; margin-right: 6px; }
-  html[data-public-ui="true"] .user-global-header input {
+  html[data-public-ui="true"] .user-global-header .composite-field input[type="text"]:not([type="checkbox"]):not([type="radio"]):not([type="range"]) {
     height: 34px; min-height: 34px; padding: 0 4px 0 0; font-size: 16px;
   }
   html[data-public-ui="true"] .user-global-header input::placeholder { font-size: 14px; }
