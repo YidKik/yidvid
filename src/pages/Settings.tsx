@@ -55,7 +55,7 @@ const Settings = () => {
           isMobile ? "flex flex-col gap-4" : "flex gap-6"
         )}>
           {/* Navigation */}
-          <nav className={cn(
+          <nav className={cn("phone-settings-tabs",
             isMobile
               ? "flex gap-2 overflow-x-auto scrollbar-hide p-1 -m-1"
               : "flex flex-col gap-1 w-[200px] shrink-0 sticky top-20 self-start"

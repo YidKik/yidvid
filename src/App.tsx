@@ -53,6 +53,10 @@ function AppContent() {
   
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isShortsRoute = location.pathname.startsWith("/shorts");
+  useEffect(() => {
+    document.documentElement.dataset.publicUi = isAdminRoute ? "false" : "true";
+    return () => { delete document.documentElement.dataset.publicUi; };
+  }, [isAdminRoute]);
   
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();

@@ -110,7 +110,7 @@ export const MobileBottomNav = (_props: MobileBottomNavProps) => {
         <DialogPrimitive.Portal>
           <DialogPrimitive.Overlay className="fixed inset-0 z-[60] bg-foreground/30 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
           <DialogPrimitive.Content
-            className="fixed inset-x-0 bottom-0 z-[61] mx-auto w-full max-w-[720px] max-h-[85dvh] flex flex-col bg-card text-foreground border-t border-border rounded-t-dialog shadow-overlay outline-none data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-4"
+            className="phone-nav-sheet fixed inset-x-0 bottom-0 z-[61] mx-auto w-full max-w-[720px] max-h-[85dvh] flex flex-col bg-card text-foreground border-t border-border rounded-t-dialog shadow-overlay outline-none data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-4"
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
           >
             <div className="flex items-center justify-between px-4 pt-2 pb-1 shrink-0">

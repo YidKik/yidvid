@@ -95,7 +95,7 @@ const LandingPage = () => {
       <meta name="twitter:description" content="Your premier free Jewish video platform. Thousands of kosher videos - music, Torah, podcasts, education & entertainment." />
     </Helmet>
     <div 
-      className="min-h-screen bg-white overflow-x-hidden"
+      className="phone-home min-h-screen bg-white overflow-x-hidden"
       style={{ paddingLeft: 'var(--sidebar-w, 0px)' }}
     >
       {/* Hero Search Section */}

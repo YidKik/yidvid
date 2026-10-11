@@ -40,3 +40,142 @@
 @media (max-width: 1023px) and (orientation: landscape) {
   .shorts-stage .shorts-actions { right: auto; left: calc(100% + 12px); bottom: 16px; }
 }
+
+/* Compact phone system. Tablet/desktop and administrative UI retain their sizing. */
+@media (max-width: 639px) {
+  html[data-public-ui="true"] {
+    --phone-gutter: 16px;
+    --bottomnav-h: calc(56px + env(safe-area-inset-bottom, 0px));
+    --radius-card: 12px;
+    --radius-control: 8px;
+    --radius-dialog: 16px;
+    --radius-badge: 4px;
+  }
+  html[data-public-ui="true"] body { font-size: 14px; line-height: 20px; }
+  html[data-public-ui="true"] :is(.type-body, .type-legal) { font-size: 14px; line-height: 20px; }
+  html[data-public-ui="true"] .text-sm { font-size: 14px; line-height: 20px; }
+  html[data-public-ui="true"] :is(.type-meta, .type-help, .type-footer) { font-size: 12px; line-height: 16px; }
+  html[data-public-ui="true"] :is(.type-caption, .type-label, .text-xs) { font-size: 11px; line-height: 14px; }
+  html[data-public-ui="true"] :is(h1:not(.sr-only), .type-h1) { font-size: 22px; line-height: 28px; font-weight: 600; overflow-wrap: anywhere; }
+  html[data-public-ui="true"] :is(h2, .type-h2, .type-h3) { font-size: 18px; line-height: 24px; font-weight: 600; }
+  html[data-public-ui="true"] :is(.type-card-title, .phone-video-card h3) { font-size: 14px; line-height: 18px; font-weight: 600; }
+  html[data-public-ui="true"] .type-hero { font-size: 26px !important; line-height: 32px !important; min-height: 64px; }
+  html[data-public-ui="true"] main { padding-left: var(--phone-gutter); padding-right: var(--phone-gutter); }
+  html[data-public-ui="true"] :is(.pt-14, .pt-16) { padding-top: calc(52px + env(safe-area-inset-top, 0px)); }
+  html[data-public-ui="true"] .user-global-header { padding-top: env(safe-area-inset-top, 0px); }
+  html[data-public-ui="true"] .user-global-header > div { height: 52px; min-height: 52px; }
+  html[data-public-ui="true"] .user-global-header svg { width: 20px; height: 20px; }
+  html[data-public-ui="true"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  html[data-public-ui="true"] select { height: 42px; min-height: 42px; padding: 0 12px; font-size: 16px; }
+  html[data-public-ui="true"] textarea { font-size: 16px; padding: 12px; }
+  html[data-public-ui="true"] [data-ui-button] {
+    position: relative; height: 38px; min-height: 38px; padding: 0 12px; font-size: 13px; line-height: 16px;
+  }
+  /* Transparent hit extension keeps the compact visible control easy to tap. */
+  html[data-public-ui="true"] [data-ui-button]::after {
+    content: ""; position: absolute; inset: -3px 0; min-width: 44px; pointer-events: auto;
+  }
+  html[data-public-ui="true"] [data-ui-button][data-ui-size="sm"] { height: 36px; min-height: 36px; font-size: 12px; }
+  html[data-public-ui="true"] [data-ui-button][data-ui-size="sm"]::after { inset-block: -4px; }
+  html[data-public-ui="true"] [data-ui-button][data-ui-size="icon"] { width: 36px; height: 36px; min-width: 36px; min-height: 36px; padding: 0; }
+  html[data-public-ui="true"] [data-ui-button][data-ui-size="icon"]::after { inset: -4px; }
+  html[data-public-ui="true"] [data-ui-button] svg { width: 18px; height: 18px; }
+  html[data-public-ui="true"] [data-ui-button][data-ui-size="icon"] svg { width: 20px; height: 20px; }
+  html[data-public-ui="true"] nav[aria-label="Primary"] > ul { height: 56px; padding-inline: 0; }
+  html[data-public-ui="true"] nav[aria-label="Primary"] svg { width: 20px; height: 20px; }
+  html[data-public-ui="true"] nav[aria-label="Primary"] li > :is(a, button) > span { padding-inline: 8px; gap: 2px; }
+  html[data-public-ui="true"] nav[aria-label="Primary"] span span { font-size: 10px; line-height: 12px; }
+  html[data-public-ui="true"] .videos-page section { margin-bottom: 20px; }
+  html[data-public-ui="true"] .videos-page section.rounded-card { padding: 12px; margin-inline: 0; }
+  html[data-public-ui="true"] :is(main .grid, .phone-home .grid) { gap: 12px; }
+  html[data-public-ui="true"] .phone-video-card h3 { min-height: 36px; max-height: 36px; -webkit-line-clamp: 2; }
+  html[data-public-ui="true"] .phone-video-card .type-meta { font-size: 12px; line-height: 16px; overflow-wrap: anywhere; }
+  html[data-public-ui="true"] .phone-home > section { padding: 20px var(--phone-gutter); }
+  html[data-public-ui="true"] .phone-home .rounded-card { padding: 12px; }
+  html[data-public-ui="true"] .phone-home .mobile-home-search input { padding-left: 36px; padding-right: 104px; }
+  html[data-public-ui="true"] .mobile-home-search button { min-height: 36px; height: 36px; padding: 0 12px; font-size: 13px; line-height: 16px; right: 3px; }
+  html[data-public-ui="true"] .mobile-home-search input + div { padding-left: 36px; padding-right: 104px; }
+  html[data-public-ui="true"] :is(.mobile-content-request, .mobile-channel-actions > button) { position: relative; height: 38px; min-height: 38px; padding: 0 12px; font-size: 13px; line-height: 16px; }
+  html[data-public-ui="true"] :is(.mobile-content-request, .mobile-channel-actions > button)::after { content: ""; position: absolute; inset: -3px 0; }
+  html[data-public-ui="true"] .mobile-channel-actions { gap: 12px; }
+  html[data-public-ui="true"] .mobile-settings-content > div:first-child { gap: 8px; }
+  html[data-public-ui="true"] .mobile-settings-content > div:first-child button { font-size: 13px; line-height: 16px; padding-inline: 12px; }
+  html[data-public-ui="true"] [role="dialog"]:not(.phone-nav-sheet),
+  html[data-public-ui="true"] [role="alertdialog"] {
+    width: calc(100vw - 24px) !important; max-width: 440px !important;
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 32px) !important;
+    padding: 16px; gap: 12px; overflow-y: auto; overscroll-behavior: contain; margin-bottom: 0;
+    border-radius: var(--radius-dialog);
+  }
+  html[data-public-ui="true"] [role="dialog"].mobile-auth-dialog { padding: 0; overflow: hidden; }
+  html[data-public-ui="true"] .mobile-auth-dialog::before { height: 48px; }
+  html[data-public-ui="true"] .auth-scroll-content > div { padding: 16px; }
+  html[data-public-ui="true"] [role="dialog"] :is(h1, h2, h3) { font-size: 18px; line-height: 24px; }
+  html[data-public-ui="true"] [role="dialog"] p { font-size: 14px; line-height: 20px; }
+  html[data-public-ui="true"] [role="dialog"] > button:has(.lucide-x) { width: 44px; height: 44px; min-height: 44px; padding: 0; }
+  html[data-public-ui="true"] .phone-nav-sheet { max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 16px); }
+  html[data-public-ui="true"] .phone-nav-sheet nav { padding-inline: 16px; }
+  html[data-public-ui="true"] .phone-nav-sheet nav ul { display: flex; flex-direction: column; gap: 12px; }
+  html[data-public-ui="true"] .phone-nav-sheet nav li { margin-top: 0; }
+  html[data-public-ui="true"] .phone-nav-sheet nav :is(a, button) { font-size: 14px; line-height: 20px; min-height: 44px; }
+  html[data-public-ui="true"] :is([role="menuitem"], [role="option"]) { font-size: 14px; line-height: 20px; min-height: 44px; }
+  html[data-public-ui="true"] .shorts-stage {
+    width: min(100vw, calc((100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 9 / 16)) !important;
+    aspect-ratio: 9 / 16; max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+  html[data-public-ui="true"] .shorts-info { padding-inline: 12px; }
+  html[data-public-ui="true"] .shorts-info h1 { font-size: 14px; line-height: 18px; }
+  html[data-public-ui="true"] .shorts-info p { font-size: 12px; line-height: 16px; }
+  html[data-public-ui="true"] .shorts-actions { gap: 12px; }
+  html[data-public-ui="true"] .phone-home > section:first-child { min-height: 0; padding-top: calc(68px + env(safe-area-inset-top, 0px)); }
+  html[data-public-ui="true"] .phone-home > section:first-child .w-32 { width: 88px; height: 88px; margin-bottom: 12px; }
+  html[data-public-ui="true"] .phone-home > section:first-child .mb-6 { margin-bottom: 12px; }
+  html[data-public-ui="true"] .phone-video-detail { padding-top: calc(52px + env(safe-area-inset-top, 0px)); }
+  html[data-public-ui="true"] .phone-video-detail > div { padding-inline: var(--phone-gutter); }
+  html[data-public-ui="true"] .phone-video-detail h1 { font-size: 16px; line-height: 22px; }
+  html[data-public-ui="true"] .phone-video-detail .-mx-3 { margin-inline: calc(-1 * var(--phone-gutter)); }
+  html[data-public-ui="true"] .phone-settings-tabs { gap: 8px; }
+  html[data-public-ui="true"] .phone-settings-tabs button { font-size: 13px; line-height: 16px; padding-inline: 12px; }
+  html[data-public-ui="true"] .phone-settings-tabs + div > .rounded-card { padding: 12px; }
+  html[data-public-ui="true"] .phone-request-dialog { padding: 0 !important; }
+  html[data-public-ui="true"] .phone-request-dialog > div { padding: 16px; }
+  html[data-public-ui="true"] .phone-request-dialog form > * + * { margin-top: 12px; }
+  html[data-public-ui="true"] [role="dialog"]:has(.type-legal) { padding: 0; display: flex; flex-direction: column; overflow: hidden; }
+  html[data-public-ui="true"] [role="dialog"]:has(.type-legal) > div { padding: 16px; }
+  html[data-public-ui="true"] [role="dialog"]:has(.type-legal) > div.overflow-y-auto { min-height: 0; flex: 1; max-height: none; }
+  html[data-public-ui="true"] [role="dialog"]:has(.type-legal) > div:first-of-type { flex-shrink: 0; }
+  html[data-public-ui="true"] [role="dialog"] .space-y-6 > * + *,
+  html[data-public-ui="true"] [role="dialog"] .space-y-5 > * + * { margin-top: 12px; }
+  /* Search adornments must not cover 16px field text. */
+  html[data-public-ui="true"] .relative:has(> svg) > input { padding-left: 36px; }
+  html[data-public-ui="true"] .user-global-header input { padding-left: 12px; }
+  html[data-public-ui="true"] .user-global-header [data-ui-button] { min-width: 44px; min-height: 44px; }
+  html[data-public-ui="true"] .phone-auth-header { padding: 12px; }
+  html[data-public-ui="true"] .phone-auth-header > .mb-4 { margin-bottom: 8px; }
+  html[data-public-ui="true"] .auth-scroll-content > div:has(> .phone-auth-header) { padding: 0; }
+  html[data-public-ui="true"] .auth-scroll-content > div:has(> .phone-auth-header) > .p-6 { padding: 16px; }
+  html[data-public-ui="true"] .auth-scroll-content button.h-12:not([data-ui-button]) { height: 38px; min-height: 38px; font-size: 13px; line-height: 16px; }
+  html[data-public-ui="true"] .mobile-share-dialog { padding: 0 !important; }
+  html[data-public-ui="true"] .mobile-share-dialog > div:nth-child(2) { padding: 12px 16px; }
+  html[data-public-ui="true"] .mobile-share-dialog > div:nth-child(2) button { min-height: 44px; padding-block: 4px; }
+  html[data-public-ui="true"] .mobile-share-dialog > div:last-of-type button { height: 38px; padding-block: 0; font-size: 13px; line-height: 16px; }
+  html[data-public-ui="true"] .phone-about > div { padding: 20px var(--phone-gutter); }
+  html[data-public-ui="true"] .phone-about :is(.mb-12, .mb-16, .mb-10) { margin-bottom: 20px; }
+  html[data-public-ui="true"] .phone-about .grid { gap: 12px; }
+  html[data-public-ui="true"] .phone-about .rounded-card { padding: 12px; }
+  html[data-public-ui="true"] .phone-about .text-base { font-size: 14px; line-height: 20px; }
+  html[data-public-ui="true"] .pb-nav > .max-w-6xl:has(> .py-20) { padding: 20px var(--phone-gutter); width: 100%; }
+  html[data-public-ui="true"] .pb-nav > .max-w-6xl > .py-20 { padding-block: 32px; }
+  html[data-public-ui="true"] .pb-nav > .max-w-6xl > .py-20 > .w-20 { width: 56px; height: 56px; margin-bottom: 12px; }
+  html[data-public-ui="true"] .pb-nav > .max-w-6xl > .py-20 > .w-20 svg { width: 28px; height: 28px; }
+  html[data-public-ui="true"] .phone-settings-tabs + div .text-center.py-12 { padding-block: 24px; padding-inline: 0; }
+  html[data-public-ui="true"] .phone-settings-tabs + div .text-center.py-12 > svg { width: 36px; height: 36px; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) { gap: 8px; margin-bottom: 12px; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) h2 { flex: 1; min-width: 0; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) > .flex { gap: 8px; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) [data-ui-button]:not([data-ui-size="icon"]) { white-space: nowrap; padding-inline: 8px; font-size: 12px; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) h2 { font-size: 18px; line-height: 24px; }
+}
+@media (max-width: 359px) {
+  html[data-public-ui="true"] { --phone-gutter: 12px; }
+}

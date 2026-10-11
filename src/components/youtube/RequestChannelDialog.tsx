@@ -117,7 +117,7 @@ export const RequestChannelDialog = ({ open, onOpenChange }: RequestChannelDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto bg-background dark:bg-card border border-border shadow-overlay rounded-dialog p-0 [&>button]:hidden">
+      <DialogContent className="phone-request-dialog sm:max-w-[480px] w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto bg-background dark:bg-card border border-border shadow-overlay rounded-dialog p-0 [&>button]:hidden">
         <div className="relative flex items-start gap-3 px-6 pt-6 pb-4 border-b border-border">
           <div className="p-2.5 bg-muted rounded-control shrink-0">
             <Tv className="h-5 w-5 text-brand" aria-hidden="true" />

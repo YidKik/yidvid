@@ -39,7 +39,7 @@ export const VideoCardWithOptions = ({
 
   return (
     <div 
-      className={cn("relative group", className)}
+      className={cn("phone-video-card relative group", className)}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
