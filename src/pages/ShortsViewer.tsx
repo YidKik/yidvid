@@ -73,6 +73,46 @@ const ShortsViewer = () => {
     setIsPaused((p) => !p);
   }, [isPaused]);
 
+  // Subscribe to player state events so we can loop the short ourselves
+  // (replaces YouTube's loop/playlist params, which add prev/next buttons)
+  const handleIframeLoad = useCallback(() => {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: "listening", id: 1, channel: "widget" }),
+      "*"
+    );
+  }, []);
+
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (e.origin !== "https://www.youtube.com") return;
+      let data: { event?: string; info?: unknown } | null = null;
+      try {
+        data = JSON.parse(e.data);
+      } catch {
+        return;
+      }
+      const ended =
+        (data?.event === "onStateChange" && data.info === 0) ||
+        (data?.event === "infoDelivery" &&
+          typeof data.info === "object" &&
+          data.info !== null &&
+          (data.info as { playerState?: number }).playerState === 0);
+      if (!ended) return;
+      const win = iframeRef.current?.contentWindow;
+      if (!win) return;
+      win.postMessage(
+        JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }),
+        "*"
+      );
+      win.postMessage(
+        JSON.stringify({ event: "command", func: "playVideo", args: [] }),
+        "*"
+      );
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
   // Close: go back only when there is an in-site history entry, otherwise land on /videos
   const handleClose = useCallback(() => {
     const idx = (window.history.state as { idx?: number } | null)?.idx;
