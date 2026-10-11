@@ -531,7 +531,6 @@ input::placeholder, textarea::placeholder { font-size: 16px; }
 
 /* On short portrait phones, keep the arrow hit boxes above the side-action column. */
 @media (max-width: 767px) and (max-height: 700px) and (orientation: portrait) {
-  .shorts-navigation { top: 72px; transform: none; }
 }
 
 /* Per-block automatic bidi for mixed Hebrew/Yiddish/English titles (interface stays LTR) */
