@@ -53,7 +53,8 @@
   }
   html[data-public-ui="true"] body { font-size: 14px; line-height: 20px; }
   html[data-public-ui="true"] :is(.type-body, .type-legal) { font-size: 14px; line-height: 20px; }
-  html[data-public-ui="true"] :is(.type-meta, .type-help, .type-footer, .text-sm) { font-size: 12px; line-height: 16px; }
+  html[data-public-ui="true"] .text-sm { font-size: 14px; line-height: 20px; }
+  html[data-public-ui="true"] :is(.type-meta, .type-help, .type-footer) { font-size: 12px; line-height: 16px; }
   html[data-public-ui="true"] :is(.type-caption, .type-label, .text-xs) { font-size: 11px; line-height: 14px; }
   html[data-public-ui="true"] :is(h1:not(.sr-only), .type-h1) { font-size: 22px; line-height: 28px; font-weight: 600; overflow-wrap: anywhere; }
   html[data-public-ui="true"] :is(h2, .type-h2, .type-h3) { font-size: 18px; line-height: 24px; font-weight: 600; }
@@ -126,6 +127,29 @@
   html[data-public-ui="true"] .shorts-info h1 { font-size: 14px; line-height: 18px; }
   html[data-public-ui="true"] .shorts-info p { font-size: 12px; line-height: 16px; }
   html[data-public-ui="true"] .shorts-actions { gap: 12px; }
+  html[data-public-ui="true"] .phone-home > section:first-child { min-height: 0; padding-top: calc(68px + env(safe-area-inset-top, 0px)); }
+  html[data-public-ui="true"] .phone-home > section:first-child .w-32 { width: 88px; height: 88px; margin-bottom: 12px; }
+  html[data-public-ui="true"] .phone-home > section:first-child .mb-6 { margin-bottom: 12px; }
+  html[data-public-ui="true"] .phone-video-detail { padding-top: calc(52px + env(safe-area-inset-top, 0px)); }
+  html[data-public-ui="true"] .phone-video-detail > div { padding-inline: var(--phone-gutter); }
+  html[data-public-ui="true"] .phone-video-detail h1 { font-size: 16px; line-height: 22px; }
+  html[data-public-ui="true"] .phone-video-detail .-mx-3 { margin-inline: calc(-1 * var(--phone-gutter)); }
+  html[data-public-ui="true"] .phone-settings-tabs { gap: 8px; }
+  html[data-public-ui="true"] .phone-settings-tabs button { font-size: 13px; line-height: 16px; padding-inline: 12px; }
+  html[data-public-ui="true"] .phone-settings-tabs + div > .rounded-card { padding: 12px; }
+  html[data-public-ui="true"] .phone-request-dialog { padding: 0 !important; }
+  html[data-public-ui="true"] .phone-request-dialog > div { padding: 16px; }
+  html[data-public-ui="true"] .phone-request-dialog form > * + * { margin-top: 12px; }
+  html[data-public-ui="true"] [role="dialog"]:has(.type-legal) { padding: 0; display: flex; flex-direction: column; overflow: hidden; }
+  html[data-public-ui="true"] [role="dialog"]:has(.type-legal) > div { padding: 16px; }
+  html[data-public-ui="true"] [role="dialog"]:has(.type-legal) > div.overflow-y-auto { min-height: 0; flex: 1; max-height: none; }
+  html[data-public-ui="true"] [role="dialog"]:has(.type-legal) > div:first-of-type { flex-shrink: 0; }
+  html[data-public-ui="true"] [role="dialog"] .space-y-6 > * + *,
+  html[data-public-ui="true"] [role="dialog"] .space-y-5 > * + * { margin-top: 12px; }
+  /* Search adornments must not cover 16px field text. */
+  html[data-public-ui="true"] .relative:has(> svg) > input { padding-left: 36px; }
+  html[data-public-ui="true"] .user-global-header input { padding-left: 12px; }
+  html[data-public-ui="true"] .user-global-header [data-ui-button] { min-width: 44px; min-height: 44px; }
 }
 @media (max-width: 359px) {
   html[data-public-ui="true"] { --phone-gutter: 12px; }
