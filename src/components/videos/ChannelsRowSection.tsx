@@ -192,7 +192,7 @@ export const ChannelsRowSection = ({ selectedCategory = "all", autoExpand = fals
   return (
     <section 
       ref={sectionRef}
-      className={`mb-8 md:mb-12 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-muted/40 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
+      className={`phone-browse-channels mb-8 md:mb-12 ${isMobile ? 'p-4 -mx-4' : 'p-6 -mx-6'} bg-muted/40 ${showAllChannels ? 'min-h-screen pb-20' : 'rounded-card shadow-sm border border-gray-100 dark:border-gray-800'}`}
     >
       <AnimatePresence mode="sync">
         {showAllChannels ? (

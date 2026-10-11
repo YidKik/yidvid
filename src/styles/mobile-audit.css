@@ -175,6 +175,45 @@
   html[data-public-ui="true"] .videos-page section > .flex:has(> h2) > .flex { gap: 8px; }
   html[data-public-ui="true"] .videos-page section > .flex:has(> h2) [data-ui-button]:not([data-ui-size="icon"]) { white-space: nowrap; padding-inline: 8px; font-size: 12px; }
   html[data-public-ui="true"] .videos-page section > .flex:has(> h2) h2 { font-size: 18px; line-height: 24px; }
+
+  /* Browse-page density: include legacy controls and animated section headers. */
+  html[data-public-ui="true"] .videos-page .phone-browse-sections { padding-inline: 0; }
+  html[data-public-ui="true"] .phone-browse-sections > section {
+    margin-inline: 0; margin-top: 0; margin-bottom: 20px; padding: 12px;
+  }
+  html[data-public-ui="true"] .phone-browse-sections > .phone-browse-featured { padding: 0; }
+  html[data-public-ui="true"] .phone-browse-sections h2 { font-size: 16px; line-height: 22px; }
+  html[data-public-ui="true"] .phone-browse-sections .flex:has(> h2),
+  html[data-public-ui="true"] .phone-browse-sections .flex:has(> div > h2) {
+    gap: 8px; margin-bottom: 12px;
+  }
+  html[data-public-ui="true"] .phone-browse-sections .flex:has(> h2) > h2 { min-width: 0; flex: 1; }
+  html[data-public-ui="true"] .phone-browse-sections button:not([data-ui-button]) {
+    position: relative; height: 36px; min-height: 36px; padding: 0 10px;
+    font-size: 12px; line-height: 16px; white-space: nowrap; flex-shrink: 0;
+  }
+  html[data-public-ui="true"] .phone-browse-sections button:not([data-ui-button])::after {
+    content: ""; position: absolute; inset: -4px; min-width: 44px;
+  }
+  html[data-public-ui="true"] .phone-browse-sections button:not([data-ui-button]):not(:has(svg + span)):has(> svg:only-child) {
+    width: 36px; min-width: 36px; padding: 0;
+  }
+  html[data-public-ui="true"] .phone-browse-sections button > svg { width: 18px; height: 18px; }
+  html[data-public-ui="true"] .phone-browse-sections .flex:has(> button) { gap: 8px; }
+  html[data-public-ui="true"] .phone-browse-videos .overflow-hidden > .flex,
+  html[data-public-ui="true"] .phone-browse-sections section:has(.phone-video-card) .overflow-hidden > .flex { gap: 12px; }
+  html[data-public-ui="true"] .phone-browse-sections .phone-video-card h3 {
+    font-size: 13px; line-height: 18px; min-height: 0; max-height: 36px;
+  }
+  html[data-public-ui="true"] .phone-browse-featured .type-card-title { font-size: 13px; line-height: 17px; }
+  html[data-public-ui="true"] .phone-browse-shorts .overflow-hidden > .flex > .flex-none { width: 104px; }
+  html[data-public-ui="true"] .phone-browse-channels a > .rounded-card { padding: 12px; }
+  html[data-public-ui="true"] .phone-browse-channels a > .rounded-card > .relative { width: 52px; height: 52px; }
+  html[data-public-ui="true"] .phone-browse-channels a > .rounded-card > p:first-of-type {
+    margin-top: 10px; font-size: 13px; line-height: 18px;
+  }
+  html[data-public-ui="true"] .phone-browse-channels .overflow-hidden { padding-block: 4px; }
+  html[data-public-ui="true"] .phone-browse-channels .flex.justify-center.mt-8 { margin-top: 16px; }
 }
 @media (max-width: 359px) {
   html[data-public-ui="true"] { --phone-gutter: 12px; }
