@@ -150,6 +150,31 @@
   html[data-public-ui="true"] .relative:has(> svg) > input { padding-left: 36px; }
   html[data-public-ui="true"] .user-global-header input { padding-left: 12px; }
   html[data-public-ui="true"] .user-global-header [data-ui-button] { min-width: 44px; min-height: 44px; }
+  html[data-public-ui="true"] .phone-auth-header { padding: 12px; }
+  html[data-public-ui="true"] .phone-auth-header > .mb-4 { margin-bottom: 8px; }
+  html[data-public-ui="true"] .auth-scroll-content > div:has(> .phone-auth-header) { padding: 0; }
+  html[data-public-ui="true"] .auth-scroll-content > div:has(> .phone-auth-header) > .p-6 { padding: 16px; }
+  html[data-public-ui="true"] .auth-scroll-content button.h-12:not([data-ui-button]) { height: 38px; min-height: 38px; font-size: 13px; line-height: 16px; }
+  html[data-public-ui="true"] .mobile-share-dialog { padding: 0 !important; }
+  html[data-public-ui="true"] .mobile-share-dialog > div:nth-child(2) { padding: 12px 16px; }
+  html[data-public-ui="true"] .mobile-share-dialog > div:nth-child(2) button { min-height: 44px; padding-block: 4px; }
+  html[data-public-ui="true"] .mobile-share-dialog > div:last-of-type button { height: 38px; padding-block: 0; font-size: 13px; line-height: 16px; }
+  html[data-public-ui="true"] .phone-about > div { padding: 20px var(--phone-gutter); }
+  html[data-public-ui="true"] .phone-about :is(.mb-12, .mb-16, .mb-10) { margin-bottom: 20px; }
+  html[data-public-ui="true"] .phone-about .grid { gap: 12px; }
+  html[data-public-ui="true"] .phone-about .rounded-card { padding: 12px; }
+  html[data-public-ui="true"] .phone-about .text-base { font-size: 14px; line-height: 20px; }
+  html[data-public-ui="true"] .pb-nav > .max-w-6xl:has(> .py-20) { padding: 20px var(--phone-gutter); width: 100%; }
+  html[data-public-ui="true"] .pb-nav > .max-w-6xl > .py-20 { padding-block: 32px; }
+  html[data-public-ui="true"] .pb-nav > .max-w-6xl > .py-20 > .w-20 { width: 56px; height: 56px; margin-bottom: 12px; }
+  html[data-public-ui="true"] .pb-nav > .max-w-6xl > .py-20 > .w-20 svg { width: 28px; height: 28px; }
+  html[data-public-ui="true"] .phone-settings-tabs + div .text-center.py-12 { padding-block: 24px; padding-inline: 0; }
+  html[data-public-ui="true"] .phone-settings-tabs + div .text-center.py-12 > svg { width: 36px; height: 36px; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) { gap: 8px; margin-bottom: 12px; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) h2 { flex: 1; min-width: 0; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) > .flex { gap: 8px; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) [data-ui-button]:not([data-ui-size="icon"]) { white-space: nowrap; padding-inline: 8px; font-size: 12px; }
+  html[data-public-ui="true"] .videos-page section > .flex:has(> h2) h2 { font-size: 18px; line-height: 24px; }
 }
 @media (max-width: 359px) {
   html[data-public-ui="true"] { --phone-gutter: 12px; }
