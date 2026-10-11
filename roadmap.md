@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Apply compact phone size guide below 640px across public pages and overlays; verify five phone sizes, landscape and tablet in both themes. No backend, admin, publication, authentication or form submissions.
+
 - [x] Finish content-route checks: Home, Videos, Music category, search/loading/no-results, channels/detail, video detail, Writing Videos and five signed-out Library routes at all seven requested sizes in both themes. Rechecked browse arrows, Request a Channel, video channel links/related links, loaded search and Shorts navigation at 320/375/390/430/844 landscape in both themes; no page horizontal overflow, all changed targets at least 44px. Automatic post-fix build passed 2026-10-09 22:47:48 UTC. No backend/admin/publication or authenticated submissions. Media reliability, exhaustive variants and physical-device coverage remain unverified below.
 
 - [x] Audit accessible signed-out phone routes and overlays at the seven requested sizes in light/dark; correct confirmed mobile sizing defects and recheck changed screens. Final preview build passed. Coverage excludes the gaps below; no authentication, real submissions, backend/admin changes or publication.
