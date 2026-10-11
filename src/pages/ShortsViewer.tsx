@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useShortsNavigation } from "@/hooks/video/useShortsNavigation";
-import { ChevronUp, ChevronDown, X, ThumbsUp, Copy, Play, Loader2 } from "lucide-react";
+import { ChevronUp, ChevronDown, X, ThumbsUp, Copy, Play, Pause, Loader2 } from "lucide-react";
 import { Helmet } from "react-helmet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -285,7 +285,7 @@ const ShortsViewer = () => {
         <div className="relative flex items-center justify-center w-full" style={{ height: "100dvh" }}>
           <div
             key={currentShort.video_id}
-            className={`shorts-stage relative bg-black overflow-hidden ${
+            className={`shorts-stage group relative bg-black overflow-hidden ${
               direction === "up" ? "short-enter-up" : "short-enter-down"
             } ${
               isMobile
@@ -321,14 +321,23 @@ const ShortsViewer = () => {
             {/* Tap layer: swallows YouTube clicks, toggles play */}
             <div className="absolute inset-0 z-10" onClick={togglePlay} />
 
-            {/* Pause indicator */}
-            {isPaused && (
-              <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-                <div className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
+            {/* Single play/pause button — appears on hover, or while paused */}
+            <button
+              type="button"
+              onClick={togglePlay}
+              aria-label={isPaused ? "Play" : "Pause"}
+              className={`absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-200 ${
+                isPaused ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+              }`}
+            >
+              <span className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                {isPaused ? (
                   <Play className="w-8 h-8 text-brand fill-brand ml-1" />
-                </div>
-              </div>
-            )}
+                ) : (
+                  <Pause className="w-8 h-8 text-brand fill-brand" />
+                )}
+              </span>
+            </button>
 
             {/* Bottom info */}
             <div className="shorts-info absolute inset-x-0 bottom-0 z-20 pointer-events-none bg-gradient-to-t from-black via-black/60 to-transparent px-4 pt-20 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
